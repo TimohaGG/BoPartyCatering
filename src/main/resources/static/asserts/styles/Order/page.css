@@ -1,0 +1,11 @@
+body{
+    background-color: black;
+}
+
+*{
+    color: white !important;
+}
+
+main .container{
+    background-color: #202020;
+}
