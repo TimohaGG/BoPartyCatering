@@ -47,4 +47,27 @@ public class PositionsService {
     public void saveAll(List<PositionAmount> positions){
         positionAmountRepos.saveAll(positions);
     }
+
+    public void removeZeroPositions(long orderId,List<PositionAmount> positions){
+        if(orderId!=0){
+            boolean isFound = false;
+            List<PositionAmount> tmp =  positionAmountRepos.findAll().stream().filter(x->x.getOrder().getId().equals(orderId)).toList();
+            for(PositionAmount positionAmount:tmp){
+                for (PositionAmount pos : positions) {
+                    if(positionAmount.getPositionId()==pos.getPositionId()){
+                        isFound = true;
+                    }
+
+                }
+                if(!isFound){
+                    positionAmountRepos.delete(positionAmount);
+                }
+                isFound = false;
+
+            }
+
+            //positionAmountRepos.deleteAll(tmp);
+        }
+
+    }
 }

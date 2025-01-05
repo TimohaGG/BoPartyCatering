@@ -43,7 +43,7 @@
             </div>
             <div class="col-12 d-block d-lg-none" style="background-color: black;">
                 <div class="d-flex align-items-center scrollbar" style="overflow-x: auto;">
-                    <a href="#" class="text-decoration-none" th:each="category:${categories}" th:text="${category.getName()}"></a>
+                    <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:each="category:${categories}" th:text="${category.getName()}"></a>
                 </div>
             </div>
             <div class="col-lg-6 col-12 positions mb-4">
@@ -103,7 +103,7 @@
                     <input class="form-control searchbar" type="text" name="positionSearch" id="positionSearch" placeholder="Пошук.."/>
                 </form>
                 <ul class="list-group ">
-                    <li class="list-group-item row d-flex align-items-center" th:each="pos:${selectedPositions}">
+                    <li class="list-group-item row d-flex align-items-center" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">
                         <div class="col-12 d-flex justify-content-between">
                             <span th:text="${pos.getPositionName()}"></span>
                             <a href="#" class="text-decoration-none" style="color: red !important;">x</a>
@@ -132,22 +132,32 @@
 
         })
             .then(res=>res.json())
-            .then(resp=>{
+            .then(async resp=> {
                 if(resp){
                     let amountSpan = document.getElementById("pos_"+position);
                     if(amountSpan!=null){
-
-
                         if(amountSpan.innerText==="0"){
-                            console.log("!!!");
                             window.location.reload();
                         }
                         amountSpan.innerText = + amountSpan.innerText + amount;
-
                     }
 
                     amountSpan = document.getElementById("sel_pos_"+position);
                     amountSpan.innerText = + amountSpan.innerText + amount;
+
+                    if(amountSpan.innerText==="0"){
+                        let deleteResp = await fetch(`/positions/remove/${position}`,{
+                            method:"GET"
+                        })
+                            .then(res=>res.json())
+                            .then(resp=>{
+                                console.log("asddd");
+                                if(resp){
+                                    document.getElementById("position_"+position).remove();
+                                }
+                            });
+
+                    }
 
                 }
 

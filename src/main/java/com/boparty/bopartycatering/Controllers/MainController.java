@@ -15,10 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
@@ -79,6 +76,7 @@ public class MainController {
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             order.setUser(user);
             Orders tm =  ordersService.save(order);
+            positionsService.removeZeroPositions(order.getId(), tmpPositions);
             positionsService.saveAll(tmpPositions);
             tmpPositions.forEach(el->{el.setOrder(tm);});
             tm.setPositionsAmount(tmpPositions);
@@ -86,7 +84,7 @@ public class MainController {
         }
 
         catch (Exception e){
-
+            System.out.printf(e.getMessage());
         }
         return "redirect:/";
     }
@@ -136,6 +134,19 @@ public class MainController {
         if(selectedIds!=null)
             selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
         return ResponseEntity.ok(amount);
+    }
+    //fetch
+    @GetMapping("/positions/remove/{id}")
+    public ResponseEntity<Boolean> removePosition(@PathVariable Long id, Model model) {
+        PositionAmount pos = tmpPositions.stream().filter(x->x.getPositionId()==id).findFirst().orElse(null);
+        if(pos != null) {
+            tmpPositions.remove(pos);
+            selectedIds.remove(pos.getPositionId());
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.ok(false);
+
+
     }
 
     @GetMapping("/edit/order/{orderId}")
