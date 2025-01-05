@@ -35,8 +35,13 @@ public class PositionsService {
     public Position getPositionById(Long id){
         return positionsRepos.findById(id).orElse(null);
     }
+
     public void save(PositionAmount position){
         positionAmountRepos.save(position);
+    }
+
+    public void save(Position position){
+        positionsRepos.save(position);
     }
 
     public void saveAll(List<PositionAmount> positions){

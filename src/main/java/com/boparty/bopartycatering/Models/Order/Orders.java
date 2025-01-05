@@ -81,7 +81,7 @@ public class Orders {
     public int getPrice(){
 
         return positionsAmount.stream()
-                .mapToInt(x -> x.getPosition().getPrice() * x.getAmount())
+                .mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount())
                 .sum();
     }
 
