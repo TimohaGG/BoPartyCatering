@@ -36,9 +36,6 @@
                 </ul>
                 <div class="btns mt-auto mb-2  ">
                     <a class="btn btn-outline-light" href="/create/order"><- До замовлення</a>
-                    <form method="POST">
-                        <input type="submit" th:formaction="'/save/order'" class="btn btn-outline-warning" style="align-self: center;color: white !important;" value="Зберегти"/>
-                    </form>
 
 
                 </div>
@@ -138,10 +135,17 @@
             .then(resp=>{
                 if(resp){
                     let amountSpan = document.getElementById("pos_"+position);
-                    if(amountSpan.innerText==="0"){
-                        window.location.reload();
+                    if(amountSpan!=null){
+
+
+                        if(amountSpan.innerText==="0"){
+                            console.log("!!!");
+                            window.location.reload();
+                        }
+                        amountSpan.innerText = + amountSpan.innerText + amount;
+
                     }
-                    amountSpan.innerText = + amountSpan.innerText + amount;
+
                     amountSpan = document.getElementById("sel_pos_"+position);
                     amountSpan.innerText = + amountSpan.innerText + amount;
 

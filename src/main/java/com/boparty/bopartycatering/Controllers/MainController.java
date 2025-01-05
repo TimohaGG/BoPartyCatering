@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,6 +44,10 @@ public class MainController {
     }
     @GetMapping("/")
     public String index(Model model) {
+        List<Orders> orders = ordersService.getAllOrders();
+        for (Orders order : orders) {
+            System.out.println(order.getPositionsAmount());
+        }
         model.addAttribute("orders",ordersService.getAllOrders());
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
@@ -70,10 +75,14 @@ public class MainController {
     public String saveOrder(@ModelAttribute("order") Orders order,RedirectAttributes attributes, Model model) {
 
         try{
-            order.setPositionsAmount(tmpPositions);
+
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             order.setUser(user);
-            ordersService.save(order);
+            Orders tm =  ordersService.save(order);
+            positionsService.saveAll(tmpPositions);
+            tmpPositions.forEach(el->{el.setOrder(tm);});
+            tm.setPositionsAmount(tmpPositions);
+            ordersService.save(tm);
         }
 
         catch (Exception e){
@@ -98,8 +107,13 @@ public class MainController {
             model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(categories.get(0).getName())).toList());
         }
 
+
         model.addAttribute("selected", selectedIds);
         model.addAttribute("selectedPositions", tmpPositions);
+
+        model.addAttribute("order", ord);
+
+
         return "Order/addPositions";
     }
 
@@ -116,11 +130,29 @@ public class MainController {
             tmpPositions.stream().filter(x->x.getPositionId()==positionId).findFirst().get().addAmount(amount);
         }
         else{
+
             tmpPositions.add(new PositionAmount(pos,amount));
         }
         if(selectedIds!=null)
             selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
         return ResponseEntity.ok(amount);
+    }
+
+    @GetMapping("/edit/order/{orderId}")
+    public String editOrder(@PathVariable long orderId, Model model) {
+        Orders order = ordersService.getOrderById(orderId);
+        if(order == null) {
+            return "redirect:/";
+        }
+
+        tmpOrder = order;
+        tmpPositions = order.getPositionsAmount();
+
+        model.addAttribute("order", order);
+        model.addAttribute("selectedPositions", order.getPositionsAmount());
+        selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
+        return "Order/orderCreate";
+
     }
 
 

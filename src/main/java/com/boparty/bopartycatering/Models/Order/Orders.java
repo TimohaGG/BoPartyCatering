@@ -4,7 +4,9 @@ import com.boparty.bopartycatering.Models.Position.PositionAmount;
 import com.boparty.bopartycatering.Models.User.User;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -12,8 +14,10 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
+@AllArgsConstructor
 public class Orders {
 
     @Id
@@ -27,6 +31,7 @@ public class Orders {
         duration = 0;
         format = "";
         phone = "";
+        id = 0L;
     }
 
     private String date;
@@ -63,6 +68,21 @@ public class Orders {
         }
 
 
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getPrice(){
+
+        return positionsAmount.stream()
+                .mapToInt(x -> x.getPosition().getPrice() * x.getAmount())
+                .sum();
     }
 
     public String getClient() {

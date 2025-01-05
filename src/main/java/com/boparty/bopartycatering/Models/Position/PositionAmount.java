@@ -2,10 +2,11 @@ package com.boparty.bopartycatering.Models.Position;
 
 import com.boparty.bopartycatering.Models.Order.Orders;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
+@AllArgsConstructor
 public class PositionAmount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +15,18 @@ public class PositionAmount {
     @ManyToOne
     private Position position;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Orders order;
     private int amount;
+    public PositionAmount() {
 
+    }
+
+    public PositionAmount(Position position, Orders order, int amount) {
+        this.position = position;
+        this.order = order;
+        this.amount = amount;
+    }
     public PositionAmount(Position position, int amount) {
         this.position = position;
         this.amount = amount;
@@ -54,5 +63,7 @@ public class PositionAmount {
         return position.getName();
     }
 
-
+    public void setOrder(Orders order) {
+        this.order = order;
+    }
 }

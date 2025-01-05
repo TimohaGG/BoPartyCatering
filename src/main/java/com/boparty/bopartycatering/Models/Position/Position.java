@@ -2,6 +2,7 @@ package com.boparty.bopartycatering.Models.Position;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+
 public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +29,10 @@ public class Position {
 
     @OneToMany(mappedBy = "position")
     private List<IngredientAmount> ingredients;
+
+    public Position() {
+
+    }
 
     public String getName() {
         return name;

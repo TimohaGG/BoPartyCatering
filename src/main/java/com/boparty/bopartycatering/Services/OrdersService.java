@@ -26,7 +26,11 @@ public class OrdersService {
         return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).toList();
     }
 
-    public void save(Orders orders) {
-        ordersRepos.save(orders);
+    public Orders save(Orders orders) {
+        return ordersRepos.save(orders);
+    }
+
+    public Orders getOrderById(Long id) {
+        return ordersRepos.findById(id).orElse(null);
     }
 }

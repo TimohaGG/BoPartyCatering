@@ -22,6 +22,7 @@
             <div class="col-lg-7 col-12 positions mt-0">
                 <h2 class="categoryHead" style="background-color: #454545;">Нове замовлення</h2>
                 <form method="post" class="d-flex flex-column mt-3" th:object="${order}" action="/create/order">
+                    <input type="hidden" th:field="*{id}" name="id" id="id"/>
                     <div class="row justify-content-center" style="height: fit-content;">
 
                         <div class="col-8 col-sm-6">
@@ -67,10 +68,10 @@
 
             </div>
             <div class="col-4 d-none d-lg-block mb-auto positions mt-0 ms-1">
-                <h2 class="categoryHead" style="background-color: #454545;">Позиції</h2>
+                <h2 class="categoryHead" style="background-color: #454545; position: sticky;top:0;">Позиції</h2>
                 <div class="col-12 h-100 m-0 pt-0">
                     <div class="category">
-                        <h2 class="categoryHead" style="position: sticky;top:0px;background-color: rgb(53, 52, 52);">Шпажки</h2>
+
                         <div class="container row m-0 " th:each="pos:${selectedPositions}">
 
                             <div class="position col-7">
