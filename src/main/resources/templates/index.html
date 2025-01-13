@@ -52,8 +52,11 @@
 
                 <div th:each="order:${orders}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
 
+
                     <div class="position col-4">
-                        <h4 th:if="${order.getClient()}!=''" th:text="${order.getClient()}"></h4>
+                        <h4 th:if="${order.getClient()}!=''" >
+                            <a th:text="${order.getClient()}" th:href="'/order/view/'+${order.getId()}" class="text-decoration-none"></a>
+                        </h4>
                         <h4 th:unless="${order.getClient()}!=''">-</h4>
                         <span th:text="${order.getPrice()}"></span>
 

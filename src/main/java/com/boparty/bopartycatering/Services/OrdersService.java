@@ -21,7 +21,6 @@ public class OrdersService {
 
     public List<Orders> getAllOrders() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //String user = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         String username = user.getUsername();
         return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).toList();
     }
@@ -33,4 +32,5 @@ public class OrdersService {
     public Orders getOrderById(Long id) {
         return ordersRepos.findById(id).orElse(null);
     }
+
 }

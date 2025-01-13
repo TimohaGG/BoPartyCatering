@@ -62,7 +62,7 @@ input{
     border-bottom: 1px solid #454545;
     padding-bottom:15px;
     padding-top:15px;
-    grid-template-columns: 3fr 2fr 0.5fr;
+    grid-template-columns: 3fr 2fr 0.5fr 1fr;
     height: 160px;
 }
 

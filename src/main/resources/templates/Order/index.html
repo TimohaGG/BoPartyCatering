@@ -1,0 +1,113 @@
+
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="/asserts/styles/Order/header.css" rel="stylesheet"/>
+    <link href="/asserts/styles/Order/page.css" rel="stylesheet"/>
+    <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
+
+</head>
+<body>
+
+<header th:insert="header::header"></header>
+
+<main>
+    <div class="container rounded">
+
+        <div class="row align-items-center justify-content-center">
+            <div class="col-3 p-3 d-none d-lg-block mb-auto">
+
+            </div>
+
+            <div class="col-lg-6 col-12 positions mb-4" style="overflow: visible;height: 100%">
+                <h2 class="categoryHead" style="background-color: #454545;" th:text="${order.getClient()}"></h2>
+
+
+
+                <div th:each="position:${order.getPositionsAmount()}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
+
+
+                    <div class="position col-4">
+
+                        <h5 th:text="${position.getPositionName()}"></h5>
+                        <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
+
+                    </div>
+                    <div class="col-4 text-center">
+
+                        <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
+                    </div>
+                    <div class="col-2 text-center">
+                        <span th:text="${position.getPosition().getWeight()} + ' г'"></span>
+                    </div>
+                    <div class="col-2 text-center" >
+                        <span th:text="${position.getAmount()} + ' шт'"></span>
+                    </div>
+
+
+                </div>
+
+                <div th:each="position:${order.getPositionsAmount()}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
+
+
+                    <div class="position col-4">
+
+                        <h5 th:text="${position.getPositionName()}"></h5>
+                        <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
+
+                    </div>
+                    <div class="col-4 text-center">
+
+                        <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
+                    </div>
+                    <div class="col-2 text-center">
+                        <span th:text="${position.getPosition().getWeight()} + ' г'"></span>
+                    </div>
+                    <div class="col-2 text-center" >
+                        <span th:text="${position.getAmount()} + ' шт'"></span>
+                    </div>
+
+
+                </div>
+                <div th:each="position:${order.getPositionsAmount()}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
+
+
+                    <div class="position col-4">
+
+                        <h5 th:text="${position.getPositionName()}"></h5>
+                        <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
+
+                    </div>
+                    <div class="col-4 text-center">
+
+                        <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
+                    </div>
+                    <div class="col-2 text-center">
+                        <span th:text="${position.getPosition().getWeight()} + ' г'"></span>
+                    </div>
+                    <div class="col-2 text-center" >
+                        <span th:text="${position.getAmount()} + ' шт'"></span>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+            <div class="col-3 d-none d-lg-block mb-auto">
+                <form method="post" action="/order/generate">
+                    <input value="Generate" class="btn btn-outline-light"/>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

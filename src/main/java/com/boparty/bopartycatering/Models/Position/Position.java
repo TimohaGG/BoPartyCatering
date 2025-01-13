@@ -61,6 +61,10 @@ public class Position {
         return price;
     }
 
+    public int getPriceInt(){
+        return (int)price;
+    }
+
     public byte[] getImage() {
 
         return image;
