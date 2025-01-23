@@ -58,7 +58,7 @@ public class PdfGenerator {
         // Load the bold font
         try (InputStream boldFontStream = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getInputStream()) {
             BaseFont boldBaseFont = BaseFont.createFont("Arial Rounded Bold.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, boldFontStream.readAllBytes(), null);
-            boldFont = new Font(boldBaseFont, 20, Font.BOLD, BaseColor.WHITE);
+            boldFont = new Font(boldBaseFont, 20, Font.BOLD, BaseColor.RED);
         } catch (DocumentException | IOException e) {
             System.out.println("Error creating font");
         }
