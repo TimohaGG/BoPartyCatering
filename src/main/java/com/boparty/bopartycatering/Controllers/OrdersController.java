@@ -6,7 +6,7 @@ import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Services.OrdersService;
-import com.boparty.bopartycatering.Services.PdfService;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -32,13 +32,13 @@ import java.util.Map;
 public class OrdersController {
 
     private OrdersService ordersService;
-    private PdfService pdfService;
+
 
 
     @Autowired
-    public OrdersController(OrdersService ordersService, PdfService pdfService) {
+    public OrdersController(OrdersService ordersService) {
         this.ordersService = ordersService;
-        this.pdfService = pdfService;
+
     }
 @GetMapping("/order/view/{id}")
     public String index(@PathVariable long id, Model model){

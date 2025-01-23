@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.swing.text.html.parser.Parser;
+import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -84,8 +85,13 @@ public class PdfGenerator {
                     if(!isImgSet.get()) {
                         String logoPath;
                         try {
+                            ClassPathResource classpath = new ClassPathResource("static/asserts/img/logo.png");
+                            byte[] imageBytes;
+                            try (InputStream inputStream = classpath.getInputStream()) {
+                                imageBytes = inputStream.readAllBytes();
+                            }
                             logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
-                            Image img = Image.getInstance(logoPath);
+                            Image img = Image.getInstance(imageBytes);
                             img.scaleToFit(150,150);
                             PdfPCell cell = new PdfPCell(img);
                             cell.setRowspan(7);
