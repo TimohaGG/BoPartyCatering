@@ -47,10 +47,10 @@ public class PdfGenerator {
 
 
         try{
-            String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
-            mainFont = new Font(BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),14, Font.NORMAL,fontColor);
-            String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
-            boldFont = new Font(BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
+            //String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
+            mainFont = new Font(BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),14, Font.NORMAL,fontColor);
+            //String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
+            boldFont = new Font(BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
