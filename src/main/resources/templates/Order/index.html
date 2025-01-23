@@ -24,7 +24,8 @@
             </div>
 
             <div class="col-lg-6 col-12 positions mb-4" style="overflow: visible;height: 100%">
-                <h2 class="categoryHead" style="background-color: #454545;" th:text="${order.getClient()}"></h2>
+                <h2 class="categoryHead" style="background-color: #454545;" th:if="${order.getDate()==null}" th:text="${order.getDate()}"></h2>
+                <h2 class="categoryHead" style="background-color: #454545;" th:unless="${order.getDate()==null}" th:text="${order.getClient()}"></h2>
 
 
 
@@ -50,57 +51,72 @@
 
 
                 </div>
-
-                <div th:each="position:${order.getPositionsAmount()}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
-
-
-                    <div class="position col-4">
-
-                        <h5 th:text="${position.getPositionName()}"></h5>
-                        <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
+                <div class="row" th:each="info:${order.getAdditionalInfo()}">
+                    <div class="col-3" th:text="${info.getTitle()}">
 
                     </div>
-                    <div class="col-4 text-center">
-
-                        <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
+                    <div class="col-5">
+                        <img alt="image" th:src="'data:image/jpeg;base64,' + ${info.getImageBase64()}"/>
                     </div>
-                    <div class="col-2 text-center">
-                        <span th:text="${position.getPosition().getWeight()} + ' г'"></span>
-                    </div>
-                    <div class="col-2 text-center" >
-                        <span th:text="${position.getAmount()} + ' шт'"></span>
-                    </div>
+                    <div class="col-3" th:text="${info.getDescription()()}">
 
-
+                    </div>
                 </div>
-                <div th:each="position:${order.getPositionsAmount()}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
-
-
-                    <div class="position col-4">
-
-                        <h5 th:text="${position.getPositionName()}"></h5>
-                        <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
-
+                <div class="row" style="height: fit-content">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#addModal">
+                            +
+                        </button>
+                        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color: #454545">
+                                        <h1 class="modal-title fs-5" id="addModalLabel">Modal title</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" style="background-color: #202020">
+                                        <form  method="post" th:action="'/order/addinfo/'+${order.getId()}" >
+                                            <div class="mb-3">
+                                                <label for="title" class="form-label">Заголовок</label>
+                                                <input type="text" name="title" id="title" class="form-control" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="description"  class="form-label">Опис</label>
+                                                <input type="text" name="description" id="description" class="form-control"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="img"  class="form-label">Зображення</label>
+                                               <input type="file" name="img" id="img" class="form-control" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="price"  class="form-label">Ціна</label>
+                                                <input type="number" name="price" id="price" class="form-control"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="isCommon"  class="from-label">Зберегти</label>
+                                                <input type="checkbox" name="isCommon" id="isCommon" class="from-control" />
+                                            </div>
+                                            <input type="submit"/>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer" style="background-color: #454545">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-4 text-center">
-
-                        <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
-                    </div>
-                    <div class="col-2 text-center">
-                        <span th:text="${position.getPosition().getWeight()} + ' г'"></span>
-                    </div>
-                    <div class="col-2 text-center" >
-                        <span th:text="${position.getAmount()} + ' шт'"></span>
-                    </div>
-
-
                 </div>
+
+
+
 
 
             </div>
             <div class="col-3 d-none d-lg-block mb-auto">
-                <form method="post" action="/order/generate">
-                    <input value="Generate" class="btn btn-outline-light"/>
+                <form method="post" th:action="'/order/generate/'+${order.getId()}">
+                    <input type="submit" value="Generate" class="btn btn-outline-light"/>
                 </form>
 
             </div>

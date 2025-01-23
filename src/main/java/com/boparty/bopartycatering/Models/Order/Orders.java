@@ -52,6 +52,9 @@ public class Orders {
     @OneToMany(mappedBy = "order")
     private List<PositionAmount> positionsAmount;
 
+    @OneToMany(mappedBy = "order")
+    private List<OrderAdditionalInfo> additionalInfo;
+
     @ManyToOne
     private User user;
 
@@ -143,5 +146,9 @@ public class Orders {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<OrderAdditionalInfo> getAdditionalInfo() {
+        return additionalInfo;
     }
 }
