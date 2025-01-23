@@ -1,10 +1,13 @@
 package com.boparty.bopartycatering.Models.Order;
 
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.swing.text.StyleConstants;
 import javax.swing.text.html.parser.Parser;
 import java.io.InputStream;
 import java.util.*;
@@ -47,12 +50,13 @@ public class PdfGenerator {
 
 
         try{
-            //String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
-            mainFont = new Font(BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),14, Font.NORMAL,fontColor);
-            //String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
-            boldFont = new Font(BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
+            String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
+            //mainFont = PdfFontFactory.createFont(StyleConstants.FontConstants.TIM);
+            String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
+            //boldFont = new Font(BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
 
         }catch (Exception e){
+            System.out.println("CANT");
             System.out.println(e.getMessage());
         }
 
