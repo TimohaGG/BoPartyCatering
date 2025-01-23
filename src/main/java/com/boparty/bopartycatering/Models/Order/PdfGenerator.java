@@ -75,7 +75,7 @@ public class PdfGenerator {
             document.add(table);
             document.add(positions);
         } catch (DocumentException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error generating the document");
         }
     }
 
