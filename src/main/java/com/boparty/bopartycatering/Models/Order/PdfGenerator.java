@@ -90,7 +90,7 @@ public class PdfGenerator {
                             try (InputStream inputStream = classpath.getInputStream()) {
                                 imageBytes = inputStream.readAllBytes();
                             }
-                            logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
+                            //logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
                             Image img = Image.getInstance(imageBytes);
                             img.scaleToFit(150,150);
                             PdfPCell cell = new PdfPCell(img);
