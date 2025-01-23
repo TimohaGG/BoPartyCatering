@@ -51,16 +51,32 @@
 
 
                 </div>
-                <div class="row" th:each="info:${order.getAdditionalInfo()}">
+                <div class="row align-items-center justify-content-center w-100 m-0" style="height: initial">
+                    <h5 class="col-6">
+                        Загальна ціна:
+                    </h5>
+                    <div class="col-6" th:text="${order.getTotalPrice()} + ' грн'" style="text-align: end">
+
+                    </div>
+                </div>
+                <div class="row align-items-center justify-content-center w-100 m-0" th:each="info:${order.getAdditionalInfo()}"  style="height: initial;position:relative">
                     <div class="col-3" th:text="${info.getTitle()}">
 
                     </div>
-                    <div class="col-5">
-                        <img alt="image" th:src="'data:image/jpeg;base64,' + ${info.getImageBase64()}"/>
+                    <div class="col-4">
+                        <img alt="image" th:src="'data:image/jpeg;base64,' + ${info.getImageBase64()}" style="max-height: 80px"/>
                     </div>
-                    <div class="col-3" th:text="${info.getDescription()()}">
+                    <div class="col-3" th:text="${info.getDescription()}">
 
                     </div>
+                    <div class="col-2" th:text="${info.getPrice()}">
+
+                    </div>
+                    <form method="post" th:action="'/order/deleteInfo/'+${info.getId()}">
+                        <input type="hidden" name="orderId" id="orderId" th:value="${order.getId()}"/>
+                        <input type="submit" style="position: absolute;top:0;right:0;text-align: end;width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger" value="x"/>
+                    </form>
+
                 </div>
                 <div class="row" style="height: fit-content">
                     <div class="col-12">
@@ -70,39 +86,41 @@
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
+                                    <form  method="post" th:action="'/order/addinfo/'+${order.getId()}" th:object="${info}" enctype="multipart/form-data">
                                     <div class="modal-header" style="background-color: #454545">
                                         <h1 class="modal-title fs-5" id="addModalLabel">Modal title</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body" style="background-color: #202020">
-                                        <form  method="post" th:action="'/order/addinfo/'+${order.getId()}" >
+
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Заголовок</label>
-                                                <input type="text" name="title" id="title" class="form-control" />
+                                                <input type="text" name="title" id="title" class="form-control" th:field="*{title}" />
                                             </div>
                                             <div class="mb-3">
                                                 <label for="description"  class="form-label">Опис</label>
-                                                <input type="text" name="description" id="description" class="form-control"/>
+                                                <input type="text" name="description" id="description" class="form-control" th:field="*{description}"/>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="img"  class="form-label">Зображення</label>
-                                               <input type="file" name="img" id="img" class="form-control" />
+                                                <label for="image"  class="form-label">Зображення</label>
+                                               <input type="file" name="image" id="image" class="form-control" th:field="*{image}"/>
                                             </div>
                                             <div class="mb-3">
                                                 <label for="price"  class="form-label">Ціна</label>
-                                                <input type="number" name="price" id="price" class="form-control"/>
+                                                <input type="number" name="price" id="price" class="form-control" th:field="*{price}"/>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="isCommon"  class="from-label">Зберегти</label>
-                                                <input type="checkbox" name="isCommon" id="isCommon" class="from-control" />
+                                                <label for="price2"  class="form-label">Зберігти</label>
+                                                <input type="checkbox" name="price2" id="price2" class="form-check" th:field="*{save}"/>
                                             </div>
-                                            <input type="submit"/>
-                                        </form>
+
+
                                     </div>
                                     <div class="modal-footer" style="background-color: #454545">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
                                     </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

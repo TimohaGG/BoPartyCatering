@@ -22,6 +22,7 @@ public class OrderAdditionalInfo
 
     private String title;
     private String description;
+    @Lob
     private byte[] image;
 
     private int price;

@@ -3,28 +3,28 @@ package com.boparty.bopartycatering.Models.Order;
 import org.springframework.web.multipart.MultipartFile;
 
 public class InfoDTO {
-    public boolean isCommon = false;
 
-    public String title = "";
-    public String description = "";
-    public MultipartFile image;
 
-    public int price = 0;
+    private String title = "";
+    private String description = "";
+    private MultipartFile image;
+    private boolean save = false;
+    private int price = 0;
 
     public InfoDTO() {
         title = "";
         description = "";
         image = null;
         price = 0;
-        isCommon = false;
+        save = false;
     }
 
-    public boolean isCommon() {
-        return isCommon;
+    public boolean getSave() {
+        return save;
     }
 
-    public void setCommon(boolean common) {
-        isCommon = common;
+    public void setSave(boolean save) {
+        this.save = save;
     }
 
     public String getTitle() {

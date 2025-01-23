@@ -1,6 +1,7 @@
 package com.boparty.bopartycatering.Controllers;
 
 import com.boparty.bopartycatering.Models.Order.InfoDTO;
+import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
@@ -68,8 +69,27 @@ public class OrdersController {
     }
 
     @PostMapping("/order/addinfo/{id}")
-    public String addInfo(@PathVariable String id,@ModelAttribute InfoDTO infoDTO, Model model) {
-        return "redirect:/";
+    public String addInfo(@PathVariable Long id, @ModelAttribute InfoDTO infoDTO, Model model) {
+
+
+        OrderAdditionalInfo tmp = new OrderAdditionalInfo();
+        tmp.setTitle(infoDTO.getTitle());
+        tmp.setDescription(infoDTO.getDescription());
+        tmp.setPrice(infoDTO.getPrice());
+        tmp.setCommon(infoDTO.getSave());
+        try{
+            tmp.setImage(infoDTO.getImage().getBytes());
+        }catch (Exception ex){
+
+        }
+        ordersService.addAdditionalInfo(id,tmp);
+        return "redirect:/order/view/" + id;
+    }
+
+    @PostMapping("/order/deleteInfo/{id}")
+    public String deleteInfo(@PathVariable Long id,Long orderId, Model model) {
+        ordersService.removeAdditionalInfo(id);
+        return "redirect:/order/view/" + orderId;
     }
 
 

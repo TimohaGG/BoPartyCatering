@@ -20,7 +20,7 @@ public class Position {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private Double weight;
+    private double weight;
     @Column(nullable = false)
     private double price;
 
@@ -53,7 +53,7 @@ public class Position {
         return name;
     }
 
-    public Double getWeight() {
+    public double getWeight() {
         return weight;
     }
 

@@ -5,12 +5,13 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.swing.text.html.parser.Parser;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PdfGenerator {
-    private Orders order;
+    private final Orders order;
     Document document;
     Font mainFont;
     Font boldFont;
@@ -119,24 +120,20 @@ public class PdfGenerator {
         for(PositionAmount pos : order.getPositionsAmount()){
             table.addCell(getDefaultCell(pos.getPositionName(), mainFont));
             table.addCell(getDefaultCell("", mainFont));
-            table.addCell(getDefaultCell(pos.getPosition().getWeight().toString(), mainFont));
+            table.addCell(getDefaultCell(String.valueOf(((int)pos.getPosition().getWeight())), mainFont));
             table.addCell(getDefaultCell(String.valueOf(pos.getAmount()), mainFont));
-            table.addCell(getDefaultCell(String.valueOf(pos.getPosition().getPrice()), mainFont));
+            table.addCell(getDefaultCell(String.valueOf(((int)pos.getPosition().getPrice())), mainFont));
         }
 
     }
 
     private PdfPCell getDefaultCell(String data, Font font){
         PdfPCell header = new PdfPCell();
-
-
         header.setHorizontalAlignment(Element.ALIGN_CENTER);
         header.setVerticalAlignment(Element.ALIGN_MIDDLE);
         header.setPhrase(new Phrase(data, font));
         header.setMinimumHeight(30);
         header.setBackgroundColor(containerColor);
-
-
         return header;
     }
 

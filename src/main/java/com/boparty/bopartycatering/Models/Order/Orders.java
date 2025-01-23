@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.web.bind.annotation.Mapping;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -71,6 +72,10 @@ public class Orders {
         }
 
 
+    }
+
+    public double getTotalPrice(){
+        return positionsAmount.stream().mapToDouble(x -> x.getPosition().getPrice()).sum();
     }
 
     public void setId(Long id) {

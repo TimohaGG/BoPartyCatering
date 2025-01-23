@@ -1,8 +1,10 @@
 package com.boparty.bopartycatering.Services;
 
+import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
 import com.boparty.bopartycatering.Models.User.User;
+import com.boparty.bopartycatering.Repos.IAdditionalInfoRepos;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -21,10 +23,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrdersService {
-    private OrdersRepos ordersRepos;
+    private final OrdersRepos ordersRepos;
+    private final IAdditionalInfoRepos iAdditionalInfoRepos;
     @Autowired
-    public OrdersService(OrdersRepos ordersRepos) {
+    public OrdersService(OrdersRepos ordersRepos, IAdditionalInfoRepos iAdditionalInfoRepos) {
         this.ordersRepos = ordersRepos;
+        this.iAdditionalInfoRepos = iAdditionalInfoRepos;
     }
 
     public List<Orders> getAllOrders() {
@@ -62,5 +66,18 @@ public class OrdersService {
         document.close();
         writer.flush();
         return writer;
+    }
+
+    public void addAdditionalInfo(Long orderId, OrderAdditionalInfo info) {
+        Orders orders = ordersRepos.findById(orderId).orElse(null);
+        if (orders!=null){
+            info.setOrder(orders);
+            iAdditionalInfoRepos.save(info);
+        }
+
+    }
+
+    public void removeAdditionalInfo(Long id) {
+        iAdditionalInfoRepos.deleteById(id);
     }
 }
