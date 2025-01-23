@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.parser.Parser;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.List;
@@ -47,18 +48,30 @@ public class PdfGenerator {
         posHeader.add("Ціна, \nгрн");
 
 
-
-
-        try{
-            String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
-            //mainFont = PdfFontFactory.createFont(StyleConstants.FontConstants.TIM);
-            String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
-            //boldFont = new Font(BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
-
-        }catch (Exception e){
-            System.out.println("CANT");
-            System.out.println(e.getMessage());
+        try (InputStream fontStream = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getInputStream()) {
+            BaseFont baseFont = BaseFont.createFont("Arial Unicode", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontStream.readAllBytes(), null);
+            mainFont = new Font(baseFont, 16, Font.BOLD, BaseColor.BLACK);
+        } catch (IOException | DocumentException e) {
+            throw new RuntimeException(e);
         }
+
+        // Load the bold font
+        try (InputStream boldFontStream = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getInputStream()) {
+            BaseFont boldBaseFont = BaseFont.createFont("Arial Rounded Bold", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, boldFontStream.readAllBytes(), null);
+            boldFont = new Font(boldBaseFont, 20, Font.BOLD, BaseColor.WHITE);
+        } catch (DocumentException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+//        try{
+//            String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
+//            mainFont = new Font(BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),16, Font.BOLD,BaseColor.BLACK);
+//            String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
+//            boldFont = new Font(BaseFont.createFont(fontBoldPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
+//        }catch (Exception e){
+//            System.out.println("CANT");
+//            System.out.println(e.getMessage());
+//        }
 
     }
 
