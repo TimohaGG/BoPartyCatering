@@ -1,14 +1,10 @@
 package com.boparty.bopartycatering.Models.Order;
 
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
-import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.swing.text.StyleConstants;
-import javax.swing.text.html.parser.Parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -20,6 +16,7 @@ public class PdfGenerator {
     Document document;
     Font mainFont;
     Font boldFont;
+    Font blackBoldFont;
 
     public static BaseColor backgroundColor;
     public static BaseColor fontColor;
@@ -56,9 +53,10 @@ public class PdfGenerator {
         }
 
         // Load the bold font
-        try (InputStream boldFontStream = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getInputStream()) {
-            BaseFont boldBaseFont = BaseFont.createFont("Arial Rounded Bold.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, boldFontStream.readAllBytes(), null);
-            boldFont = new Font(boldBaseFont, 20, Font.BOLD, BaseColor.RED);
+        try (InputStream boldFontStream = new ClassPathResource("static/asserts/fonts/ArialMT.ttf").getInputStream()) {
+            BaseFont boldBaseFont = BaseFont.createFont("ArialMT.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, boldFontStream.readAllBytes(), null);
+            boldFont = new Font(boldBaseFont, 20, Font.BOLD, BaseColor.WHITE);
+            blackBoldFont = new Font(boldBaseFont, 16, Font.BOLD, BaseColor.BLACK);
         } catch (DocumentException | IOException e) {
             System.out.println("Error creating font");
         }
@@ -134,8 +132,8 @@ public class PdfGenerator {
         table.addCell(tmp);
         table.setWidths(new float[]{27.5f,27.5f,15f,15f,15f});
         posHeader.forEach((key) -> {
-            PdfPCell cell = getDefaultCell(key,mainFont);
-            cell.setBackgroundColor(posHeaderColor);
+            PdfPCell cell = getDefaultCell(key, blackBoldFont);
+            //cell.setBackgroundColor(posHeaderColor);
             table.addCell(cell);
         });
     }
@@ -143,7 +141,22 @@ public class PdfGenerator {
     private void addPositionsCell(PdfPTable table) {
         for(PositionAmount pos : order.getPositionsAmount()){
             table.addCell(getDefaultCell(pos.getPositionName(), mainFont));
-            table.addCell(getDefaultCell("", mainFont));
+
+            try{
+                Image img = Image.getInstance(pos.getPosition().getImage());
+                img.scaleToFit(50,50);
+                PdfPCell cell = new PdfPCell(img);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
+            }
+            catch(Exception e){
+                table.addCell(new Paragraph(""));
+            }
+            //logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
+
+
+
             table.addCell(getDefaultCell(String.valueOf(((int)pos.getPosition().getWeight())), mainFont));
             table.addCell(getDefaultCell(String.valueOf(pos.getAmount()), mainFont));
             table.addCell(getDefaultCell(String.valueOf(((int)pos.getPosition().getPrice())), mainFont));
@@ -156,7 +169,7 @@ public class PdfGenerator {
         header.setHorizontalAlignment(Element.ALIGN_CENTER);
         header.setVerticalAlignment(Element.ALIGN_MIDDLE);
         header.setPhrase(new Phrase(data, font));
-        header.setMinimumHeight(30);
+        header.setMinimumHeight(40);
         header.setBackgroundColor(containerColor);
         return header;
     }
