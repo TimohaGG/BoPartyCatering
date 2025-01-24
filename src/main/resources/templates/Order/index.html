@@ -18,7 +18,7 @@
 <main>
     <div class="container rounded">
 
-        <div class="row align-items-center justify-content-center">
+        <div class="row align-items-center justify-content-center pt-3">
             <div class="col-3 p-3 d-none d-lg-block mb-auto">
 
             </div>
@@ -78,7 +78,7 @@
                     </form>
 
                 </div>
-                <div class="row" style="height: fit-content">
+                <div class="row w-100" style="height: fit-content">
                     <div class="col-12">
                         <button type="button" class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#addModal">
                             +
@@ -126,15 +126,10 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
-
             </div>
-            <div class="col-3 d-none d-lg-block mb-auto">
-                <form method="post" th:action="'/order/generate/'+${order.getId()}">
-                    <input type="submit" value="Generate" class="btn btn-outline-light"/>
+            <div class="col-lg-3 col-sm-12 mb-auto">
+                <form method="post" th:action="'/order/generate/'+${order.getId()}" class="text-center">
+                    <input type="submit" value="Generate" class="btn btn-outline-light" style="color: white !important;"/>
                 </form>
 
             </div>

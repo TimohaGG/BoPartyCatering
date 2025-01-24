@@ -97,13 +97,15 @@ public class MainController {
         model.addAttribute("categories", categories);
 
         List<Position> positions = positionsService.getPositions();
-        if(categoryId != null) {
-            Category category = categories.stream().filter(x->x.getId().equals(categoryId)).findFirst().orElse(null);
-            model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(category.getName())).toList());
+        Category category;
+        if(categoryId==null){
+            category = categories.get(0);
         }
         else{
-            model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(categories.get(0).getName())).toList());
+            category = categories.stream().filter(x->x.getId().equals(categoryId)).findFirst().orElse(null);
         }
+        model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(category.getName())).toList());
+        model.addAttribute("categoryName", category.getName());
 
 
         model.addAttribute("selected", selectedIds);

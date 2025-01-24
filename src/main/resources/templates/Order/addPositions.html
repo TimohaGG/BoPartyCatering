@@ -48,7 +48,7 @@
             </div>
             <div class="col-lg-6 col-12 positions mb-4">
 
-                <h2 class="categoryHead">Категорія</h2>
+                <h2 class="categoryHead" th:text="${categoryName}"></h2>
 
                 <div class="w-100 d-sm-block d-lg-none" style="background-color: #454545;position: sticky;top:0;height: auto;padding: 0">
                     <a class="btn btn-outline-light my-3" href="/create/order" ><- До замовлення</a>
@@ -104,10 +104,13 @@
                 </div>
 
             </div>
-            <div class="col-3 d-none d-lg-block mb-auto">
-                <form>
-                    <input class="form-control searchbar" type="text" name="positionSearch" id="positionSearch" placeholder="Пошук.."/>
-                </form>
+            <div class="col-3 d-none d-lg-block mb-auto" style="height: 80vh;overflow: scroll;margin-top:20px">
+                <div>
+                    <form >
+                        <input class="form-control searchbar" type="text" name="positionSearch" id="positionSearch" placeholder="Пошук.."/>
+                    </form>
+                </div>
+
                 <ul class="list-group ">
                     <li class="list-group-item row d-flex align-items-center" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">
                         <div class="col-12 d-flex justify-content-between">

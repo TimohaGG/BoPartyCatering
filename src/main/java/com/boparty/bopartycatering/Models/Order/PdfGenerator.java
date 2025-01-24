@@ -153,8 +153,6 @@ public class PdfGenerator {
             catch(Exception e){
                 table.addCell(new Paragraph(""));
             }
-            //logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
-
 
 
             table.addCell(getDefaultCell(String.valueOf(((int)pos.getPosition().getWeight())), mainFont));

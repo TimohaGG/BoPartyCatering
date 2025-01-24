@@ -44,7 +44,7 @@ input{
 }
 
 .positions{
-    margin-top: 20px;
+
     border: 1px solid #454545;
     border-radius: 15px;
     padding-left: 0;
@@ -126,7 +126,7 @@ input{
 }
 
 .searchbar{
-    margin-top:20px;
+
     background-color: rgb(53, 52, 52);
     border:0;
     margin-bottom: auto;
