@@ -18,14 +18,17 @@ public class PdfGenerator {
     Font boldFont;
     Font blackBoldFont;
 
+
     public static BaseColor backgroundColor;
     public static BaseColor fontColor;
     public static BaseColor containerColor;
     public static BaseColor posHeaderColor;
+    public static BaseColor summaryHeaderColor;
 
     Map<String,String> header = new LinkedHashMap<>();
     String posMainHeader = "Позиції";
     List<String> posHeader = new ArrayList<>();
+    String summaryHeader = "Загалом";
 
     public PdfGenerator(Orders order) {
         this.order = order;
@@ -61,16 +64,6 @@ public class PdfGenerator {
             System.out.println("Error creating font");
         }
 
-//        try{
-//            String fontPath = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getFile().getAbsolutePath();
-//            mainFont = new Font(BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),16, Font.BOLD,BaseColor.BLACK);
-//            String fontBoldPath = new ClassPathResource("static/asserts/fonts/Arial Rounded Bold.ttf").getFile().getAbsolutePath();
-//            boldFont = new Font(BaseFont.createFont(fontBoldPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED),20, Font.BOLD,BaseColor.WHITE);
-//        }catch (Exception e){
-//            System.out.println("CANT");
-//            System.out.println(e.getMessage());
-//        }
-
     }
 
     public void generate(Document document) {
@@ -83,8 +76,14 @@ public class PdfGenerator {
             positions.setWidthPercentage(100);
             addPositionsHeader(positions);
             addPositionsCell(positions);
+
+            PdfPTable summary = new PdfPTable(3);
+            summary.setWidthPercentage(100);
+            addSummary(summary);
+
             document.add(table);
             document.add(positions);
+            document.add(summary);
         } catch (DocumentException e) {
             System.out.println("There was an error generating the document");
         }
@@ -159,6 +158,34 @@ public class PdfGenerator {
             table.addCell(getDefaultCell(String.valueOf(pos.getAmount()), mainFont));
             table.addCell(getDefaultCell(String.valueOf(((int)pos.getPosition().getPrice())), mainFont));
         }
+
+    }
+
+    private void addSummary(PdfPTable table) {
+        //header
+        PdfPCell header = getDefaultCell(summaryHeader, boldFont);
+        header.setBackgroundColor(summaryHeaderColor);
+        header.setColspan(3);
+        table.addCell(header);
+
+        for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
+            table.addCell(getDefaultCell(info.getTitle(), mainFont));
+            table.addCell(getDefaultCell(info.getDescription(), mainFont));
+            if(info.getImage()!=null){
+                try{
+                    Image img = Image.getInstance(info.getImage());
+                    img.scaleToFit(50,50);
+                    table.addCell(img);
+                }
+                catch(Exception e){
+                    table.addCell(new Paragraph(""));
+                }
+            }
+            else{
+                table.addCell(new Paragraph(""));
+            }
+        }
+
 
     }
 

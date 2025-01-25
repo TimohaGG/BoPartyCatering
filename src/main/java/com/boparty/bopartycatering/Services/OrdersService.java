@@ -54,6 +54,7 @@ public class OrdersService {
         PdfGenerator.fontColor = BaseColor.BLACK;
         PdfGenerator.containerColor = BaseColor.WHITE;
         PdfGenerator.posHeaderColor = new BaseColor(250,187,7);
+        PdfGenerator.summaryHeaderColor = new BaseColor(91,91,91);
 
         PdfWriter writer = PdfWriter.getInstance(document, out);
 

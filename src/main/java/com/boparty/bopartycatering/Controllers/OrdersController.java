@@ -61,8 +61,6 @@ public class OrdersController {
 
         try (OutputStream out = response.getOutputStream()) {
            ordersService.GeneratePdf(document,out,id);
-
-
         } catch (Exception e) {
             throw new RuntimeException("Error while generating PDF", e);
         }

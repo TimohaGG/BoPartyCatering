@@ -75,7 +75,7 @@ public class Orders {
     }
 
     public double getTotalPrice(){
-        return positionsAmount.stream().mapToDouble(x -> x.getPosition().getPrice()).sum();
+        return positionsAmount.stream().mapToDouble(x -> x.getPosition().getPrice() * x.getAmount()).sum();
     }
 
     public void setId(Long id) {

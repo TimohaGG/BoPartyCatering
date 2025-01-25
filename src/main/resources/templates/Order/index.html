@@ -18,12 +18,27 @@
 <main>
     <div class="container rounded">
 
-        <div class="row align-items-center justify-content-center pt-3">
-            <div class="col-3 p-3 d-none d-lg-block mb-auto">
-
+        <div class="row align-items-center pt-3" style="justify-content: space-around">
+            <div class="col-3 p-3 d-none d-lg-block mb-auto" style="position: sticky;top:0;">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <b>Замовник: </b><br/><span th:text="${order.getClient()}"></span>
+                    </li >
+                    <li class="list-group-item"><b>Дата: </b><br/><span th:text="${order.getDate()}"></span></li>
+                    <li class="list-group-item"> <b>Початок заходу: </b><br/><span th:text="${order.getDate()}"></span></li>
+                    <li class="list-group-item"> <b>Тривалість: </b><br/><span th:text="${order.getDuration()}"></span></li>
+                    <li class="list-group-item"> <b>К-сть запрошених: </b><br/><span th:text="${order.getGuestsAmount()}"></span></li>
+                    <li class="list-group-item"> <b>Формат: </b><br/><span th:text="${order.getFormat()}"></span></li>
+                    <li class="list-group-item"> <b>Телефон відповідального: </b><br/><span th:text="${order.getPhone()}"></span></li>
+                    <li class="list-group-item">
+                        <form method="post" th:action="'/order/generate/'+${order.getId()}">
+                            <input type="submit" value="Generate" class="btn btn-outline-success w-100" style="color: white !important;"/>
+                        </form>
+                        </li>
+                </ul>
             </div>
 
-            <div class="col-lg-6 col-12 positions mb-4" style="overflow: visible;height: 100%">
+            <div class="col-lg-7 col-12 positions mb-4" style="overflow: visible;height: 100%">
                 <h2 class="categoryHead" style="background-color: #454545;" th:if="${order.getDate()==null}" th:text="${order.getDate()}"></h2>
                 <h2 class="categoryHead" style="background-color: #454545;" th:unless="${order.getDate()==null}" th:text="${order.getClient()}"></h2>
 
@@ -59,28 +74,45 @@
 
                     </div>
                 </div>
+                <div class="row align-items-center justify-content-center w-100 m-0" style="height: initial">
+                    <h5 class="col-6">
+                        На 1 людину:
+                    </h5>
+                    <div class="col-6" th:text="${order.getTotalPrice() / order.getGuestsAmount()} + ' грн'" style="text-align: end">
+
+                    </div>
+                </div>
                 <div class="row align-items-center justify-content-center w-100 m-0" th:each="info:${order.getAdditionalInfo()}"  style="height: initial;position:relative">
-                    <div class="col-3" th:text="${info.getTitle()}">
+                    <div class="col-lg-3 col-sm-4" th:text="${info.getTitle()}" style="width: initial">
 
                     </div>
-                    <div class="col-4">
-                        <img alt="image" th:src="'data:image/jpeg;base64,' + ${info.getImageBase64()}" style="max-height: 80px"/>
+                    <div class="col-lg-3 col-sm-4" th:if="${info.getImageBase64()!=''}" >
+                        <img alt="image"  th:src="'data:image/jpeg;base64,' + ${info.getImageBase64()}" style="max-height: 80px"/>
                     </div>
-                    <div class="col-3" th:text="${info.getDescription()}">
+                    <div class="col-lg-4 col-sm-4" th:text="${info.getDescription()}"  >
 
                     </div>
-                    <div class="col-2" th:text="${info.getPrice()}">
+                    <div class="col-lg-1 col-sm-6" th:text="${info.getPrice()} + ' грн'"  >
 
                     </div>
-                    <form method="post" th:action="'/order/deleteInfo/'+${info.getId()}">
-                        <input type="hidden" name="orderId" id="orderId" th:value="${order.getId()}"/>
-                        <input type="submit" style="position: absolute;top:0;right:0;text-align: end;width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger" value="x"/>
-                    </form>
+                    <div class="col-lg-1 col-sm-6"  style="margin-left: auto">
+                        <form method="post" th:action="'/order/deleteInfo/'+${info.getId()}">
+                            <input type="hidden" name="orderId" id="orderId" th:value="${order.getId()}"/>
+                            <input type="submit" style="width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger" value="x"/>
+                        </form>
+                    </div>
+
 
                 </div>
-                <div class="row w-100" style="height: fit-content">
-                    <div class="col-12">
-                        <button type="button" class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#addModal">
+                <div class="row align-items-center justify-content-center w-100 m-0 py-3" style="height: fit-content">
+
+                    <div class="col-sm-7 col-lg-5" style="width: unset">
+                        <form method="post" th:action="'/order/generate/'+${order.getId()}">
+                            <input type="submit" value="Generate" class="btn btn-outline-success w-100" style="color: white !important;"/>
+                        </form>
+                    </div>
+                    <div class="col-sm-3 col-lg-12 " style="width: unset">
+                        <button type="button" class="btn btn-outline-light w-100 " data-bs-toggle="modal" data-bs-target="#addModal">
                             +
                         </button>
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
@@ -125,14 +157,10 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
-            <div class="col-lg-3 col-sm-12 mb-auto">
-                <form method="post" th:action="'/order/generate/'+${order.getId()}" class="text-center">
-                    <input type="submit" value="Generate" class="btn btn-outline-light" style="color: white !important;"/>
-                </form>
 
-            </div>
         </div>
 
     </div>
