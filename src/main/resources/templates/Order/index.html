@@ -18,7 +18,7 @@
 <main>
     <div class="container rounded">
 
-        <div class="row align-items-center pt-3" style="justify-content: space-around">
+        <div class="row align-items-center pt-3 preview" style="justify-content: space-around">
             <div class="col-3 p-3 d-none d-lg-block mb-auto" style="position: sticky;top:0;">
                 <ul class="list-group">
                     <li class="list-group-item">
@@ -38,7 +38,7 @@
                 </ul>
             </div>
 
-            <div class="col-lg-7 col-12 positions mb-4" style="overflow: visible;height: 100%">
+            <div class="col-lg-8 col-12 positions mb-4" style="overflow: visible;height: 100%">
                 <h2 class="categoryHead" style="background-color: #454545;" th:if="${order.getDate()==null}" th:text="${order.getDate()}"></h2>
                 <h2 class="categoryHead" style="background-color: #454545;" th:unless="${order.getDate()==null}" th:text="${order.getClient()}"></h2>
 
@@ -47,26 +47,26 @@
                 <div th:each="position:${order.getPositionsAmount()}" class="row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
 
 
-                    <div class="position col-4">
+                    <div class="position col-lg-4">
 
                         <h5 th:text="${position.getPositionName()}"></h5>
                         <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
 
                     </div>
-                    <div class="col-4 text-center">
+                    <div class="col-lg-2 text-center order-first">
 
                         <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
                     </div>
-                    <div class="col-2 text-center">
+                    <div class="col-lg-2 text-center  d-none d-lg-block">
                         <span th:text="${position.getPosition().getWeight()} + ' г'"></span>
                     </div>
-                    <div class="col-2 text-center" >
+                    <div class="col-lg-2 text-center p-0" >
                         <span th:text="${position.getAmount()} + ' шт'"></span>
                     </div>
 
 
                 </div>
-                <div class="row align-items-center justify-content-center w-100 m-0" style="height: initial">
+                <div class="row align-items-center justify-content-center w-100 m-0 preview" style="height: initial">
                     <h5 class="col-6">
                         Загальна ціна:
                     </h5>
@@ -74,7 +74,7 @@
 
                     </div>
                 </div>
-                <div class="row align-items-center justify-content-center w-100 m-0" style="height: initial">
+                <div class="row align-items-center justify-content-center w-100 m-0 preview" style="height: initial">
                     <h5 class="col-6">
                         На 1 людину:
                     </h5>
@@ -82,20 +82,19 @@
 
                     </div>
                 </div>
-                <div class="row align-items-center justify-content-center w-100 m-0" th:each="info:${order.getAdditionalInfo()}"  style="height: initial;position:relative">
-                    <div class="col-lg-3 col-sm-4" th:text="${info.getTitle()}" style="width: initial">
-
+                <div class="row align-items-center justify-content-between w-100 m-0 preview" th:each="info:${order.getAdditionalInfo()}"  style="height: initial;position:relative">
+                    <div class="col-3" style="width: initial">
+                        <span th:text="${info.getTitle()}" ></span>
                     </div>
-                    <div class="col-lg-3 col-sm-4" th:if="${info.getImageBase64()!=''}" >
+                    <div class="col-3" th:if="${info.getImageBase64()!=''}" >
                         <img alt="image"  th:src="'data:image/jpeg;base64,' + ${info.getImageBase64()}" style="max-height: 80px"/>
                     </div>
-                    <div class="col-lg-4 col-sm-4" th:text="${info.getDescription()}"  >
-
+                    <div class="col-3"  style="width: min-content" >
+                        <span th:text="${info.getDescription()}"></span><br>
+                        <span th:text="${info.getPrice()} + ' грн'"></span>
                     </div>
-                    <div class="col-lg-1 col-sm-6" th:text="${info.getPrice()} + ' грн'"  >
 
-                    </div>
-                    <div class="col-lg-1 col-sm-6"  style="margin-left: auto">
+                    <div class="col-lg-1 col-sm-6" >
                         <form method="post" th:action="'/order/deleteInfo/'+${info.getId()}">
                             <input type="hidden" name="orderId" id="orderId" th:value="${order.getId()}"/>
                             <input type="submit" style="width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger" value="x"/>
@@ -104,7 +103,7 @@
 
 
                 </div>
-                <div class="row align-items-center justify-content-center w-100 m-0 py-3" style="height: fit-content">
+                <div class="row align-items-center justify-content-center w-100 m-0 py-3 preview" style="height: fit-content">
 
                     <div class="col-sm-7 col-lg-5" style="width: unset">
                         <form method="post" th:action="'/order/generate/'+${order.getId()}">
