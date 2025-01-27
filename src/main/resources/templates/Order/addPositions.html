@@ -71,13 +71,15 @@
                             <div class="amount-selector">
                                 <button class="btn btn-outline-warning" th:onclick="'addAmount(' + ${position.getId()} + ',-1)'" >-</button>
 
-                                <span class="amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:text="${selected.get(position.getId())}" ></span>
+                                <input class="amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:value="${selected.get(position.getId())}" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
+
+<!--                                <span class="amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:text="${selected.get(position.getId())}"></span>-->
                                 <span th:unless="${selected.keySet().contains(position.getId())}" class="amount" th:id="'pos_'+${position.getId()}">0</span>
                                 <button class="btn btn-outline-warning" th:onclick="'addAmount(' + ${position.getId()} + ',1)'" >+</button>
                             </div>
                         </div>
                     </div>
-                    <div class="image col-3" style="background-image: url('/asserts/img/image.png');">
+                    <div class="image col-3" style="background-image: url('/asserts/img/logo.png');">
 
                     </div>
                     <div class="d-flex flex-column buttons col-3">

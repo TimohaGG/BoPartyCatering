@@ -4,6 +4,7 @@ import com.boparty.bopartycatering.Models.Position.PositionAmount;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
+import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,7 @@ public class PdfGenerator {
     String posMainHeader = "Позиції";
     List<String> posHeader = new ArrayList<>();
     String summaryHeader = "Загалом";
+    Map<String, Tuple<String,byte[]>> summary = new LinkedHashMap<>();
 
     public PdfGenerator(Orders order) {
         this.order = order;
@@ -47,6 +49,13 @@ public class PdfGenerator {
         posHeader.add("К-сть порцій");
         posHeader.add("Ціна, \nгрн");
 
+        summary.put("Разом по меню, грн",new Tuple<>((int) order.getTotalPrice() + " грн",null));
+        summary.put("На 1 особу, грн", new Tuple<>((int) order.getTotalPrice() / order.getGuestsAmount() + " грн",null));
+        for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
+            summary.put(info.getTitle(),new Tuple<>( (int)info.getPrice() + " грн",info.getImage()));
+        }
+
+        summary.put("Всього за заходом: ",new Tuple<>((int) order.getTotalPrice() + (int) order.getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum() + " грн",null));
 
         try (InputStream fontStream = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getInputStream()) {
             BaseFont baseFont = BaseFont.createFont("Arial Unicode.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontStream.readAllBytes(), null);
@@ -168,14 +177,17 @@ public class PdfGenerator {
         header.setColspan(3);
         table.addCell(header);
 
-        for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
-            table.addCell(getDefaultCell(info.getTitle(), mainFont));
-            table.addCell(getDefaultCell(info.getDescription(), mainFont));
-            if(info.getImage()!=null){
+        for (Map.Entry<String, Tuple<String,byte[]>> info : summary.entrySet()) {
+            table.addCell(getDefaultCell(info.getKey(), mainFont));
+            table.addCell(getDefaultCell(info.getValue()._1(), mainFont));
+            if(info.getValue()._2()!=null){
                 try{
-                    Image img = Image.getInstance(info.getImage());
+                    Image img = Image.getInstance(info.getValue()._2());
                     img.scaleToFit(50,50);
-                    table.addCell(img);
+                    PdfPCell cell = new PdfPCell(img);
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table.addCell(cell);
                 }
                 catch(Exception e){
                     table.addCell(new Paragraph(""));

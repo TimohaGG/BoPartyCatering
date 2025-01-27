@@ -130,7 +130,6 @@ public class MainController {
             tmpPositions.stream().filter(x->x.getPositionId()==positionId).findFirst().get().addAmount(amount);
         }
         else{
-
             tmpPositions.add(new PositionAmount(pos,amount));
         }
         if(selectedIds!=null)
