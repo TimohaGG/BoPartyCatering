@@ -173,3 +173,11 @@ input{
     }
 }
 
+.disable-dbl-tap-zoom {
+    touch-action: manipulation;
+}
+
+#template{
+    visibility: collapse;
+    display: none;
+}

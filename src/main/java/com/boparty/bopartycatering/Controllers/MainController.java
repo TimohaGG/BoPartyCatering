@@ -4,6 +4,7 @@ import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Position.Category;
 import com.boparty.bopartycatering.Models.Position.Position;
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
+import com.boparty.bopartycatering.Models.Position.ResponsePosAmount;
 import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Services.OrdersService;
 import com.boparty.bopartycatering.Services.PositionsService;
@@ -120,26 +121,30 @@ public class MainController {
 
     //fetch
     @GetMapping("/positions/addPosition")
-    public ResponseEntity<Integer> addPosition(Long positionId, int amount) {
+    public ResponseEntity<ResponsePosAmount> addPosition(Long positionId, int amount) {
         Position pos = positionsService.getPositionById(positionId);
         if(pos == null) {
-            return ResponseEntity.ok(0);
+            return ResponseEntity.ok(null);
         }
 
+        PositionAmount tmp;
+
         if(tmpPositions.stream().filter(x->x.getPositionId()==positionId).count()!=0) {
-            tmpPositions.stream().filter(x->x.getPositionId()==positionId).findFirst().get().addAmount(amount);
+            tmp = tmpPositions.stream().filter(x->x.getPositionId()==positionId).findFirst().get();
+            tmp.setAmount(amount);
         }
         else{
-            tmpPositions.add(new PositionAmount(pos,amount));
+            tmp = new PositionAmount(pos,amount);
+            tmpPositions.add(tmp);
         }
         if(selectedIds!=null)
             selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
-        return ResponseEntity.ok(amount);
+        return ResponseEntity.ok(new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPositionName()));
     }
     //fetch
     @GetMapping("/positions/remove/{id}")
     public ResponseEntity<Boolean> removePosition(@PathVariable Long id, Model model) {
-        PositionAmount pos = tmpPositions.stream().filter(x->x.getPositionId()==id).findFirst().orElse(null);
+            PositionAmount pos = tmpPositions.stream().filter(x->x.getPositionId()==id).findFirst().orElse(null);
         if(pos != null) {
             tmpPositions.remove(pos);
             selectedIds.remove(pos.getPositionId());
