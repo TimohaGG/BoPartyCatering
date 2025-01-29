@@ -33,13 +33,16 @@ public class WebSecurityConfiguration {
                     login
                             .loginPage("/login")
                             .defaultSuccessUrl("/", true)
+
                             .permitAll();
                 })
                 .logout(logout ->
                         logout.logoutUrl("/logout")
                                 .logoutSuccessUrl("/login")
                                 .invalidateHttpSession(true)
-                                .permitAll());
+                                .deleteCookies("JSESSIONID")
+                                .permitAll())
+                .rememberMe(rem->rem.key("uniqueAndSecret").tokenValiditySeconds(86400));
 
         return http.build();
 
