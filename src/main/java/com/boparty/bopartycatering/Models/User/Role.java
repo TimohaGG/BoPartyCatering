@@ -9,15 +9,15 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+
 public class Role implements GrantedAuthority{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     public Role(){
-
+        id=0L;
+        roleName="";
     }
 
     public Role(String role, Long id) {
@@ -34,4 +34,11 @@ public class Role implements GrantedAuthority{
         return roleName;
     }
 
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 }

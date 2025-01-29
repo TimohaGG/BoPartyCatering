@@ -25,7 +25,8 @@ public class UserService implements UserDetailsService {
 
     public boolean saveUser(User user) {
 
-        user.setRoles(List.of(new Role("ROLE_USER",1L)));
+        user.setRoles(rolesRepos.findAll().stream().filter(x->x.getRoleName().equals("ROLE_USER")).toList());
+        user.setUsername(user.getEmail());
         try{
             userRepos.save(user);
         }
