@@ -27,7 +27,8 @@ public class UserService implements UserDetailsService {
         this.rolesRepos = rolesRepos;
     }
     public User getCurrentUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User usr = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepos.findByUsername(usr.getUsername());
     }
 
     public boolean saveUser(User user) {

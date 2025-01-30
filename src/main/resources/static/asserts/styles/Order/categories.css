@@ -181,3 +181,36 @@ input{
     visibility: collapse;
     display: none;
 }
+
+.list-group-item:last-child:hover{
+    background-color: #202020 !important;
+}
+
+.rounded-input{
+    background-color: #454545;
+    border:0;
+
+    text-align: center;
+    border-radius: 20px;
+    height: 40px;
+    color: white !important;
+    outline: none;
+}
+
+.rounded-input:hover{
+    border-radius: 20px;
+    border: 0;
+    outline: none;
+}
+
+.rounded-input:focus{
+    border-radius: 20px;
+    border: 1px solid #202020;
+    outline: none;
+
+}
+
+.rounded-input.amount{
+    width: 60px;
+}
+

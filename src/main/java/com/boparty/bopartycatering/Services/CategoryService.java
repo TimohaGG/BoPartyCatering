@@ -20,4 +20,8 @@ public class CategoryService {
     public List<Category> findAll() {
         return categoriesRepos.findAll();
     }
+
+    public void save(Category category) {
+        categoriesRepos.save(category);
+    }
 }

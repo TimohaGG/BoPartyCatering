@@ -27,6 +27,14 @@ public class Category {
         return positions;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
     }

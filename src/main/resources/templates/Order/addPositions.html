@@ -18,22 +18,22 @@
 
         <div class="row justify-content-center">
             <div class="col-3 p-3 d-none d-lg-flex flex-column">
-                <ul class="list-group text-decoration-none">
-                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class="fw-bold">Меню</div>
-                            <ul class="list-group">
-                                <li class="list-group-item" th:each="category:${categories}" >
 
-                                    <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:text="${category.getName()}"></a>
-                                </li>
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Меню</div>
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="category:${categories}" >
 
-                            </ul>
+                            <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:text="${category.getName()}"></a>
+                        </li>
+                        <li class="list-group-item">
+                            <input class="rounded-input" name="newCategory" id="newCategory" type="text" placeholder="+" onfocusout="addCategory()"/>
+                        </li>
 
-                        </div>
-                    </li>
+                    </ul>
 
-                </ul>
+                </div>
+
                 <div class="btns mt-auto mb-2  ">
                     <a class="btn btn-outline-light" href="/create/order"><- До замовлення</a>
 
@@ -71,8 +71,8 @@
                             <div class="amount-selector">
                                 <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',-1)'" >-</button>
 
-                                <input class="amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:value="${selected.get(position.getId())}" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
-                                <input class="amount" th:id="'pos_'+${position.getId()}" th:unless="${selected.keySet().contains(position.getId())}" value="0" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
+                                <input class="rounded-input amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:value="${selected.get(position.getId())}" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
+                                <input class="rounded-input amount" th:id="'pos_'+${position.getId()}" th:unless="${selected.keySet().contains(position.getId())}" value="0" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
 
                                 <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',1)'" >+</button>
                             </div>
@@ -223,6 +223,27 @@
                     document.getElementById("pos_"+position).value = 0;
                 }
             });
+    }
+
+    async function addCategory(){
+        let name = document.getElementById("newCategory").value;
+        console.log(name);
+        let resp = await fetch("/category/add?categoryName=" + name,{
+            method:"POST"
+        })
+            .then(resp=>resp.json())
+            .then(resp=>{
+                let elem = document.createElement("li");
+                elem.classList.add("list-group-item");
+                let a = document.createElement("a");
+                a.classList.add("text-decoration-none");
+                a.href = "/positions/add?categoryId=" + resp.id;
+                a.innerText = resp.name;
+                elem.appendChild(a);
+
+                document.querySelector(".list-group .list-group-item:last-child").insertAdjacentElement("beforebegin",elem);
+                document.getElementById("newCategory").value="";
+            }).catch(error=>console.log(error));
     }
 </script>
 </body>
