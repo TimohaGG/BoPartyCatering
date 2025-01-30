@@ -1,7 +1,9 @@
 package com.boparty.bopartycatering.Models.Position;
 
+import com.boparty.bopartycatering.Models.User.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class Ingredient {
     private Long Id;
 
     private String name;
+
+    @ManyToOne
+    private User user;
 
 
 }

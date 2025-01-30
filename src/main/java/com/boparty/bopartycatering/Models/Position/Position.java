@@ -1,5 +1,6 @@
 package com.boparty.bopartycatering.Models.Position;
 
+import com.boparty.bopartycatering.Models.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class Position {
     private double weight;
     @Column(nullable = false)
     private double price;
+
 
     @Lob
     private byte[] image;

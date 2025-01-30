@@ -5,6 +5,7 @@ import com.boparty.bopartycatering.Repos.CategoriesRepos;
 import com.boparty.bopartycatering.Repos.PositionsRepos;
 import com.boparty.bopartycatering.Services.CategoryService;
 import com.boparty.bopartycatering.Services.PositionsService;
+import com.boparty.bopartycatering.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class PositionController {
 
+    private final UserService userService;
     private PositionsService positionsService;
     private CategoryService categoriesService;
     @Autowired
-    public PositionController(PositionsService positionsService, CategoryService categoriesService) {
+    public PositionController(PositionsService positionsService, CategoryService categoriesService, UserService userService) {
         this.positionsService = positionsService;
         this.categoriesService = categoriesService;
+        this.userService = userService;
     }
 
     @GetMapping("/create/position")
@@ -47,7 +50,7 @@ public class PositionController {
 
     @GetMapping("/positions")
     public String positions(Model model) {
-        model.addAttribute("positions",positionsService.getPositions());
+        model.addAttribute("positions",userService.getPositions());
         return "Positions/index";
     }
 }

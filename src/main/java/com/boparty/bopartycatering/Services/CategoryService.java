@@ -9,10 +9,12 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-    private CategoriesRepos categoriesRepos;
+    private final CategoriesRepos categoriesRepos;
+   // private final UserService userService;
     @Autowired
-    public CategoryService(CategoriesRepos categoriesRepos) {
+    public CategoryService(CategoriesRepos categoriesRepos, UserService userService) {
         this.categoriesRepos = categoriesRepos;
+        //this.userService = userService;
     }
 
     public List<Category> findAll() {

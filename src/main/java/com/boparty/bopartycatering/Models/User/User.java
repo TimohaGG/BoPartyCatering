@@ -1,6 +1,9 @@
 package com.boparty.bopartycatering.Models.User;
 
 import com.boparty.bopartycatering.Models.Order.Orders;
+import com.boparty.bopartycatering.Models.Position.Category;
+import com.boparty.bopartycatering.Models.Position.Ingredient;
+import com.boparty.bopartycatering.Models.Position.Position;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -40,6 +44,14 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Category> categories;
+
+
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Ingredient> ingredients;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -65,6 +77,15 @@ public class User implements UserDetails {
         return true;
     }
 
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
 
     @Override
     public String getUsername() {

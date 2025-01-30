@@ -25,15 +25,19 @@ import java.util.stream.Collectors;
 public class OrdersService {
     private final OrdersRepos ordersRepos;
     private final IAdditionalInfoRepos iAdditionalInfoRepos;
+    private UserService userService;
+
     @Autowired
-    public OrdersService(OrdersRepos ordersRepos, IAdditionalInfoRepos iAdditionalInfoRepos) {
+    public OrdersService(OrdersRepos ordersRepos, IAdditionalInfoRepos iAdditionalInfoRepos, UserService userService) {
         this.ordersRepos = ordersRepos;
         this.iAdditionalInfoRepos = iAdditionalInfoRepos;
+        this.userService = userService;
+
     }
 
     public List<Orders> getAllOrders() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = user.getUsername();
+
+        String username = userService.getCurrentUser().getUsername();
         return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).toList();
     }
 
@@ -44,6 +48,7 @@ public class OrdersService {
     public Orders getOrderById(Long id) {
         return ordersRepos.findById(id).orElse(null);
     }
+
 
 
     public PdfWriter GeneratePdf(Document document, OutputStream out, long id) throws DocumentException {

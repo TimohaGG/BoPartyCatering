@@ -6,6 +6,7 @@ import com.boparty.bopartycatering.Models.Position.Position;
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
 import com.boparty.bopartycatering.Models.Position.ResponsePosAmount;
 import com.boparty.bopartycatering.Models.User.User;
+import com.boparty.bopartycatering.Services.CategoryService;
 import com.boparty.bopartycatering.Services.OrdersService;
 import com.boparty.bopartycatering.Services.PositionsService;
 import com.boparty.bopartycatering.Services.UserService;
@@ -26,15 +27,17 @@ import java.util.stream.Collectors;
 public class MainController {
 
 
-    private OrdersService ordersService;
-    private PositionsService positionsService;
+    private final OrdersService ordersService;
+    private final PositionsService positionsService;
+    private final UserService userService;
     private Orders tmpOrder;
     private List<PositionAmount> tmpPositions;
     private Map<Long,Integer> selectedIds;
     @Autowired
-    public MainController(OrdersService ordersService, PositionsService positionsService) {
+    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService) {
         this.ordersService = ordersService;
         this.positionsService = positionsService;
+        this.userService = userService;
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds  = new HashMap<>();
@@ -94,10 +97,10 @@ public class MainController {
     public String addPosition(Long categoryId,  Model model) {
         Orders ord = (Orders)model.getAttribute("order");
 
-        List<Category> categories = positionsService.getCategories();
+        List<Category> categories = userService.getCategories();
         model.addAttribute("categories", categories);
 
-        List<Position> positions = positionsService.getPositions();
+        List<Position> positions = userService.getPositions();
         Category category;
         if(categoryId==null){
             category = categories.get(0);

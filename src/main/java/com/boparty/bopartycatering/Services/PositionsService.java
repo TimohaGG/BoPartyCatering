@@ -14,23 +14,15 @@ import java.util.List;
 @Service
 public class PositionsService {
 
-    private PositionsRepos positionsRepos;
-    private CategoriesRepos categoriesRepos;
-    private PositionAmountRepos positionAmountRepos;
+    private final PositionsRepos positionsRepos;
+
+    private final PositionAmountRepos positionAmountRepos;
     @Autowired
-    public PositionsService(PositionsRepos positionsRepos, CategoriesRepos categoriesRepos, PositionAmountRepos positionAmountRepos) {
+    public PositionsService(PositionsRepos positionsRepos, PositionAmountRepos positionAmountRepos) {
         this.positionsRepos = positionsRepos;
-        this.categoriesRepos = categoriesRepos;
         this.positionAmountRepos = positionAmountRepos;
     }
 
-    public List<Category> getCategories(){
-        return categoriesRepos.findAll();
-    }
-
-    public List<Position> getPositions(){
-        return positionsRepos.findAll();
-    }
 
     public Position getPositionById(Long id){
         return positionsRepos.findById(id).orElse(null);
