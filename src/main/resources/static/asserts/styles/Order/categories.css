@@ -54,6 +54,7 @@ input{
     padding-left: 0;
     padding-right: 0;
     overflow: scroll;
+    height: calc(100vh - 100px);
     /*height: 100%;*/
 }
 
@@ -82,7 +83,7 @@ input{
 }
 
 .col-12.container:last-child{
-    padding-bottom: 100px;
+    padding-bottom: 200px;
 }
 
 .col-12.container{
@@ -109,6 +110,10 @@ input{
 
 .positions .container:last-child{
     /*margin-bottom: 0;*/
+}
+
+.order-position:last-child{
+padding-bottom: 50px;
 }
 
 .amount-selector{

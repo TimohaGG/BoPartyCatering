@@ -14,7 +14,13 @@
 
 
 <main>
-    <a class="btn btn-light d-lg-none d-sm-block" style="border-radius: 50%;position: absolute;bottom: 6%;left: 6%;width: 60px;height: 60px;color: black !important;" href="/create/order" ><</a>
+    <a class="btn btn-light d-lg-none d-sm-flex d-flex justify-content-center align-items-center" style="border-radius: 50%;position: absolute;bottom: 6%;left: 6%;width: 60px;height: 60px;" href="/create/order" >
+        <span >
+            <svg style="color: black !important;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+              <path style="color: black !important;" fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+            </svg>
+        </span>
+    </a>
     <div class="container rounded">
 
         <div class="row justify-content-center pt-3 pb-3" style="height: 90vh;align-content: start">
@@ -40,7 +46,7 @@
                     <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:each="category:${categories}" th:text="${category.getName()}"></a>
                 </div>
             </div>
-            <div class="col-lg-6 col-12 positions" >
+            <div class="col-lg-6 col-12 positions" style="height: 100%" >
                 <h2 class="categoryHead" th:text="${categoryName}"></h2>
 
                 <div class="row" style="align-content: start">

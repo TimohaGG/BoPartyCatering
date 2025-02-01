@@ -19,7 +19,7 @@
     <div class="container rounded">
 
         <div class="row align-items-center justify-content-between">
-            <div class="col-lg-7 col-12 positions mt-0" style="align-self: flex-start">
+            <div class="col-lg-7 col-12 positions mt-0" style="align-self: flex-start; height: 89vh">
                 <h2 class="categoryHead" style="background-color: #454545;">Нове замовлення</h2>
                 <form method="post" class="d-flex flex-column mt-3 pb-5" th:object="${order}" action="/create/order">
                     <input type="hidden" th:field="*{id}" name="id" id="id"/>
@@ -72,7 +72,7 @@
                 <div class="col-12 h-100 m-0 pt-0">
                     <div class="category">
 
-                        <div class="container row m-0 " th:each="pos:${selectedPositions}">
+                        <div class="container row m-0 order-position " th:each="pos:${selectedPositions}">
 
                             <div class="position col-7">
                                 <h5 th:text="${pos.getPositionName()}" ></h5>
