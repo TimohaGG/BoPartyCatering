@@ -1,5 +1,5 @@
 body{
-    overflow: hidden;
+    overflow-x: hidden !important;
 }
 
 li{
@@ -54,7 +54,7 @@ input{
     border-radius: 15px;
     padding-left: 0;
     padding-right: 0;
-    overflow: scroll;
+    overflow-y: scroll;
     height: calc(100vh - 100px);
     /*height: 100%;*/
 }
