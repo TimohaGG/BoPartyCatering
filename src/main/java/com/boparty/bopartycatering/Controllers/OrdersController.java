@@ -40,13 +40,22 @@ public class OrdersController {
         this.ordersService = ordersService;
 
     }
-@GetMapping("/order/view/{id}")
+    @GetMapping("/order/view/{id}")
     public String index(@PathVariable long id, Model model){
         Orders order = ordersService.getOrderById(id);
         if(order != null){
             model.addAttribute("order", order);
             model.addAttribute("info", new InfoDTO());
             return "Order/index";
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/order/remove/{id}")
+    public String remove(@PathVariable long id, Model model){
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            ordersService.removeOrder(id);
         }
         return "redirect:/";
     }

@@ -11,9 +11,9 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.Mapping;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,7 @@ public class Orders {
     private Long id;
 
     public Orders(){
-        date = "";
+        date = new java.sql.Date(System.currentTimeMillis());
         client = "";
         guestsAmount = 0;
         duration = 0;
@@ -35,7 +35,9 @@ public class Orders {
         id = 0L;
     }
 
-    private String date;
+    @Nullable
+    private java.sql.Date date;
+    //private String date;
     //private Date date;
 
     @Column(nullable = true)
@@ -59,19 +61,13 @@ public class Orders {
     @ManyToOne
     private User user;
 
-    public String getDate() {
+    public Date getDate() {
+        return date;
+    }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try{
-            Date res = formatter.parse(date);
-            formatter = new SimpleDateFormat("dd.MM.yyyy");
-            return formatter.format(res);
-        }
-        catch (Exception e){
-            return "";
-        }
-
-
+    public String getDateFormatted() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        return formatter.format(date);
     }
 
     public double getTotalPrice(){
@@ -125,7 +121,7 @@ public class Orders {
         this.client = client;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

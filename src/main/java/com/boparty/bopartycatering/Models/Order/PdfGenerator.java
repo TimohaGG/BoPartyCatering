@@ -36,8 +36,8 @@ public class PdfGenerator {
         this.order = order;
 
         header.put("Замовник",order.getClient());
-        header.put(   "Дата",order.getDate());
-        header.put(   "Початок заходу",order.getDate());
+        header.put(   "Дата",order.getDate().toString());
+        header.put(   "Початок заходу",order.getDate().toString());
         header.put(   "Тривалість",String.valueOf(order.getDuration()));
         header.put(  "К-сть запрошених",String.valueOf( order.getGuestsAmount()));
         header.put(  "Формат заходу",order.getFormat());
@@ -207,6 +207,8 @@ public class PdfGenerator {
         header.setVerticalAlignment(Element.ALIGN_MIDDLE);
         header.setPhrase(new Phrase(data, font));
         header.setMinimumHeight(40);
+        header.setPaddingBottom(10);
+        header.setPaddingTop(10);
         header.setBackgroundColor(containerColor);
         return header;
     }

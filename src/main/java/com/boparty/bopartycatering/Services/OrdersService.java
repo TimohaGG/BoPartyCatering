@@ -6,6 +6,7 @@ import com.boparty.bopartycatering.Models.Order.PdfGenerator;
 import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Repos.IAdditionalInfoRepos;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
+import com.boparty.bopartycatering.Repos.PositionAmountRepos;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -25,13 +26,15 @@ import java.util.stream.Collectors;
 public class OrdersService {
     private final OrdersRepos ordersRepos;
     private final IAdditionalInfoRepos iAdditionalInfoRepos;
+    private final PositionAmountRepos positionAmountRepos;
     private UserService userService;
 
     @Autowired
-    public OrdersService(OrdersRepos ordersRepos, IAdditionalInfoRepos iAdditionalInfoRepos, UserService userService) {
+    public OrdersService(OrdersRepos ordersRepos, IAdditionalInfoRepos iAdditionalInfoRepos, UserService userService, PositionAmountRepos positionAmountRepos) {
         this.ordersRepos = ordersRepos;
         this.iAdditionalInfoRepos = iAdditionalInfoRepos;
         this.userService = userService;
+        this.positionAmountRepos = positionAmountRepos;
 
     }
 
@@ -85,5 +88,19 @@ public class OrdersService {
 
     public void removeAdditionalInfo(Long id) {
         iAdditionalInfoRepos.deleteById(id);
+    }
+
+    public void removeOrder(Long id) {
+        Orders orders = ordersRepos.findById(id).orElse(null);
+        if (orders!=null){
+            if(orders.getAdditionalInfo()!=null){
+                iAdditionalInfoRepos.deleteAll(orders.getAdditionalInfo());
+            }
+            if(orders.getPositionsAmount()!=null){
+                positionAmountRepos.deleteAll(orders.getPositionsAmount());
+            }
+        }
+        ordersRepos.deleteById(id);
+
     }
 }

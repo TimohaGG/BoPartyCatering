@@ -38,7 +38,7 @@
                 </ul>
             </div>
 
-            <div class="col-lg-8 col-12 positions mb-4" style="overflow: visible;height: 100%">
+            <div class="col-lg-8 col-12 positions mb-4" style="overflow-y: scroll;height: 100%">
                 <h2 class="categoryHead" style="background-color: #454545;" th:if="${order.getDate()==null}" th:text="${order.getDate()}"></h2>
                 <h2 class="categoryHead" style="background-color: #454545;" th:unless="${order.getDate()==null}" th:text="${order.getClient()}"></h2>
 
@@ -156,6 +156,26 @@
                             </div>
                         </div>
                     </div>
+
+                </div>
+
+                <div class="row align-items-center justify-content-between w-100 m-0 preview" style="visibility: hidden">
+                    <div class="col-3" style="width: initial">
+                        <span ></span>
+                    </div>
+
+                    <div class="col-3"  style="width: min-content" >
+                        <span></span><br>
+                        <span ></span>
+                    </div>
+
+                    <div class="col-lg-1 col-sm-6" >
+                        <form method="post" action="#">
+                            <input type="hidden" name="orderId" />
+                            <input type="submit" style="width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger" value="x"/>
+                        </form>
+                    </div>
+
 
                 </div>
             </div>
