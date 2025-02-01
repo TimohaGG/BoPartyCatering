@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" style="overflow: hidden;"
+<html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
@@ -12,16 +12,16 @@
     <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
 </head>
 <body>
-<header th:insert="header::header"></header>
+<header th:replace="header::header"></header>
 
 <main>
 
     <div class="container rounded">
 
         <div class="row align-items-center justify-content-between">
-            <div class="col-lg-7 col-12 positions mt-0">
+            <div class="col-lg-7 col-12 positions mt-0" style="align-self: flex-start">
                 <h2 class="categoryHead" style="background-color: #454545;">Нове замовлення</h2>
-                <form method="post" class="d-flex flex-column mt-3" th:object="${order}" action="/create/order">
+                <form method="post" class="d-flex flex-column mt-3 pb-5" th:object="${order}" action="/create/order">
                     <input type="hidden" th:field="*{id}" name="id" id="id"/>
                     <div class="row justify-content-center" style="height: fit-content;">
 
@@ -67,7 +67,7 @@
 
 
             </div>
-            <div class="col-4 d-none d-lg-block mb-auto positions mt-0 ms-1">
+            <div class="col-4 d-none d-lg-block mb-auto positions mt-0 ms-1" style="height: 89vh;">
                 <h2 class="categoryHead" style="background-color: #454545; position: sticky;top:0;">Позиції</h2>
                 <div class="col-12 h-100 m-0 pt-0">
                     <div class="category">
