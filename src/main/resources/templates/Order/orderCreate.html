@@ -19,7 +19,7 @@
     <div class="container rounded">
 
         <div class="row align-items-center justify-content-between">
-            <div class="col-lg-7 col-12 positions mt-3" style="align-self: flex-start; height: 89vh">
+            <div class="col-lg-7 col-12 positions mt-3 pb-5" style="align-self: flex-start; height: 89vh">
                 <h2 class="categoryHead" style="background-color: #454545;">Нове замовлення</h2>
                 <form method="post" class="d-flex flex-column mt-3 pb-5" th:object="${order}" action="/create/order">
                     <input type="hidden" th:field="*{id}" name="id" id="id"/>
