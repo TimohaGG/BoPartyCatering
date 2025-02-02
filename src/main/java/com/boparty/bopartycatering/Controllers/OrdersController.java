@@ -106,7 +106,7 @@ public class OrdersController {
 
 
     @GetMapping("/order/copy/{id}")
-    public ResponseEntity<Boolean> copy(@PathVariable Long id, Model model) {
+    public String copy(@PathVariable Long id, Model model) {
         Orders order = ordersService.getOrderById(id);
         if(order != null){
             Orders newOrd = new Orders();
@@ -142,9 +142,9 @@ public class OrdersController {
                 tmp.setOrder(newOrd);
                 ordersService.saveInfo(tmp);
             }
-            return ResponseEntity.ok(true);
+
         }
-        return ResponseEntity.ok(false);
+        return "redirect:/";
     }
 
 
