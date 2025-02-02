@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +36,29 @@ public class User implements UserDetails {
 
     private String username;
     private String password;
+
+    public MultipartFile getLogoFile() {
+        return logoFile;
+    }
+
+    public void setLogoFile(MultipartFile logoFile) {
+        this.logoFile = logoFile;
+    }
+
+    @Transient
+    private MultipartFile logoFile;
+
+    @Lob
+    private byte[] logo;
+
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
+
     @Transient
     private String repeatPassword;
 

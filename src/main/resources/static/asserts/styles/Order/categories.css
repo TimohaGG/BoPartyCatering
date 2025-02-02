@@ -176,7 +176,7 @@ padding-bottom: 50px;
 }
 
 .btn-outline-light:hover{
-    color: black;
+    color: black !important;
 }
 
 
@@ -235,4 +235,8 @@ padding-bottom: 50px;
 
 .order_block:last-child{
     padding-bottom: 100px;
+}
+
+.modal-content{
+    background-color: #454545;
 }

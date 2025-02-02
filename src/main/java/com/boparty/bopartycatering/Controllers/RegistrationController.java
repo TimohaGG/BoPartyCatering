@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class RegistrationController {
@@ -35,6 +36,11 @@ public class RegistrationController {
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        try{
+            user.setLogo(user.getLogoFile().getBytes());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
 
         if(!userService.saveUser(user)) {
            return "redirect:/registration";

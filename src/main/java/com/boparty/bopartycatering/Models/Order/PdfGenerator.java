@@ -109,20 +109,25 @@ public class PdfGenerator {
                     if(!isImgSet.get()) {
                         String logoPath;
                         try {
-                            ClassPathResource classpath = new ClassPathResource("static/asserts/img/logo.png");
-                            byte[] imageBytes;
-                            try (InputStream inputStream = classpath.getInputStream()) {
-                                imageBytes = inputStream.readAllBytes();
-                            }
+//                            ClassPathResource classpath = new ClassPathResource("static/asserts/img/logo.png");
+//                            byte[] imageBytes;
+//                            try (InputStream inputStream = classpath.getInputStream()) {
+//                                imageBytes = inputStream.readAllBytes();
+//                            }
                             //logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
-                            Image img = Image.getInstance(imageBytes);
-                            img.scaleToFit(150,150);
+                            Image img = null;
+                            byte[] logo = order.getUser().getLogo();
+                            if(logo!=null){
+                                img = Image.getInstance(logo);
+                                img.scaleToFit(150,150);
+
+                            }
+
                             PdfPCell cell = new PdfPCell(img);
                             cell.setRowspan(7);
                             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             table.addCell(cell);
-
                             isImgSet.set(true);
                         } catch (Exception e) {
                             System.out.println("Error creating PDF");
