@@ -15,7 +15,7 @@ public class Ingredient {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
 

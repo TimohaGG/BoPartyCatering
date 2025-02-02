@@ -148,7 +148,7 @@ public class PdfGenerator {
 
     private void addPositionsCell(PdfPTable table) {
         for(PositionAmount pos : order.getPositionsAmount()){
-            table.addCell(getDefaultCell(pos.getPositionName(), mainFont));
+            table.addCell(getDefaultCell(pos.getPosName(), mainFont));
 
             try{
                 Image img = Image.getInstance(pos.getPosition().getImage());

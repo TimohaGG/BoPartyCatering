@@ -168,7 +168,7 @@
                 <ul class="list-group selected">
                     <li class="list-group-item row d-flex align-items-center" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">
                         <div class="col-12 d-flex justify-content-between">
-                            <span th:text="${pos.getPositionName()}"></span>
+                            <span th:text="${pos.getPosName()}"></span>
                             <button th:onclick="'remove('+${pos.getPositionId()}+')'" class="text-decoration-none btn btn-outline-danger align-self-center" style="color: red !important;">x</button>
                         </div>
                         <div class="col-12 d-flex justify-content-center align-items-center mt-2">
@@ -193,6 +193,8 @@
         </div>
 
     </div>
+
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

@@ -4,6 +4,7 @@ import com.boparty.bopartycatering.Models.Order.InfoDTO;
 import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
+import com.boparty.bopartycatering.Models.Position.PositionAmount;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Services.OrdersService;
 
@@ -17,28 +18,32 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.pdfbox.pdmodel.graphics.optionalcontent.PDOptionalContentGroup;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.FrameworkServlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class OrdersController {
 
+    private final FrameworkServlet frameworkServlet;
     private OrdersService ordersService;
 
 
 
     @Autowired
-    public OrdersController(OrdersService ordersService) {
+    public OrdersController(OrdersService ordersService, FrameworkServlet frameworkServlet) {
         this.ordersService = ordersService;
-
+        this.frameworkServlet = frameworkServlet;
     }
     @GetMapping("/order/view/{id}")
     public String index(@PathVariable long id, Model model){
@@ -99,6 +104,48 @@ public class OrdersController {
         return "redirect:/order/view/" + orderId;
     }
 
+
+    @GetMapping("/order/copy/{id}")
+    public ResponseEntity<Boolean> copy(@PathVariable Long id, Model model) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            Orders newOrd = new Orders();
+            newOrd.setClient(order.getClient() + "(copy)");
+            newOrd.setUser(order.getUser());
+            newOrd.setDate(order.getDate());
+            newOrd.setDuration(order.getDuration());
+            newOrd.setFormat(order.getFormat());
+            newOrd.setPhone(order.getPhone());
+            newOrd.setGuestsAmount(order.getGuestsAmount());
+            newOrd = ordersService.save(newOrd);
+            for(PositionAmount pos : order.getPositionsAmount()){
+                PositionAmount p = new PositionAmount();
+                p.setAmount(pos.getAmount());
+                p.setPosition(pos.getPosition());
+                newOrd.addPosition(p);
+                //newOrd.getPositionsAmount().add(p);
+                p.setOrder(newOrd);
+                ordersService.savePositionAmount(p);
+            }
+
+            ordersService.save(newOrd);
+
+
+
+            for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
+                OrderAdditionalInfo tmp = new OrderAdditionalInfo();
+                tmp.setTitle(info.getTitle());
+                tmp.setDescription(info.getDescription());
+                tmp.setPrice(info.getPrice());
+                tmp.setImage(info.getImage());
+                tmp.setCommon(false);
+                tmp.setOrder(newOrd);
+                ordersService.saveInfo(tmp);
+            }
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.ok(false);
+    }
 
 
 

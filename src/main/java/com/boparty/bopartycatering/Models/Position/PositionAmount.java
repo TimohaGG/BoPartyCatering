@@ -3,7 +3,6 @@ package com.boparty.bopartycatering.Models.Position;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
@@ -12,10 +11,10 @@ public class PositionAmount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Position position;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Orders order;
     private int amount;
     public PositionAmount() {
@@ -30,6 +29,10 @@ public class PositionAmount {
     public PositionAmount(Position position, int amount) {
         this.position = position;
         this.amount = amount;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     public long getPositionId(){
@@ -59,11 +62,15 @@ public class PositionAmount {
         return order;
     }
 
-    public String getPositionName() {
+    public String getPosName() {
         return position.getName();
     }
 
     public void setOrder(Orders order) {
         this.order = order;
+    }
+
+    public void removeId(){
+        id = null;
     }
 }

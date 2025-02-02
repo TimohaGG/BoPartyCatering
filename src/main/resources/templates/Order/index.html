@@ -49,13 +49,12 @@
 
                     <div class="position col-lg-4">
 
-                        <h5 th:text="${position.getPositionName()}"></h5>
+                        <h5 th:text="${position.getPosName()}"></h5>
                         <span th:text="${position.getPosition().getPriceInt()} + ' грн/шт'"></span>
 
                     </div>
                     <div class="col-lg-2 text-center order-first">
-
-                        <img th:if="${position.getPosition().getImage()!=null}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
+                        <img th:if="${!position.getPosition().getImageBase64().isEmpty()}" th:src="'data:image/jpeg;base64,' + ${position.getPosition().getImageBase64()}" alt="photo" style="max-height: 70px"/>
                     </div>
                     <div class="col-lg-2 text-center  d-none d-lg-block">
                         <span th:text="${position.getPosition().getWeight()} + ' г'"></span>

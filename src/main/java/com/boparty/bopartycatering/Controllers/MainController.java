@@ -142,7 +142,7 @@ public class MainController {
         }
         if(selectedIds!=null)
             selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
-        return ResponseEntity.ok(new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPositionName()));
+        return ResponseEntity.ok(new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPosName()));
     }
     //fetch
     @GetMapping("/positions/remove/{id}")

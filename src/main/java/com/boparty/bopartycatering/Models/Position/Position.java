@@ -32,10 +32,10 @@ public class Position {
     @Transient
     private MultipartFile multipartFile;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    @OneToMany(mappedBy = "position")
+    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<IngredientAmount> ingredients;
 
     public Position() {

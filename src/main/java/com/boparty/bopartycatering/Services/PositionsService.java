@@ -25,7 +25,8 @@ public class PositionsService {
 
 
     public Position getPositionById(Long id){
-        return positionsRepos.findById(id).orElse(null);
+        Position res = positionsRepos.findById(id).orElse(null);
+        return res;
     }
 
     public void save(PositionAmount position){

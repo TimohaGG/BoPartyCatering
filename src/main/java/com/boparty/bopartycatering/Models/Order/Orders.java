@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.Mapping;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public class Orders {
         format = "";
         phone = "";
         id = 0L;
+        positionsAmount = new ArrayList<>();
     }
 
     @Nullable
@@ -52,13 +54,13 @@ public class Orders {
     private String phone;
 
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
     private List<PositionAmount> positionsAmount;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
     private List<OrderAdditionalInfo> additionalInfo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     public Date getDate() {
@@ -151,5 +153,9 @@ public class Orders {
 
     public List<OrderAdditionalInfo> getAdditionalInfo() {
         return additionalInfo;
+    }
+
+    public void addPosition(PositionAmount position) {
+        positionsAmount.add(position);
     }
 }

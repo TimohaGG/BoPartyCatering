@@ -75,7 +75,7 @@
                         <div class="container row m-0 order-position " th:each="pos:${selectedPositions}">
 
                             <div class="position col-7">
-                                <h5 th:text="${pos.getPositionName()}" ></h5>
+                                <h5 th:text="${pos.getPosName()}" ></h5>
                                 <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
                                 <div class="d-flex flex-column">
                                     <div class="weight">
