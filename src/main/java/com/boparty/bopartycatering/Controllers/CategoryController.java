@@ -30,4 +30,6 @@ public class CategoryController {
         categoryService.save(category);
         return ResponseEntity.ok(category);
     }
+
+
 }

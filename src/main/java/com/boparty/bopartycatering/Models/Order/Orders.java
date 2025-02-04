@@ -72,8 +72,8 @@ public class Orders {
         return formatter.format(date);
     }
 
-    public double getTotalPrice(){
-        return positionsAmount.stream().mapToDouble(x -> x.getPosition().getPrice() * x.getAmount()).sum();
+    public int getTotalPrice(){
+        return positionsAmount.stream().mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount()).sum();
     }
 
     public void setId(Long id) {
@@ -157,5 +157,9 @@ public class Orders {
 
     public void addPosition(PositionAmount position) {
         positionsAmount.add(position);
+    }
+
+    public int getOnOnePerson(){
+        return (int)getTotalPrice() / guestsAmount;
     }
 }

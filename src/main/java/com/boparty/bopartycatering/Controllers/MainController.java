@@ -46,6 +46,10 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         List<Orders> orders = ordersService.getAllOrders();
+
+        //orders = orders.reversed();
+
+
         for (Orders order : orders) {
             System.out.println(order.getPositionsAmount());
         }

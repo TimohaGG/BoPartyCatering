@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class OrdersService {
     public List<Orders> getAllOrders() {
 
         String username = userService.getCurrentUser().getUsername();
-        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).toList();
+        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate())).toList();
     }
 
     public Orders save(Orders orders) {
@@ -88,7 +89,16 @@ public class OrdersService {
     }
 
     public void removeAdditionalInfo(Long id) {
-        iAdditionalInfoRepos.deleteById(id);
+        OrderAdditionalInfo inf = iAdditionalInfoRepos.findById(id).orElse(null);
+        if (inf!=null){
+            if(inf.isCommon()){
+                inf.setOrder(null);
+                iAdditionalInfoRepos.save(inf);
+            }
+            else{
+                iAdditionalInfoRepos.delete(inf);
+            }
+        }
     }
 
     public void removeOrder(Long id) {
@@ -113,5 +123,20 @@ public class OrdersService {
 
     public void savePositionAmount(PositionAmount pos) {
         positionAmountRepos.save(pos);
+    }
+
+    public List<OrderAdditionalInfo> getCommonAdditionalInfo(){
+        return iAdditionalInfoRepos.findAll().stream().filter(OrderAdditionalInfo::isCommon).toList();
+    }
+
+    public OrderAdditionalInfo getCommonInfoById(Long id) {
+        OrderAdditionalInfo tmp = iAdditionalInfoRepos.findById(id).orElse(null);
+        if(tmp==null){
+            return null;
+        }
+        if(tmp.isCommon()){
+            return tmp;
+        }
+        return null;
     }
 }

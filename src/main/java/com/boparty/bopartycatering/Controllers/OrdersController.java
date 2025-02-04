@@ -51,6 +51,7 @@ public class OrdersController {
         if(order != null){
             model.addAttribute("order", order);
             model.addAttribute("info", new InfoDTO());
+            model.addAttribute("common",ordersService.getCommonAdditionalInfo());
             return "Order/index";
         }
         return "redirect:/";
@@ -147,6 +148,20 @@ public class OrdersController {
         return "redirect:/";
     }
 
+
+    @PostMapping("/info/get/{id}")
+    public ResponseEntity<InfoDTO> getInfo(@PathVariable Long id, Model model) {
+        OrderAdditionalInfo tmp = ordersService.getCommonInfoById(id);
+        InfoDTO dto = new InfoDTO();
+        if(tmp != null){
+
+            dto.setTitle(tmp.getTitle());
+            dto.setDescription(tmp.getDescription());
+            dto.setPrice(tmp.getPrice());
+            return ResponseEntity.ok(dto);
+        }
+        return ResponseEntity.ok(dto);
+    }
 
 
 }
