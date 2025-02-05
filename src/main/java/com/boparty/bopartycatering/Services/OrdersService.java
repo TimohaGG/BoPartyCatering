@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,14 +57,22 @@ public class OrdersService {
 
 
 
-    public PdfWriter GeneratePdf(Document document, OutputStream out, long id) throws DocumentException {
+    public PdfWriter GeneratePdf(Document document, OutputStream out, long id, String backColor) throws DocumentException {
         PdfGenerator generator = new PdfGenerator(getOrderById(id));
 
 
         PdfGenerator.backgroundColor = BaseColor.WHITE;
         PdfGenerator.fontColor = BaseColor.BLACK;
         PdfGenerator.containerColor = BaseColor.WHITE;
-        PdfGenerator.posHeaderColor = new BaseColor(250,187,7);
+        if(backColor.isEmpty()){
+            PdfGenerator.posHeaderColor = new BaseColor(250,187,7);
+        }
+        else{
+            String[] res = backColor.split(",");
+            int[] color = Arrays.stream(backColor.split(",")).mapToInt(x->Integer.parseInt(x.trim())).toArray();
+            PdfGenerator.posHeaderColor = new BaseColor(color[0],color[1],color[2]);
+        }
+
         PdfGenerator.summaryHeaderColor = new BaseColor(91,91,91);
 
         PdfWriter writer = PdfWriter.getInstance(document, out);

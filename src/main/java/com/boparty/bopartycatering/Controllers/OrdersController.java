@@ -67,7 +67,7 @@ public class OrdersController {
     }
 
     @PostMapping("/order/generate/{id}")
-    public void generatePdf(HttpServletResponse response, @PathVariable Long id) {
+    public void generatePdf(HttpServletResponse response, @PathVariable Long id, String color) {
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=example.pdf");
 
@@ -75,7 +75,7 @@ public class OrdersController {
         Document document = new Document();
 
         try (OutputStream out = response.getOutputStream()) {
-           ordersService.GeneratePdf(document,out,id);
+           ordersService.GeneratePdf(document,out,id,color);
         } catch (Exception e) {
             throw new RuntimeException("Error while generating PDF", e);
         }

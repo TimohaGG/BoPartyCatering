@@ -1,5 +1,6 @@
 body{
     overflow-x: hidden !important;
+    overflow-y: hidden !important;
 }
 
 li{
@@ -239,4 +240,15 @@ padding-bottom: 50px;
 
 .modal-content{
     background-color: #454545;
+}
+
+.color-square{
+    display: block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.color-square.selected{
+    border:2px solid white;
 }
