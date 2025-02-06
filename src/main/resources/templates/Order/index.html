@@ -248,9 +248,10 @@
     function appendColor(event){
         event.preventDefault();
         let form = event.target;
-        console.log(event.target.action);
+        alert(event.target.action);
         let color = selectedColor.replace("rgb(","").replace(")","");
         form.action = form.action + "?color=" + color;
+        alert(form.action);
         form.submit();
         form.action = form.action.split("?")[0];
     }
