@@ -104,6 +104,7 @@ input{
 .positions .container{
     padding-top:10px;
     justify-content: space-around;
+    padding-bottom: 20px;
 }
 
 .positions .container:first-child{

@@ -13,8 +13,13 @@
 <header th:replace="header::header"></header>
 
 
-<main style="overflow-y: hidden;">
-    <a class="btn btn-light d-lg-none d-sm-flex d-flex justify-content-center align-items-center" style="border-radius: 50%;position: absolute;bottom: 12%;left: 6%;width: 60px;height: 60px;" href="/create/order" >
+<main style="overflow-y: hidden;position: relative">
+    <button class="btn btn-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:12%;right:8%;border-radius: 50%;width: 50px;height: 50px">
+        <svg style="color: black !important" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket-fill" viewBox="0 0 16 16">
+            <path style="color: black !important" d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"/>
+        </svg>
+    </button>
+    <a class="btn btn-light d-lg-none d-sm-flex d-flex justify-content-center align-items-center" style="border-radius: 50%;position: absolute;bottom: 12%;left: 6%;width: 50px;height: 50px;" href="/create/order" >
         <span >
             <svg style="color: black !important;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
               <path style="color: black !important;" fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
@@ -191,7 +196,62 @@
                 </ul>
             </div>
         </div>
+        <div style="background-color: #202020 !important;" class="offcanvas offcanvas-end text-bg-dark p-0" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+            <div class="offcanvas-header">
+                <h2  style="position: sticky;top:0;border:0">Позиції</h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0" style="overflow: hidden;">
+                <div class="mb-auto mt-0 ms-1" style="height: 89vh;overflow-y: scroll">
 
+                    <div class="m-0 pt-0">
+                        <div class="category positions">
+
+                            <div class="container row m-0 order-position " th:each="pos:${selectedPositions}" style="height: fit-content !important;">
+
+                                <div class="position col-7">
+                                    <h5 th:text="${pos.getPosName()}" ></h5>
+                                    <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
+                                    <div class="d-flex flex-column">
+                                        <div class="weight">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+                                                <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+                                                <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+                                            </svg>
+                                            <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>
+                                        </div>
+
+                                        <div class="amount-selector">
+                                            <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
+                                            <span class="amount" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()} + '_mob'"></span>
+                                            <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="image col-3" style="background-image: url('/asserts/img/image.png');">
+
+                                </div>
+                                <div class="d-flex flex-column buttons col-2 justify-content-center">
+                                    <a class="btn btn-outline-danger m-0" href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                            <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                                        </svg>
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -234,6 +294,11 @@
                     if(sel_pos!=null){
                         console.log(resp.amount + " should be added");
                         sel_pos.innerHTML =  resp.amount;
+                    }
+
+                    let pos_mob = document.getElementById("pos_"+position+"_mob");
+                    if(pos_mob!=null){
+                        pos_mob.innerHTML = resp.amount;
                     }
                     else{
                         let elem = document.getElementById("template").cloneNode(true);
