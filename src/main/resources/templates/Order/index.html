@@ -250,7 +250,7 @@
         let form = event.target;
         alert(event.target.action);
         let color = selectedColor.replace("rgb(","").replace(")","");
-        form.action = form.action + "?color=" + color;
+        form.action = form.action + "?color=" + color.replace(" ","");
         alert(form.action);
         form.submit();
         form.action = form.action.split("?")[0];
