@@ -82,7 +82,7 @@
 
                             <div class="position col-7">
                                 <h5 th:text="${pos.getPosName()}" ></h5>
-                                <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
+                                <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price big"></span>
                                 <div class="d-flex flex-column">
                                     <div class="weight">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
@@ -94,7 +94,7 @@
 
                                     <div class="amount-selector">
                                         <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
-                                        <span class="amount" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()}"></span>
+                                        <span class="amount big" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()}"></span>
                                         <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
                                     </div>
                                 </div>
@@ -111,6 +111,9 @@
                                 </a>
                             </div>
 
+                        </div>
+                        <div class="container row m-0" style="position: sticky;bottom: 0;">
+                            <h4>Загальна сума: <span id="total-header-big"></span></h4>
                         </div>
 
                     </div>
@@ -133,11 +136,11 @@
                         <div class="m-0 pt-0">
                             <div class="category positions">
 
-                                <div class="container row m-0 order-position " th:each="pos:${selectedPositions}" style="height: fit-content !important;">
+                                <div class="container row m-0 " th:each="pos:${selectedPositions}" style="height: fit-content !important;">
 
                                     <div class="position col-7">
                                         <h5 th:text="${pos.getPosName()}" ></h5>
-                                        <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
+                                        <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price small"></span>
                                         <div class="d-flex flex-column">
                                             <div class="weight">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
@@ -149,7 +152,7 @@
 
                                             <div class="amount-selector">
                                                 <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
-                                                <span class="amount" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()}+'_mob'"></span>
+                                                <span class="amount mobile" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()}+'_mob'"></span>
                                                 <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
                                             </div>
                                         </div>
@@ -166,6 +169,9 @@
                                         </a>
                                     </div>
 
+                                </div>
+                                <div class="container row m-0" style="position: sticky;bottom: 0;height: fit-content">
+                                    <h4>Загальна сума: <span id="total-header-small"></span></h4>
                                 </div>
 
                             </div>
@@ -207,6 +213,27 @@
             .catch(error=>console.log(error));
 
     }
+
+    setInterval(getPrice,1000);
+
+    function getPrice(){
+        let pos = document.querySelectorAll(".order-position");
+        let totalHeaderBig = document.getElementById("total-header-big");
+        let totalHeaderSmall = document.getElementById("total-header-small");
+        let sum = 0;
+        pos.forEach(el=>{
+           let amount = +el.getElementsByClassName("amount")[0].innerText;
+           let price = +el.getElementsByClassName("price")[0].innerText.replace(" грн","");
+            sum+= (amount*price);
+        });
+
+        totalHeaderBig.innerText = (sum + " грн");
+        totalHeaderSmall.innerText = (sum + " грн");
+
+    }
+
+
+
 </script>
 
 </body>
