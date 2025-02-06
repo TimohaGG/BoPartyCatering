@@ -245,15 +245,27 @@
 
     }
 
-    function appendColor(event){
+    async function appendColor(event){
         event.preventDefault();
         let form = event.target;
-        alert(event.target.action);
+        let url = form.action;
         let color = selectedColor.replace("rgb(","").replace(")","");
-        form.action = form.action + "?color=" + color.replace(" ","");
-        alert(form.action);
-        form.submit();
-        form.action = form.action.split("?")[0];
+        url += "?color=" + color.replace(" ","");
+        alert(url);
+        await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }).then(response => response.blob())
+            .then(blob => {
+                let link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "example.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }).catch(console.error);
+        // form.submit();
+        // form.action = form.action.split("?")[0];
     }
 
     function selectColor(event){
