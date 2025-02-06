@@ -51,7 +51,7 @@
                 </ul>
             </div>
 
-            <div class="col-lg-8 col-12 positions mb-4" style="overflow-y: scroll;height: 100%">
+            <div class="col-lg-8 col-12 positions mb-4" style="overflow-y: scroll;overflow-x: hidden;height: 100%">
                 <h2 class="categoryHead" style="background-color: #454545;" th:if="${order.getDate()==null}" th:text="${order.getDate()}"></h2>
                 <h2 class="categoryHead" style="background-color: #454545;" th:unless="${order.getDate()==null}" th:text="${order.getClient()}"></h2>
 
@@ -251,7 +251,7 @@
         let url = form.action;
         let color = selectedColor.replace("rgb(","").replace(")","");
         url += "?color=" + color.replace(" ","");
-        alert(url);
+
         await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" }
