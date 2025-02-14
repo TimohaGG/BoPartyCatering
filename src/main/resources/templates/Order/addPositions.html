@@ -210,7 +210,7 @@
 
 
                     <div class="m-0 pt-0">
-                        <div class="category positions" style="height:81vh">
+                        <div class="category positions selected-big" style="height:81vh">
 
                             <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
 
@@ -228,7 +228,7 @@
 
                                         <div class="amount-selector">
                                             <div class="btn btn-outline-warning disable-dbl-tap-zoom"  th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
-                                            <span class="amount" th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>
+                                            <span class="amount" th:class="'sel_pos_'+${pos.getPositionId()} + ' amount'"  th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>
                                             <div class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
                                         </div>
                                     </div>
@@ -243,7 +243,7 @@
                                 </div>
 
                             </div>
-                            <div style="position: sticky;bottom: 0;height: fit-content" class="container">
+                            <div style="position: sticky;bottom: 0;height: fit-content" class="container" id="total-container-big">
                                 <h5>Загальна сума: <span id="total-header-big"></span></h5>
                             </div>
 
@@ -268,7 +268,7 @@
                     <div class="m-0 pt-0">
                         <div class="category positions">
 
-                            <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;">
+                            <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
 
                                 <div class="position col-7">
                                     <h5 th:text="${pos.getPosName()}" ></h5>
@@ -284,7 +284,7 @@
 
                                         <div class="amount-selector">
                                             <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
-                                            <span class="amount" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()} + '_mob'"></span>
+                                            <span class="amount" th:class="'sel_pos_'+${pos.getPositionId()} + ' amount'"  th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPositionId()}"></span>
                                             <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
                                         </div>
                                     </div>
@@ -299,7 +299,7 @@
                                 </div>
 
                             </div>
-                            <div style="position: sticky;bottom: 0;height: fit-content" class="container">
+                            <div style="position: sticky;bottom: 0;height: fit-content" class="container" id="total-container-small">
                                 <h4>Загальна сума: <span id="total-header-small"></span></h4>
                             </div>
 
@@ -340,41 +340,30 @@
             method:"GET"
 
         })
-            .then(res=>res.json())
+            .then(res=>res.text())
             .then(async resp=> {
-                console.log(resp);
+
                 if(resp!==null){
+
+                    if(document.getElementById("position_"+position)===null){
+                        document.getElementById("total-container-big").insertAdjacentHTML("beforebegin",resp);
+                        document.getElementById("total-container-small").insertAdjacentHTML("beforebegin",resp);
+                    }
+
 
                     let amountSpan = document.getElementById("pos_"+position);
                     if(amountSpan!=null){
-                        amountSpan.value = resp.amount;
+                        amountSpan.value = amount;
                     }
-
-                    let pos_mob = document.getElementById("pos_"+position+"_mob");
-                    if(pos_mob!=null){
-                        pos_mob.innerHTML = resp.amount;
-                    }
-
                     let sel_pos = document.getElementById("sel_pos_"+position);
-                    console.log(sel_pos);
                     if(sel_pos!=null){
-                        console.log(resp.amount + " should be added");
-                        sel_pos.innerHTML =  resp.amount;
+                        sel_pos.innerHTML = amount;
                     }
-                    else{
-                        let elem = document.getElementById("template").cloneNode(true);
-                        elem.style.visibility = "visible";
-                        elem.id = "position_"+resp.id;
-                        elem.getElementsByClassName("pos-name")[0].innerText = resp.name;
-                        elem.getElementsByClassName("remove-btn")[0].addE = ()=>remove(resp.id);
-                        elem.getElementsByClassName("sub-btn")[0].onclick =()=> addAmount(resp.id,-1);
-                        elem.getElementsByClassName("add-btn")[0].onclick =()=> addAmount(resp.id,1);
-                        elem.getElementsByClassName("amount-span")[0].innerText = resp.amount;
-                        elem.getElementsByClassName("amount-span")[0].id="sel_pos_"+resp.id;
-                        elem.getElementsByClassName("price")[0].innerText=resp.price + " грн";
 
-                        document.querySelector(".list-group.selected").insertBefore(elem,document.querySelector(".list-group.selected").lastElementChild.previousElementSibling);
-                    }
+                    sel_pos = document.querySelectorAll(".sel_pos_"+position);
+                    sel_pos.forEach(el=>{
+                        el.innerHTML = amount;
+                    });
 
 
                 }

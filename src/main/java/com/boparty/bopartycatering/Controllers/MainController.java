@@ -134,10 +134,10 @@ public class MainController {
 
     //fetch
     @GetMapping("/positions/addPosition")
-    public ResponseEntity<ResponsePosAmount> addPosition(Long positionId, int amount) {
+    public String addPosition(Long positionId, int amount, Model model) {
         Position pos = positionsService.getPositionById(positionId);
         if(pos == null) {
-            return ResponseEntity.ok(null);
+            return "";
         }
 
         PositionAmount tmp;
@@ -152,7 +152,9 @@ public class MainController {
         }
         if(selectedIds!=null)
             selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
-        return ResponseEntity.ok(new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPosName(),tmp.getPosition().getPriceInt()));
+        ResponsePosAmount res = new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPosName(),tmp.getPosition().getPriceInt());
+        model.addAttribute("pos", res);
+        return "fragments/_selectedItem :: selectedItem";
     }
     //fetch
     @GetMapping("/positions/remove/{id}")
@@ -184,6 +186,8 @@ public class MainController {
         return "Order/orderCreate";
 
     }
+
+
 
 
 
