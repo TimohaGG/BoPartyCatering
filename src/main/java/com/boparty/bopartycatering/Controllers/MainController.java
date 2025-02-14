@@ -127,6 +127,12 @@ public class MainController {
 
 
     //fetch
+    @PostMapping("/positions/getTotalPrice")
+    public ResponseEntity<Integer> getTotalPrice(){
+        return ResponseEntity.ok(tmpPositions.stream().mapToInt(x-> (int) (x.getAmount() * x.getPosition().getPrice())).sum());
+    }
+
+    //fetch
     @GetMapping("/positions/addPosition")
     public ResponseEntity<ResponsePosAmount> addPosition(Long positionId, int amount) {
         Position pos = positionsService.getPositionById(positionId);

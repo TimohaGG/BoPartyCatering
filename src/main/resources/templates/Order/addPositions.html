@@ -163,52 +163,100 @@
             </div>
 
 
-            <div class="col-3 d-none d-lg-block mb-auto" style="height: 80vh;overflow-y: scroll;margin-top:20px">
-                <div>
+            <div class="col-3 d-none d-lg-block mb-auto" style="height: 90vh;overflow-y: hidden">
+                <div style="margin-bottom:20px">
                     <form >
                         <input class="form-control searchbar" type="text" name="positionSearch" id="positionSearch" placeholder="Пошук.."/>
                     </form>
                 </div>
 
-                <ul class="list-group selected">
-                    <li class="list-group-item row d-flex align-items-center order-position" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">
-                        <div class="col-8 d-flex justify-content-between">
-                            <span th:text="${pos.getPosName()}"></span>
+<!--                <ul class="list-group selected">-->
+<!--                    <li class="list-group-item row d-flex align-items-center order-position" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">-->
+<!--                        <div class="col-8 d-flex justify-content-between">-->
+<!--                            <span th:text="${pos.getPosName()}"></span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price"></span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <button th:onclick="'remove('+${pos.getPositionId()}+')'" class="text-decoration-none btn btn-outline-danger align-self-center" style="color: red !important;">x</button>-->
+<!--                        </div>-->
+<!--                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',-1)'">-</button>-->
+<!--                            <span class="mx-2 amount" th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',1)'" >+</button>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="list-group-item row d-flex align-items-center order-position" id="template">-->
+<!--                        <div class="col-8 d-flex justify-content-between" >-->
+<!--                            <span class="pos-name">0</span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <span class="price"></span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <button onclick="remove(3)" class="text-decoration-none btn btn-outline-danger align-self-center remove-btn" style="color: red !important;">x</button>-->
+<!--                        </div>-->
+<!--                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom sub-btn" onclick="addAmount(3,-1)">-</button>-->
+<!--                            <span class="mx-2 amount-span amount" id="sel_pos_3">0</span>-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom add-btn" onclick="addAmount(3,1)">+</button>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="list-group-item" style="position: sticky;bottom: 0;height: fit-content;background-color: #202020 !important;">-->
+<!--                        <h5>Загальна сума: <span id="total-header-big"></span></h5>-->
+<!--                    </li>-->
+<!--                </ul>-->
+
+
+                    <div class="m-0 pt-0">
+                        <div class="category positions" style="height:81vh">
+
+                            <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
+
+                                <div class="position big col-7">
+                                    <h5 th:text="${pos.getPosName()}" ></h5>
+                                    <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
+                                    <div class="d-flex flex-column">
+                                        <div class="weight">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+                                                <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+                                                <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+                                            </svg>
+                                            <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>
+                                        </div>
+
+                                        <div class="amount-selector">
+                                            <div class="btn btn-outline-warning disable-dbl-tap-zoom"  th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
+                                            <span class="amount" th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>
+                                            <div class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column buttons col-2 justify-content-center">
+                                    <button class="btn btn-outline-danger m-0" th:onclick="'remove('+${pos.getPositionId()}+')'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                            <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div style="position: sticky;bottom: 0;height: fit-content" class="container">
+                                <h5>Загальна сума: <span id="total-header-big"></span></h5>
+                            </div>
+
                         </div>
-                        <div class="col-2">
-                            <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price"></span>
-                        </div>
-                        <div class="col-2">
-                            <button th:onclick="'remove('+${pos.getPositionId()}+')'" class="text-decoration-none btn btn-outline-danger align-self-center" style="color: red !important;">x</button>
-                        </div>
-                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',-1)'">-</button>
-                            <span class="mx-2 amount" th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',1)'" >+</button>
-                        </div>
-                    </li>
-                    <li class="list-group-item row d-flex align-items-center order-position" id="template">
-                        <div class="col-8 d-flex justify-content-between" >
-                            <span class="pos-name">0</span>
-                        </div>
-                        <div class="col-2">
-                            <span class="price"></span>
-                        </div>
-                        <div class="col-2">
-                            <button onclick="remove(3)" class="text-decoration-none btn btn-outline-danger align-self-center remove-btn" style="color: red !important;">x</button>
-                        </div>
-                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom sub-btn" onclick="addAmount(3,-1)">-</button>
-                            <span class="mx-2 amount-span amount" id="sel_pos_3">0</span>
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom add-btn" onclick="addAmount(3,1)">+</button>
-                        </div>
-                    </li>
-                    <li class="list-group-item" style="position: sticky;bottom: 0;height: fit-content;background-color: #202020 !important;">
-                        <h5>Загальна сума: <span id="total-header-big"></span></h5>
-                    </li>
-                </ul>
+
+
+
+
+                    </div>
+
+                </div>
             </div>
-        </div>
+
         <div style="background-color: #202020 !important;" class="offcanvas offcanvas-end text-bg-dark p-0" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
             <div class="offcanvas-header">
                 <h2  style="position: sticky;top:0;border:0">Позиції</h2>
@@ -240,9 +288,6 @@
                                             <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="image col-3" style="background-image: url('/asserts/img/image.png');">
-
                                 </div>
                                 <div class="d-flex flex-column buttons col-2 justify-content-center">
                                     <a class="btn btn-outline-danger m-0" href="#">
@@ -276,7 +321,7 @@
 
 <script>
     async function addAmount(position, event){
-        console.log("ASDSA");
+
         let amount;
 
         if(typeof event === "number"){
@@ -399,19 +444,27 @@
 
     setInterval(getPrice,1000);
 
-    function getPrice(){
-        let pos = document.querySelectorAll(".order-position");
+    async function getPrice(){
+        console.log("Hello!");
+        //let pos = document.querySelectorAll(".position.big");
         let totalHeaderBig = document.getElementById("total-header-big");
         let totalHeaderSmall = document.getElementById("total-header-small");
-        let sum = 0;
-        pos.forEach(el=>{
-            let amount = +el.getElementsByClassName("amount")[0].innerText;
-            let price = +el.getElementsByClassName("price")[0].innerText.replace(" грн","");
-            sum+= (amount*price);
-        });
+        let resp = await fetch("/positions/getTotalPrice",{
+            method:"POST"
+        }).then(res=>res.text())
+            .then(res=>{
+                totalHeaderBig.innerText = (res + " грн");
+                totalHeaderSmall.innerText = (res + " грн");
+            })
+            .catch(error=>console.log(error));
+        // let sum = 0;
+        // pos.forEach(el=>{
+        //     let amount = +el.getElementsByClassName("amount")[0].innerText;
+        //     let price = +el.getElementsByClassName("price")[0].innerText.replace(" грн","");
+        //     sum+= (amount*price);
+        // });
 
-        totalHeaderBig.innerText = (sum + " грн");
-        totalHeaderSmall.innerText = (sum + " грн");
+
 
     }
 </script>
