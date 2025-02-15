@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<div th:fragment="selectedItem(pos)" class="container row m-0" style="height: fit-content !important;" th:id="'position_'+${pos.getId()}">
+<div th:fragment="selectedItem(pos)" class="container row m-0" th:classappend="'position_' + ${pos.getId()}" style="height: fit-content !important;" th:id="'position_'+${pos.getId()}">
 
   <div class="position big col-7">
     <h5 th:text="${pos.getName()  }" ></h5>
