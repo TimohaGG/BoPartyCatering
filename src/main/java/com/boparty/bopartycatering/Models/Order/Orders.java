@@ -9,11 +9,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.Mapping;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +32,7 @@ public class Orders {
     private Long id;
 
     public Orders(){
-        date = new java.sql.Date(System.currentTimeMillis());
+        date = LocalDate.now().atStartOfDay();
         client = "";
         guestsAmount = 0;
         duration = 0;
@@ -38,9 +43,9 @@ public class Orders {
     }
 
     @Nullable
-    private java.sql.Date date;
-    //private String date;
-    //private Date date;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime date;
+
 
     @Column(nullable = true)
     private String client;
@@ -63,13 +68,19 @@ public class Orders {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
     public String getDateFormatted() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        return formatter.format(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        if(date!=null){
+            return date.format(formatter);
+        }
+        else{
+            return "";
+        }
+
     }
 
     public int getTotalPrice(){
@@ -123,7 +134,7 @@ public class Orders {
         this.client = client;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

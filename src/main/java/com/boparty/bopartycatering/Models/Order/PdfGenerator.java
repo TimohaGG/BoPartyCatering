@@ -8,6 +8,8 @@ import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,9 +37,15 @@ public class PdfGenerator {
     public PdfGenerator(Orders order) {
         this.order = order;
 
+        DateTimeFormatter date = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm");
+
+
         header.put("Замовник",order.getClient());
-        header.put(   "Дата",order.getDate().toString());
-        header.put(   "Початок заходу",order.getDate().toString());
+
+
+        header.put(   "Дата",order.getDate()==null ? "" : order.getDate().format(date));
+        header.put(   "Початок заходу",order.getDate()==null ? "" : order.getDate().format(time));
         header.put(   "Тривалість",String.valueOf(order.getDuration()));
         header.put(  "К-сть запрошених",String.valueOf( order.getGuestsAmount()));
         header.put(  "Формат заходу",order.getFormat());
