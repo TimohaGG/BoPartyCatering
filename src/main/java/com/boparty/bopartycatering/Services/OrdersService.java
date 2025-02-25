@@ -148,4 +148,12 @@ public class OrdersService {
         }
         return null;
     }
+
+    public String getOrderFileName(long id){
+        Orders tmp = ordersRepos.findById(id).orElse(null);
+        if(tmp==null){
+            return "";
+        }
+        return tmp.getClient() + " " + tmp.getDate()+".pdf";
+    }
 }
