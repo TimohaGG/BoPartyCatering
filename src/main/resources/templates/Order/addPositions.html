@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" style="overflow-y: hidden;">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="overflow-y: hidden;position:relative">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,10 +10,17 @@
     <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
 </head>
 <body style="position: relative">
+<div th:replace="fragments/_loading.html::loading"></div>
 <header th:replace="header::header"></header>
 
 
 <main style="overflow-y: hidden;position: relative">
+
+<!--TODO::-->
+<!--    1. Create fetch method to get all positions-->
+<!--    2. create fragment of position to select-->
+<!--    3 Load it when page is loaded-->
+
     <button class="btn btn-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px">
         <svg style="color: black !important" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket-fill" viewBox="0 0 16 16">
             <path style="color: black !important" d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"/>
@@ -212,6 +219,7 @@
                     <div class="m-0 pt-0">
                         <div class="category positions selected-big" style="height:81vh">
 
+
                             <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
 
                                 <div class="position big col-7">
@@ -364,6 +372,7 @@
                     sel_pos.forEach(el=>{
                         el.innerHTML = amount;
                     });
+                    await getPrice();
 
 
                 }
@@ -382,7 +391,7 @@
             method:"GET"
         })
             .then(res=>res.json())
-            .then(resp=>{
+            .then(async resp=>{
                 if(resp){
                     document.querySelectorAll(".position_"+position).forEach(el=>{
                         el.remove();
@@ -392,6 +401,7 @@
                     if(document.getElementById("pos_"+position)!=null)
                         document.getElementById("pos_"+position).value = 0;
 
+                    await getPrice();
                 }
             });
     }
@@ -437,7 +447,8 @@
         }
     }
 
-    setInterval(getPrice,1000);
+    getPrice();
+    //setInterval(getPrice,1000);
 
     async function getPrice(){
         console.log("Hello!");
@@ -462,6 +473,12 @@
 
 
     }
+    document.addEventListener("DOMContentLoaded", function(event) {
+        console.log("DOM funciona");
+        document.getElementById("loading").style.display = "none";
+    });
+
+
 </script>
 </body>
 </html>

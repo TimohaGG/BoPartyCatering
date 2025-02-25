@@ -13,6 +13,7 @@ import com.boparty.bopartycatering.Services.UserService;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Controller
@@ -97,14 +99,15 @@ public class MainController {
         return "redirect:/";
     }
 
+
     @GetMapping("/positions/add")
-    public String addPosition(Long categoryId,  Model model) {
+    public String addPosition(Long categoryId, Model model) {
         Orders ord = (Orders)model.getAttribute("order");
 
         List<Category> categories = userService.getCategories();
         model.addAttribute("categories", categories);
 
-        List<Position> positions = userService.getPositions();
+
         Category category;
         if(categoryId==null){
             category = categories.get(0);
@@ -112,6 +115,7 @@ public class MainController {
         else{
             category = categories.stream().filter(x->x.getId().equals(categoryId)).findFirst().orElse(null);
         }
+        List<Position> positions = userService.getPositions();
         model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(category.getName())).toList());
         model.addAttribute("categoryName", category.getName());
 
