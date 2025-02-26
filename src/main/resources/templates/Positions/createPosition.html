@@ -107,7 +107,7 @@
             </div>
         </div>
         <div id="others" style="height: 50%;overflow-y: scroll;">
-            <div th:each="ing:${ingredients}" th:insert="/fragments/_ingredient::ingredient(${ing},${units})"></div>
+            <div th:each="ing:${ingredients}" th:insert="fragments/_ingredient::ingredient(${ing},${units})"></div>
 
         </div>
         <div class="py-3" style="position:sticky;bottom:0; height:fit-content;background-color: #202020;">
