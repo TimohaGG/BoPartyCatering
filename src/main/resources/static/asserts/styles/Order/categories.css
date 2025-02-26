@@ -253,3 +253,7 @@ padding-bottom: 50px;
 .color-square.selected{
     border:2px solid white;
 }
+
+#others>div:last-child{
+    margin-bottom: 100px;
+}

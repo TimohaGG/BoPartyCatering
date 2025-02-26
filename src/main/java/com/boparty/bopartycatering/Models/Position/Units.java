@@ -13,4 +13,16 @@ public class Units {
     private Long id;
 
     private String unitName;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
 }

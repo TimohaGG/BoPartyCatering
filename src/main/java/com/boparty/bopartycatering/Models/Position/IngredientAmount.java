@@ -7,8 +7,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Setter
-@Getter
+
 public class IngredientAmount {
 
     @Id
@@ -26,4 +25,40 @@ public class IngredientAmount {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Position position;
+
+    public Long getId() {
+        return id;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
+    }
+
+    public Units getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Units unit) {
+        this.unit = unit;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 }

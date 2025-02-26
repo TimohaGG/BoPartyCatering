@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class Position {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientAmount> ingredients;
 
     public Position() {
@@ -70,6 +71,14 @@ public class Position {
     public byte[] getImage() {
 
         return image;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public String getImageBase64() {
@@ -114,6 +123,7 @@ public class Position {
     }
 
     public void setIngredients(List<IngredientAmount> ingredients) {
+        this.ingredients = new ArrayList<>();
         this.ingredients = ingredients;
     }
 
@@ -123,5 +133,12 @@ public class Position {
 
     public void setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
+    }
+
+    public void addIngredientAmount(IngredientAmount ingredientAmount) {
+        if(this.ingredients == null) {
+            this.ingredients = new ArrayList<>();
+        }
+        this.ingredients.add(ingredientAmount);
     }
 }
