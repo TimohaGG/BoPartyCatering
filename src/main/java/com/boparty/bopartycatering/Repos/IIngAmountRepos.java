@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface IIngAmountRepos extends JpaRepository<IngredientAmount,Long> {
     public List<IngredientAmount> findByPositionId(Long posId);
+    public void deleteAllByIngredientId(Long ingredientId);
 }

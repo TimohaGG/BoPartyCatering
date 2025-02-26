@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<div th:fragment="ingredient(ing,units)" th:id="'item_'+${ing.getId()}" class="mb-2">
+  <div class="w-100 row justify-content-center align-items-center">
+
+    <div class="col-3 p-0 ms-2">
+      <span th:text="${ing.getName()}"></span>
+    </div>
+    <div class="col-5 p-0">
+      <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(-1,'+${ing.getId()}+',event)'" >-</button>
+      <input class="rounded-input amount" th:value="0" th:id="'ing_'+${ing.getId()}" th:onfocusout="'changeAmount(null,'+${ing.getId()}+',event)'"/>
+      <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(1,'+${ing.getId()}+',event)'" >+</button>
+    </div>
+    <div class="col-1 p-0">
+      <select th:id="'unit_'+${ing.getId()}" style="color: black !important" th:onchange="'updateUnits(event)'">
+        <option th:each="unit:${units}" th:value="${unit.getId()}" th:text="${unit.getUnitName()}"></option>
+      </select>
+    </div>
+    <div class="col-2 p-0">
+      <button type="button" class="btn btn-outline-danger ms-3" data-bs-toggle="modal" th:data-bs-target="'#removeModal_'+${ing.getId()}">
+        -
+      </button>
+
+    </div>
+
+
+  </div>
+  <div class="modal fade" th:id="'removeModal_'+${ing.getId()}" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="removeModalLabel">Видалити інгридієнт?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-light  " data-bs-dismiss="modal">Ні</button>
+
+          <button type="button" class="btn btn-danger" th:onclick="'removeIngredient('+${ing.getId()}+')'">Так</button>
+<!--          <form  onsubmit="()=>{asd(event);return false}" method="post">-->
+<!--            <input type="hidden" th:value="${ing.getId()}" name="id" th:id="'del_'+${ing.getId()}"/>-->
+<!--            <button type="submit" class="btn btn-danger">Так</button>-->
+<!--          </form>-->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+
+</script>
+</body>
+
+</html>

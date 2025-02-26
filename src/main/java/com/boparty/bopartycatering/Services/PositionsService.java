@@ -115,4 +115,17 @@ public class PositionsService {
         res.removeIf(x->ings.stream().anyMatch(y->x.getIngredient().getId()==y.getIngredient().getId()));
         ingAmountRepos.deleteAll(res);
     }
+
+    public Ingredient saveIngredient(Ingredient ingredient){
+        return ingredientsRepos.save(ingredient);
+    }
+
+    public Ingredient getIngredientById(long id){
+        return ingredientsRepos.findById(id).orElse(null);
+    }
+
+    public void removeIngredient(long id){
+        ingAmountRepos.deleteAllByIngredientId(id);
+        ingredientsRepos.deleteById(id);
+    }
 }

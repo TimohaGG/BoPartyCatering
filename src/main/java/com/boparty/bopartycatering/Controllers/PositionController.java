@@ -124,5 +124,24 @@ public class PositionController {
         return ResponseEntity.ok(true);
     }
 
+    @PostMapping("/ingredient/create")
+    public String createIngredient(@RequestBody String name, Model model) {
+        Ingredient ing = new Ingredient();
+        ing.setName(name);
+        ing.setUser(userService.getCurrentUser());
+        Ingredient saved = positionsService.saveIngredient(ing);
+        model.addAttribute("ing", ing);
+        model.addAttribute("units", positionsService.getAllUnits());
+        return "fragments/_ingredient :: ingredient";
+    }
+
+    @PostMapping("/ingredient/remove/{id}")
+    public ResponseEntity<Boolean> removeIngredient(@PathVariable Long id, Model model) {
+        Ingredient ing = positionsService.getIngredientById(id);
+        if(ing!=null){
+            positionsService.removeIngredient(id);
+        }
+        return ResponseEntity.ok(true);
+    }
 
 }
