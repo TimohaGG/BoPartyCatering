@@ -58,7 +58,7 @@ public class PdfGenerator {
         posHeader.add("Ціна, \nгрн");
 
         summary.put("Разом по меню, грн",new Tuple<>((int) order.getTotalPrice() + " грн",null));
-        summary.put("На 1 особу, грн", new Tuple<>((int) order.getTotalPrice() / order.getGuestsAmount() + " грн",null));
+//        summary.put("На 1 особу, грн", new Tuple<>((int) order.getTotalPrice() / order.getGuestsAmount() + " грн",null));
         for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
             summary.put(info.getTitle(),new Tuple<>( (int)info.getPrice() + " грн",info.getImage()));
         }

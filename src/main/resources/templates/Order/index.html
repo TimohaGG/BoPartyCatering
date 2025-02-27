@@ -86,14 +86,14 @@
 
                     </div>
                 </div>
-                <div class="row align-items-center justify-content-center w-100 m-0 preview" style="height: initial">
-                    <h5 class="col-6">
-                        На 1 людину:
-                    </h5>
-                    <div class="col-6" th:text="${order.getOnOnePerson()} + ' грн'" style="text-align: end">
+<!--                <div class="row align-items-center justify-content-center w-100 m-0 preview" style="height: initial">-->
+<!--                    <h5 class="col-6">-->
+<!--                        На 1 людину:-->
+<!--                    </h5>-->
+<!--                    <div class="col-6" th:text="${order.getOnOnePerson()} + ' грн'" style="text-align: end">-->
 
-                    </div>
-                </div>
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="row align-items-center justify-content-between w-100 m-0 preview" th:each="info:${order.getAdditionalInfo()}"  style="height: initial;position:relative">
                     <div class="col-3" style="width: initial">
                         <span th:text="${info.getTitle()}" ></span>

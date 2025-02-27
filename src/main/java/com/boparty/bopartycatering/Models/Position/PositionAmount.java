@@ -31,6 +31,7 @@ public class PositionAmount {
         this.amount = amount;
     }
 
+
     public void setPosition(Position position) {
         this.position = position;
     }

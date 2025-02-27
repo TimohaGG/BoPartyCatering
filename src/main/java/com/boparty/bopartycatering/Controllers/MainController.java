@@ -1,5 +1,6 @@
 package com.boparty.bopartycatering.Controllers;
 
+import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Position.Category;
 import com.boparty.bopartycatering.Models.Position.Position;
@@ -59,6 +60,8 @@ public class MainController {
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();
+
+        Map<String, AmountUnit> res = ordersService.getShopping();
         return "index";
     }
 
@@ -190,6 +193,14 @@ public class MainController {
         return "Order/orderCreate";
 
     }
+
+
+//    @GetMapping("/order/generateShopping/{id}")
+//    public String generateShopping(Model model, @PathVariable String id) {
+//
+//    }
+
+
 
 
 

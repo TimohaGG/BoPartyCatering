@@ -22,6 +22,13 @@ public class IngredientAmount {
 
     private double amount;
 
+    public IngredientAmount() {}
+
+    public IngredientAmount(Ingredient ingredient, double amount, Units unit) {
+        this.ingredient = ingredient;
+        this.amount = amount;
+        this.unit = unit;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Position position;
