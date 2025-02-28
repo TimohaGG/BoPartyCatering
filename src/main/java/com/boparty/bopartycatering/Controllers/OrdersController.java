@@ -184,7 +184,7 @@ public class OrdersController {
             model.addAttribute("shoppingList",list);
 
         }
-        return "/Order/shopping";
+        return "Order/shopping";
     }
 
     @PostMapping("/order/shopping/changeState/{ingId}")
