@@ -1,9 +1,11 @@
 package com.boparty.bopartycatering.Models.Order;
 
+import com.boparty.bopartycatering.Models.Position.IngredientAmount;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class ShoppingList {
@@ -59,4 +61,29 @@ public class ShoppingList {
         }
 
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void clearOldItems(List<ShoppingListItem> newIngs) {
+        if(this.items != null) {
+
+
+            List<ShoppingListItem> result = newIngs.stream().peek(
+                    x->{
+                        ShoppingListItem item = this.items.stream().filter(y-> Objects.equals(y.getIngredient().getIngredient().getId(), x.getIngredient().getIngredient().getId())).findFirst().orElse(null);
+                        if(item != null) {
+                            x.setBought(item.isBought());
+                        }
+                    }
+            ).toList();
+            this.items.clear();
+            this.items.addAll(result);
+
+        }
+
+    }
+
+
 }

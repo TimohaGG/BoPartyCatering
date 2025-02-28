@@ -68,8 +68,13 @@ public class PositionController {
     @PostMapping("/create/position")
     public String createPosition(@ModelAttribute("position") Position position,Model model) {
         try{
-            if(!position.getMultipartFile().isEmpty())
+            byte[] res = position.getMultipartFile().getBytes();
+
+            if( position.getMultipartFile().getBytes().length!=0)
                 position.setImage(position.getMultipartFile().getBytes());
+            else if(position.getId()!=null || position.getId()!=0){
+                position.setImage(positionsService.getPositionById(position.getId()).getImage());
+            }
             position.setIngredients(selectedIngredients);
             //positionsService.removeIngAmount(position.getId(),selectedIngredients);
             //

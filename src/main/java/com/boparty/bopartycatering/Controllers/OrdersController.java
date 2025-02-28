@@ -27,6 +27,7 @@ import org.springframework.web.servlet.FrameworkServlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +187,20 @@ public class OrdersController {
         return "/Order/shopping";
     }
 
+    @PostMapping("/order/shopping/changeState/{ingId}")
+    public ResponseEntity<Boolean> changeState(@PathVariable Long ingId, Model model) {
+        ShoppingListItem item = shoppingListService.getItemById(ingId);
+        if(item != null){
+            item.setBought(!item.isBought());
+            shoppingListService.saveItem(item);
+            return ResponseEntity.ok(item.isBought());
+        }
+        return ResponseEntity.ok(false);
+    }
+    @PostMapping("/order/shopping/getState/{shoppingId}")
+    public ResponseEntity<long[]> getState(Model model, @PathVariable Long shoppingId){
+        return ResponseEntity.ok(shoppingListService.findSelectedItems(shoppingId));
+    }
 
 
 }

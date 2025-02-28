@@ -16,6 +16,10 @@ public class ShoppingListItem {
     @ColumnDefault("false")
     private boolean isBought;
 
+    public Long getId() {
+        return id;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ShoppingList shoppingList;
 
@@ -28,6 +32,9 @@ public class ShoppingListItem {
 
     }
 
+    public long getInsideIngredientId(){
+        return ingredient.getIngredient().getId();
+    }
     public IngredientAmount getIngredient() {
         return ingredient;
     }
