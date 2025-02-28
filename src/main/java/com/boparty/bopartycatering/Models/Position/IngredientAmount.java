@@ -30,6 +30,14 @@ public class IngredientAmount {
         this.unit = unit;
     }
 
+    public IngredientAmount(Long id, Ingredient ingredient, Units unit, double amount, Position position) {
+        this.id = id;
+        this.ingredient = ingredient;
+        this.unit = unit;
+        this.amount = amount;
+        this.position = position;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Position position;
 

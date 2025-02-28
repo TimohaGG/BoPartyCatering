@@ -1,13 +1,12 @@
 package com.boparty.bopartycatering.Controllers;
 
-import com.boparty.bopartycatering.Models.Order.InfoDTO;
-import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
-import com.boparty.bopartycatering.Models.Order.Orders;
-import com.boparty.bopartycatering.Models.Order.PdfGenerator;
+import com.boparty.bopartycatering.Models.Order.*;
+import com.boparty.bopartycatering.Models.Position.IngredientAmount;
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Services.OrdersService;
 
+import com.boparty.bopartycatering.Services.ShoppingListService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -36,14 +35,16 @@ import java.util.Map;
 public class OrdersController {
 
     private final FrameworkServlet frameworkServlet;
+    private final ShoppingListService shoppingListService;
     private OrdersService ordersService;
 
 
 
     @Autowired
-    public OrdersController(OrdersService ordersService, FrameworkServlet frameworkServlet) {
+    public OrdersController(OrdersService ordersService, FrameworkServlet frameworkServlet, ShoppingListService shoppingListService) {
         this.ordersService = ordersService;
         this.frameworkServlet = frameworkServlet;
+        this.shoppingListService = shoppingListService;
     }
     @GetMapping("/order/view/{id}")
     public String index(@PathVariable long id, Model model){
@@ -133,6 +134,7 @@ public class OrdersController {
                 ordersService.savePositionAmount(p);
             }
 
+
             ordersService.save(newOrd);
 
 
@@ -166,6 +168,24 @@ public class OrdersController {
         }
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("/order/shopping/{id}")
+    public String shopping(@PathVariable Long id, Model model) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            ShoppingList list = shoppingListService.getShoppingListByOrderId(id);
+
+            if(list == null || list.isNeedsUpdate()){
+                List<IngredientAmount> ings = ordersService.getShopping(List.of(order));
+                list = shoppingListService.createList(order,ings);
+            }
+
+            model.addAttribute("shoppingList",list);
+
+        }
+        return "/Order/shopping";
+    }
+
 
 
 }

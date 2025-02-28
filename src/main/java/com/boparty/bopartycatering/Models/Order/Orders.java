@@ -68,6 +68,17 @@ public class Orders {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ShoppingList shoppingList;
+
+    public ShoppingList getShoppingList() {
+        return shoppingList;
+    }
+
+    public void setShoppingList(ShoppingList shoppingList) {
+        this.shoppingList = shoppingList;
+    }
+
     public LocalDateTime getDate() {
         return date;
     }

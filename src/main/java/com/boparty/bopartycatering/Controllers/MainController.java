@@ -2,15 +2,10 @@ package com.boparty.bopartycatering.Controllers;
 
 import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.Orders;
-import com.boparty.bopartycatering.Models.Position.Category;
-import com.boparty.bopartycatering.Models.Position.Position;
-import com.boparty.bopartycatering.Models.Position.PositionAmount;
-import com.boparty.bopartycatering.Models.Position.ResponsePosAmount;
+import com.boparty.bopartycatering.Models.Order.ShoppingList;
+import com.boparty.bopartycatering.Models.Position.*;
 import com.boparty.bopartycatering.Models.User.User;
-import com.boparty.bopartycatering.Services.CategoryService;
-import com.boparty.bopartycatering.Services.OrdersService;
-import com.boparty.bopartycatering.Services.PositionsService;
-import com.boparty.bopartycatering.Services.UserService;
+import com.boparty.bopartycatering.Services.*;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,18 +28,19 @@ public class MainController {
     private final OrdersService ordersService;
     private final PositionsService positionsService;
     private final UserService userService;
+    private final ShoppingListService shoppingListService;
     private Orders tmpOrder;
     private List<PositionAmount> tmpPositions;
     private Map<Long,Integer> selectedIds;
     @Autowired
-    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService) {
+    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService) {
         this.ordersService = ordersService;
         this.positionsService = positionsService;
         this.userService = userService;
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds  = new HashMap<>();
-
+        this.shoppingListService = shoppingListService;
     }
     @GetMapping("/")
     public String index(Model model) {
@@ -61,7 +57,7 @@ public class MainController {
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();
 
-        Map<String, AmountUnit> res = ordersService.getShopping();
+       // List<IngredientAmount> res = ordersService.getShopping(new ArrayList<>());
         return "index";
     }
 
@@ -93,6 +89,16 @@ public class MainController {
             positionsService.saveAll(tmpPositions);
             tmpPositions.forEach(el->{el.setOrder(tm);});
             tm.setPositionsAmount(tmpPositions);
+
+            ShoppingList list = shoppingListService.getShoppingListByOrderId(order.getId());
+            if(list!=null){
+                list.setNeedsUpdate(true);
+                shoppingListService.save(list);
+            }
+
+            if(tm.getShoppingList()!=null){
+                tm.getShoppingList().setNeedsUpdate(true);
+            }
             ordersService.save(tm);
         }
 

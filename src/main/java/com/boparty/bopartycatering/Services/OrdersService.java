@@ -162,39 +162,33 @@ public class OrdersService {
         return tmp.getClient() + " " + tmp.getDate()+".pdf";
     }
 
-    public Map<String, AmountUnit> getShopping() {
+    public List<IngredientAmount> getShopping(List<Orders> orders) {
 
-        List<Orders> orders = List.of(ordersRepos.getOrderById(74L),ordersRepos.getOrderById(75L));
-        //combine all orders into one array with normal amount
-        List<PositionAmount> positions= orders.stream()
-                .flatMap(order->order.getPositionsAmount().stream())
-                .collect(Collectors
-                        .groupingBy(PositionAmount::getPosition, Collectors.summingInt(x->x.getAmount()))
-                )
+        //orders = List.of(ordersRepos.getOrderById(74L), ordersRepos.getOrderById(75L));
+
+        // Combine all orders into one list with summed amounts
+        List<PositionAmount> positions = orders.stream()
+                .flatMap(order -> order.getPositionsAmount().stream())
+                .collect(Collectors.groupingBy(
+                        PositionAmount::getPosition, Collectors.summingInt(PositionAmount::getAmount)))
                 .entrySet().stream()
-                .map(x->new PositionAmount(x.getKey(),x.getValue())).toList();
+                .map(e -> new PositionAmount(e.getKey(), e.getValue()))
+                .toList();
 
-        //creating map of ingredients and amount of positions
-        Map<List<IngredientAmount>, Integer> re = positions.stream()
-                .collect(
-                        Collectors.groupingBy(x->x.getPosition().getIngredients(),
-                                Collectors.summingInt(PositionAmount::getAmount)));
+        List<IngredientAmount> ings = positions.stream()
+                .flatMap(pos -> pos.getPosition().getIngredients().stream()
+                        .map(ingAm -> new IngredientAmount(ingAm.getIngredient(),
+                                ingAm.getAmount() * pos.getAmount(), ingAm.getUnit())))
+                .collect(Collectors.toMap(
+                        ing->ing.getIngredient().getId(),
+                        item->item,
+                        (existIt,newIt)->new IngredientAmount(existIt.getId(), existIt.getIngredient(),existIt.getUnit(),existIt.getAmount() + newIt.getAmount(), existIt.getPosition())
+                ))
+                .values().stream().toList();
 
-        //getting final amount of ingredients
-        List<IngredientAmount> ress= re.entrySet().stream()
-                .flatMap(entry->entry.getKey().stream()
-                        .map(ingAm -> new IngredientAmount(ingAm.getIngredient(),ingAm.getAmount() * entry.getValue(),ingAm.getUnit()))).toList();
+        ings.forEach(v -> System.out.println(v.getIngredient().getName() + " " + v.getAmount() + " " + v.getUnit().getUnitName()));
 
-        //map of name and amount with units
-        Map<String, AmountUnit> finalRes = ress.stream().collect(Collectors.toMap(
-                x->x.getIngredient().getName(),
-                y->new AmountUnit(y.getUnit(),y.getAmount()),
-                (a,b)->new AmountUnit(a.getUnit(),a.getAmount()+ b.getAmount())
-        ));
 
-        finalRes.forEach((k,v)->{
-            System.out.println(k + " " + v.getAmount() + " " + v.getUnit().getUnitName());
-        });
-        return finalRes;
+        return ings;
     }
 }
