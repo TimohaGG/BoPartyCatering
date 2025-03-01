@@ -87,16 +87,16 @@
 
 
             <div th:each="sel:${selectedIngs}" th:id="'item_'+${sel.getIngredient().getId()}" class="mb-2">
-                <div class="w-100 row justify-content-center align-items-center" >
-                    <div class="col-4 p-0 ms-2">
+                <div class="w-100 row justify-content-center align-items-center m-0" >
+                    <div class="col-3 p-0">
                         <span th:text="${sel.getIngredient().getName()}"></span>
                     </div>
-                    <div class="col-6 p-0">
+                    <div class="col-5 p-0">
                         <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(-1,'+${sel.getIngredient().getId()}+',event)'" >-</button>
                         <input class="rounded-input amount" th:value="${sel.getAmount()}" th:id="'ing_'+${sel.getIngredient().getId()}" th:onfocusout="'changeAmount(null,'+${sel.getIngredient().getId()}+',event)'"/>
                         <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(1,'+${sel.getIngredient().getId()}+',event)'" >+</button>
                     </div>
-                    <div class="col-1 p-0">
+                    <div class="col-2 p-0">
                         <select  th:id="'unit_'+${sel.getIngredient().getId()}" style="color: black !important" th:onchange="'updateUnits(event)'">
                             <option th:selected="${sel.getUnit().getId() == unit.getId()}" th:each="unit:${units}" th:value="${unit.getId()}" th:text="${unit.getUnitName()}" style="color: black !important"></option>
                         </select>
@@ -167,9 +167,9 @@
                 if(resp){
                     console.log(resp);
                     if(+resp===0.0)
-                        replaceItem('item_'+id,"others");
+                        replaceItem('item_'+id,"others", false);
                     else
-                        replaceItem('item_'+id,"selected");
+                        replaceItem('item_'+id,"selected", true);
                 }
 
 
@@ -193,10 +193,13 @@
         return 0;
     }
 
-    function replaceItem(itemId, target){
+    function replaceItem(itemId, target, hideControl){
         let temp;
         let elem = document.getElementById(itemId);
         temp = elem;
+
+        temp.querySelector(".delButton").style.display = hideControl ? "none" : "block";
+
         elem.remove();
         document.getElementById(target).appendChild(temp);
     }
@@ -246,9 +249,6 @@
     }
 
    async function removeIngredient(id){
-
-
-
        let resp = await fetch('/ingredient/remove/' + id, {
            method: 'POST',
            headers: {

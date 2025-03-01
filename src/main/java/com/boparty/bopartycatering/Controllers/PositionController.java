@@ -95,7 +95,7 @@ public class PositionController {
         }
 
 
-        return "redirect:/";
+        return "redirect:/positions?categoryId="+position.getCategory().getId();
     }
 
     @GetMapping("/positions")

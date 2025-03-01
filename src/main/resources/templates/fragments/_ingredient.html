@@ -7,9 +7,9 @@
 </head>
 <body>
 <div th:fragment="ingredient(ing,units)" th:id="'item_'+${ing.getId()}" class="mb-2">
-  <div class="w-100 row justify-content-center align-items-center">
+  <div class="w-100 row justify-content-center align-items-center m-0">
 
-    <div class="col-3 p-0 ms-2">
+    <div class="col-3 p-0">
       <span th:text="${ing.getName()}"></span>
     </div>
     <div class="col-5 p-0">
@@ -17,12 +17,12 @@
       <input class="rounded-input amount" th:value="0" th:id="'ing_'+${ing.getId()}" th:onfocusout="'changeAmount(null,'+${ing.getId()}+',event)'"/>
       <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(1,'+${ing.getId()}+',event)'" >+</button>
     </div>
-    <div class="col-1 p-0">
+    <div class="col-2 p-0">
       <select th:id="'unit_'+${ing.getId()}" style="color: black !important" th:onchange="'updateUnits(event)'">
         <option th:each="unit:${units}" th:value="${unit.getId()}" th:text="${unit.getUnitName()}"></option>
       </select>
     </div>
-    <div class="col-2 p-0">
+    <div class="col-2 p-0 delButton">
       <button type="button" class="btn btn-outline-danger ms-3" data-bs-toggle="modal" th:data-bs-target="'#removeModal_'+${ing.getId()}">
         -
       </button>
