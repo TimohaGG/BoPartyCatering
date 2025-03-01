@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Controller
 public class PositionController {
@@ -48,7 +50,7 @@ public class PositionController {
         }
         model.addAttribute("categories", categoriesService.findAll());
         List<Ingredient> ings = positionsService.getAllIngredients();
-
+        Map<String, List<Ingredient>> mapped = null;
         if(selectedIngredients != null) {
             if(posId != null) {
                 Position pos = positionsService.getPositionById(posId);
@@ -60,11 +62,13 @@ public class PositionController {
                 IngredientAmount tmp = selectedIngredients.stream().filter(y-> Objects.equals(y.getIngredient().getId(), x.getId())).findFirst().orElse(null);
                 return tmp == null;
             }).toList();
+
+            mapped = ings.stream().collect(Collectors.groupingBy(x->x.getIngCategory().getName()));
             model.addAttribute("selectedIngs",selectedIngredients);
         }
 
         model.addAttribute("position", temp);
-        model.addAttribute("ingredients",ings);
+        model.addAttribute("ingredients",mapped);
         model.addAttribute("units",positionsService.getAllUnits());
         model.addAttribute("currentPos", posId== null ? 0:posId);
         model.addAttribute("ingsCategories",positionsService.getAllIngsCategories());

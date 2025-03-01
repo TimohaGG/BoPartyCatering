@@ -17,7 +17,7 @@
 <header th:replace="header::header"></header>
 
 <main style="overflow:hidden;position: relative">
-    <button class="btn btn-outline-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px">
+    <button class="btn btn-outline-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px;z-index: 1000">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket-fill" viewBox="0 0 16 16">
             <path d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"/>
         </svg>
@@ -28,14 +28,25 @@
             <div class="col-lg-7 col-12 positions mt-3 pb-5" style="align-self: flex-start; height: 89vh">
                 <h2 class="categoryHead" style="background-color: #454545;">Закупівля</h2>
 
-                <ul class="list-group">
-                    <li class="list-group-item p-3" th:each="item:${shoppingList.getItems()}">
-                        <input type="checkbox" th:checked="${item.isBought()}" th:data-id="${item.getId()}" th:onclick="'changeState('+${item.getId()}+',event)'" style="transform: scale(2)"/>
-                        <span class="ms-3" th:text="${item.getIngredient().getIngredient().getName()} +' - '"></span>
-                        <span th:text="${item.getIngredient().getAmount()} + ' ' + ${item.getIngredient().getUnit().getUnitName()}"></span>
-                    </li>
+                <div th:each="shoppingItem : ${ingredients}" style="box-sizing: content-box; height: auto !important;">
+                    <h3 th:text="${shoppingItem.getKey()}"></h3>
+                    <ul class="list-group">
+                        <li class="list-group-item p-3" th:each="item:${shoppingItem.getValue()}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <input type="checkbox" th:checked="${item.isBought()}" th:data-id="${item.getId()}" th:onclick="'changeState('+${item.getId()}+',event)'" style="transform: scale(2)"/>
+                                    <span class="ms-3" th:text="${item.getIngredient().getIngredient().getName()}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <span th:text="${item.getIngredient().getAmount()} + ' ' + ${item.getIngredient().getUnit().getUnitName()}"></span>
+                                </div>
+                            </div>
 
-                </ul>
+
+                        </li>
+                    </ul>
+                </div>
+
 
 
 
@@ -92,7 +103,7 @@
                         <div class="m-0 pt-0">
                             <div class="category">
 
-                                <div class="container row m-0 order-position mb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}">
+                                <div class="container row m-0 order-position mb-3 pb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}" style="border-bottom: 1px solid #454545">
 
                                     <div class="position col-12">
                                         <h5 th:text="${pos.getPosName()}" ></h5>

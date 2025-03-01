@@ -31,6 +31,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class OrdersController {
@@ -182,6 +183,9 @@ public class OrdersController {
             }
 
             model.addAttribute("shoppingList",list);
+            Map<String, List<ShoppingListItem>> res = list.getItems()
+                    .stream().collect(Collectors.groupingBy(x->x.getIngredient().getIngredient().getIngCategory().getName()));
+            model.addAttribute("ingredients",res);
 
         }
         return "Order/shopping";
