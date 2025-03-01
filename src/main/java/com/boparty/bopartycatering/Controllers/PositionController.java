@@ -67,6 +67,7 @@ public class PositionController {
         model.addAttribute("ingredients",ings);
         model.addAttribute("units",positionsService.getAllUnits());
         model.addAttribute("currentPos", posId== null ? 0:posId);
+        model.addAttribute("ingsCategories",positionsService.getAllIngsCategories());
         return "Positions/createPosition";
     }
 
@@ -143,10 +144,11 @@ public class PositionController {
     }
 
     @PostMapping("/ingredient/create")
-    public String createIngredient(@RequestBody String name, Model model) {
+    public String createIngredient(@RequestParam String name,@RequestParam Long categoryId, Model model) {
         Ingredient ing = new Ingredient();
         ing.setName(name);
         ing.setUser(userService.getCurrentUser());
+        ing.setIngCategory(positionsService.findIngById(categoryId));
         Ingredient saved = positionsService.saveIngredient(ing);
         model.addAttribute("ing", ing);
         model.addAttribute("units", positionsService.getAllUnits());

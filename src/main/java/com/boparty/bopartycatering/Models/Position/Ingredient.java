@@ -2,10 +2,6 @@ package com.boparty.bopartycatering.Models.Position;
 
 import com.boparty.bopartycatering.Models.User.User;
 import jakarta.persistence.*;
-import lombok.Data;
-import org.hibernate.annotations.ColumnDefault;
-
-import java.util.List;
 
 @Entity
 public class Ingredient {
@@ -17,6 +13,17 @@ public class Ingredient {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    public IngredientCategory getIngCategory() {
+        return ingCategory;
+    }
+
+    public void setIngCategory(IngredientCategory ingCategory) {
+        this.ingCategory = ingCategory;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private IngredientCategory ingCategory;
 
     public Long getId() {
         return Id;

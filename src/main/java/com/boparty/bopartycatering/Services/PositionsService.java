@@ -17,13 +17,15 @@ public class PositionsService {
     private final IIngredientsRepos ingredientsRepos;
     private final IIngAmountRepos ingAmountRepos;
     private final IUnitRepos unitRepos;
+    private final IIngCategoryRepos iIngCategoryRepos;
     @Autowired
-    public PositionsService(PositionsRepos positionsRepos, PositionAmountRepos positionAmountRepos, IIngredientsRepos ingredientsRepos, IIngAmountRepos iIngAmountRepos, IUnitRepos unitRepos) {
+    public PositionsService(PositionsRepos positionsRepos, PositionAmountRepos positionAmountRepos, IIngredientsRepos ingredientsRepos, IIngAmountRepos iIngAmountRepos, IUnitRepos unitRepos, IIngCategoryRepos iIngCategoryRepos) {
         this.positionsRepos = positionsRepos;
         this.positionAmountRepos = positionAmountRepos;
         this.ingredientsRepos = ingredientsRepos;
         this.ingAmountRepos = iIngAmountRepos;
         this.unitRepos = unitRepos;
+        this.iIngCategoryRepos = iIngCategoryRepos;
     }
 
 
@@ -135,5 +137,13 @@ public class PositionsService {
 
     public void deletePosition(long id){
         positionsRepos.deleteById(id);
+    }
+
+    public List<IngredientCategory> getAllIngsCategories(){
+        return iIngCategoryRepos.findAll();
+    }
+
+    public IngredientCategory findIngById(long id){
+        return iIngCategoryRepos.findById(id).orElse(null);
     }
 }

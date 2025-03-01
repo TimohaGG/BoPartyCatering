@@ -128,10 +128,16 @@
                     </div>
                     <div class="modal-body">
 
-                            <div class="mb-3">
-                                <label class="form-label" for="ingName">Назва</label>
-                                <input class="form-control"  type="text" name="ingName" id="ingName" />
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="ingName">Назва</label>
+                            <input class="form-control"  type="text" name="ingName" id="ingName" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="ingName">Категорія</label>
+                            <select class="form-select" name="ingCategory" id="ingCategory">
+                                <option th:each="cat:${ingsCategories}" th:text="${cat.getName()}" th:value="${cat.getId()}"></option>
+                            </select>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -233,13 +239,17 @@
        if(!name){
            return;
        }
-       let resp = await fetch('/ingredient/create',{
+       let category = document.getElementById('ingCategory').value;
+       console.log(category);
+       if(!category){
+           return;
+       }
+       let resp = await fetch('/ingredient/create?name='+name+"&categoryId="+category,{
            method:'POST',
            headers:{
                'Content-Type':'application/json',
                'Accept':'application/json'
-           },
-           body:name
+           }
        })
            .then(res=>res.text())
            .then(resp=>{
