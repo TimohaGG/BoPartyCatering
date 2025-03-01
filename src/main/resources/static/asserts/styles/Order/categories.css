@@ -20,6 +20,11 @@ input{
     border-radius: 15px;
 }
 
+.list-group-item.current,
+.mobile-menu-item.current{
+    background-color: #454545 !important;
+}
+
 .scrollbar::-webkit-scrollbar{
     display: none;
 }

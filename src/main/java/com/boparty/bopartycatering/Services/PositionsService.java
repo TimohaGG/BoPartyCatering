@@ -128,4 +128,12 @@ public class PositionsService {
         ingAmountRepos.deleteAllByIngredientId(id);
         ingredientsRepos.deleteById(id);
     }
+
+    public List<Position> getPositions(long categoryId){
+        return positionsRepos.findAllByCategoryId(categoryId);
+    }
+
+    public void deletePosition(long id){
+        positionsRepos.deleteById(id);
+    }
 }

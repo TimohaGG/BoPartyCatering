@@ -24,6 +24,11 @@ public class PositionController {
     private CategoryService categoriesService;
     private Position temp;
 
+
+
+
+
+
     private List<IngredientAmount> selectedIngredients;
     @Autowired
     public PositionController(PositionsService positionsService, CategoryService categoriesService, UserService userService) {
@@ -72,7 +77,7 @@ public class PositionController {
 
             if( position.getMultipartFile().getBytes().length!=0)
                 position.setImage(position.getMultipartFile().getBytes());
-            else if(position.getId()!=null || position.getId()!=0){
+            else if(position!=null && position.getId()!=null){
                 position.setImage(positionsService.getPositionById(position.getId()).getImage());
             }
             position.setIngredients(selectedIngredients);
@@ -94,8 +99,16 @@ public class PositionController {
     }
 
     @GetMapping("/positions")
-    public String positions(Model model) {
-        model.addAttribute("positions",userService.getPositions());
+    public String positions(@Nullable @RequestParam Long categoryId, Model model) {
+
+
+        if(categoryId==null){
+            categoryId = userService.getFirstCategory();
+        }
+        List<Position> positions = positionsService.getPositions(categoryId);
+        model.addAttribute("positions",positions);
+        model.addAttribute("categories", categoriesService.findAll());
+        model.addAttribute("currentCategory",categoriesService.findById(categoryId));
         return "Positions/index";
     }
 
@@ -148,5 +161,18 @@ public class PositionController {
         }
         return ResponseEntity.ok(true);
     }
+
+    @PostMapping("/position/remove/{id}")
+    public ResponseEntity<Boolean> removePosition(@PathVariable Long id, Model model) {
+        try{
+            positionsService.deletePosition(id);
+            return ResponseEntity.ok(true);
+        }catch (Exception e){
+            System.out.printf(e.getMessage());
+            return ResponseEntity.ok(false);
+        }
+    }
+
+
 
 }

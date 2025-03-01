@@ -73,4 +73,8 @@ public class UserService implements UserDetailsService {
         return pos;
     }
 
+
+    public Long getFirstCategory() {
+        return getCurrentUser().getCategories().get(0).getId();
+    }
 }

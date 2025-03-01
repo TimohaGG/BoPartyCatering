@@ -19,12 +19,15 @@ public class CategoryService {
     }
 
     public List<Category> findAll() {
-        userService.getCategories();
         return userService.getCategories();
     }
 
     public void save(Category category) {
 
         categoriesRepos.save(category);
+    }
+
+    public Category findById(Long id) {
+        return categoriesRepos.findById(id).orElse(null);
     }
 }
