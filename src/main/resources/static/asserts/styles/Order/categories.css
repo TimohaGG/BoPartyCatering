@@ -304,3 +304,6 @@ padding-bottom: 50px;
     }
 }
 
+body:not(.modal-open){
+    padding-right: 0px !important;
+}
