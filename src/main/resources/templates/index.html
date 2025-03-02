@@ -308,6 +308,10 @@
         let btn = document.getElementById('shoppingBtnMobile');
         btn.style.display = btn.style.display==='none' ? 'block' : 'none';
     }
+
+    $(document.body).on('hide.bs.modal,hidden.bs.modal', function () {
+        $('body').css('padding-right','0');
+    });
 </script>
 
 </body>
