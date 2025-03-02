@@ -1,47 +1,49 @@
 package com.boparty.bopartycatering.Services;
 
-import com.boparty.bopartycatering.Models.Position.Category;
-import com.boparty.bopartycatering.Models.Position.Position;
-import com.boparty.bopartycatering.Models.Position.PositionAmount;
-import com.boparty.bopartycatering.Repos.CategoriesRepos;
-import com.boparty.bopartycatering.Repos.PositionAmountRepos;
-import com.boparty.bopartycatering.Repos.PositionsRepos;
+import com.boparty.bopartycatering.Models.Position.*;
+import com.boparty.bopartycatering.Repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PositionsService {
 
-    private PositionsRepos positionsRepos;
-    private CategoriesRepos categoriesRepos;
-    private PositionAmountRepos positionAmountRepos;
+    private final PositionsRepos positionsRepos;
+
+    private final PositionAmountRepos positionAmountRepos;
+    private final IIngredientsRepos ingredientsRepos;
+    private final IIngAmountRepos ingAmountRepos;
+    private final IUnitRepos unitRepos;
+    private final IIngCategoryRepos iIngCategoryRepos;
     @Autowired
-    public PositionsService(PositionsRepos positionsRepos, CategoriesRepos categoriesRepos, PositionAmountRepos positionAmountRepos) {
+    public PositionsService(PositionsRepos positionsRepos, PositionAmountRepos positionAmountRepos, IIngredientsRepos ingredientsRepos, IIngAmountRepos iIngAmountRepos, IUnitRepos unitRepos, IIngCategoryRepos iIngCategoryRepos) {
         this.positionsRepos = positionsRepos;
-        this.categoriesRepos = categoriesRepos;
         this.positionAmountRepos = positionAmountRepos;
+        this.ingredientsRepos = ingredientsRepos;
+        this.ingAmountRepos = iIngAmountRepos;
+        this.unitRepos = unitRepos;
+        this.iIngCategoryRepos = iIngCategoryRepos;
     }
 
-    public List<Category> getCategories(){
-        return categoriesRepos.findAll();
-    }
-
-    public List<Position> getPositions(){
-        return positionsRepos.findAll();
-    }
 
     public Position getPositionById(Long id){
-        return positionsRepos.findById(id).orElse(null);
+        Position res = positionsRepos.findById(id).orElse(null);
+        return res;
     }
 
     public void save(PositionAmount position){
         positionAmountRepos.save(position);
     }
 
-    public void save(Position position){
-        positionsRepos.save(position);
+    public Position save(Position position){
+        return positionsRepos.save(position);
+    }
+
+    public void saveIngredients(List<IngredientAmount> ingredients){
+        ingAmountRepos.saveAll(ingredients);
     }
 
     public void saveAll(List<PositionAmount> positions){
@@ -69,5 +71,79 @@ public class PositionsService {
             //positionAmountRepos.deleteAll(tmp);
         }
 
+    }
+
+    public IngredientAmount addIngredient(IngAmountDTO ingredient, long posId){
+        IngredientAmount tmp = new IngredientAmount();
+        Position pos = positionsRepos.findById(posId).orElse(null);
+        if(pos != null){
+            tmp.setPosition(pos);
+        }
+
+        Ingredient ingTmp = ingredientsRepos.findById(ingredient.getIngId()).orElse(null);
+        if(ingTmp == null){
+            return null;
+        }
+
+        Units tmpUnit = unitRepos.findById(ingredient.getUnitId()).orElse(null);
+        if(tmpUnit == null){
+            return null;
+        }
+
+
+        tmp.setPosition(pos);
+        tmp.setIngredient(ingTmp);
+        tmp.setAmount( ingredient.getAmount());
+        tmp.setUnit(tmpUnit);
+        return tmp;
+    }
+
+    public List<Ingredient> getAllIngredients(){
+        return ingredientsRepos.findAll();
+    }
+    public List<Units> getAllUnits(){
+        return unitRepos.findAll();
+    }
+        public List<IngredientAmount> getSelectedIngs(long posId){
+        return ingAmountRepos.findAll().stream().filter(x->x.getPosition().getId()==posId).collect(Collectors.toList());
+    }
+
+    public Units getUnitById(long id){
+        return unitRepos.findById(id).orElse(null);
+    }
+
+    public void removeIngAmount(long posId, List<IngredientAmount> ings){
+        List<IngredientAmount> res = ingAmountRepos.findByPositionId(posId);
+        res.removeIf(x->ings.stream().anyMatch(y->x.getIngredient().getId()==y.getIngredient().getId()));
+        ingAmountRepos.deleteAll(res);
+    }
+
+    public Ingredient saveIngredient(Ingredient ingredient){
+        return ingredientsRepos.save(ingredient);
+    }
+
+    public Ingredient getIngredientById(long id){
+        return ingredientsRepos.findById(id).orElse(null);
+    }
+
+    public void removeIngredient(long id){
+        ingAmountRepos.deleteAllByIngredientId(id);
+        ingredientsRepos.deleteById(id);
+    }
+
+    public List<Position> getPositions(long categoryId){
+        return positionsRepos.findAllByCategoryId(categoryId);
+    }
+
+    public void deletePosition(long id){
+        positionsRepos.deleteById(id);
+    }
+
+    public List<IngredientCategory> getAllIngsCategories(){
+        return iIngCategoryRepos.findAll();
+    }
+
+    public IngredientCategory findIngById(long id){
+        return iIngCategoryRepos.findById(id).orElse(null);
     }
 }

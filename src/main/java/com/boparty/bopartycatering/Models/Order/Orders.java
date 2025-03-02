@@ -5,17 +5,14 @@ import com.boparty.bopartycatering.Models.User.User;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -26,17 +23,20 @@ public class Orders {
     private Long id;
 
     public Orders(){
-        date = "";
+        date = LocalDate.now().atStartOfDay();
         client = "";
         guestsAmount = 0;
         duration = 0;
         format = "";
         phone = "";
         id = 0L;
+        positionsAmount = new ArrayList<>();
     }
 
-    private String date;
-    //private Date date;
+    @Nullable
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime date;
+
 
     @Column(nullable = true)
     private String client;
@@ -50,32 +50,45 @@ public class Orders {
     private String phone;
 
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PositionAmount> positionsAmount;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
     private List<OrderAdditionalInfo> additionalInfo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public String getDate() {
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ShoppingList shoppingList;
+    @ColumnDefault("false")
+    private boolean temporary;
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try{
-            Date res = formatter.parse(date);
-            formatter = new SimpleDateFormat("dd.MM.yyyy");
-            return formatter.format(res);
+    public ShoppingList getShoppingList() {
+        return shoppingList;
+    }
+
+    public void setShoppingList(ShoppingList shoppingList) {
+        this.shoppingList = shoppingList;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public String getDateFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        if(date!=null){
+            return date.format(formatter);
         }
-        catch (Exception e){
+        else{
             return "";
         }
 
-
     }
 
-    public double getTotalPrice(){
-        return positionsAmount.stream().mapToDouble(x -> x.getPosition().getPrice() * x.getAmount()).sum();
+    public int getTotalPrice(){
+        return positionsAmount.stream().mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount()).sum();
     }
 
     public void setId(Long id) {
@@ -125,7 +138,7 @@ public class Orders {
         this.client = client;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -155,5 +168,21 @@ public class Orders {
 
     public List<OrderAdditionalInfo> getAdditionalInfo() {
         return additionalInfo;
+    }
+
+    public void addPosition(PositionAmount position) {
+        positionsAmount.add(position);
+    }
+
+    public int getOnOnePerson(){
+        return (int)getTotalPrice() / guestsAmount;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
     }
 }

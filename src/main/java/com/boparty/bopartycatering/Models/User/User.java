@@ -1,14 +1,19 @@
 package com.boparty.bopartycatering.Models.User;
 
 import com.boparty.bopartycatering.Models.Order.Orders;
+import com.boparty.bopartycatering.Models.Position.Category;
+import com.boparty.bopartycatering.Models.Position.Ingredient;
+import com.boparty.bopartycatering.Models.Position.Position;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -31,14 +36,47 @@ public class User implements UserDetails {
 
     private String username;
     private String password;
+
+    public MultipartFile getLogoFile() {
+        return logoFile;
+    }
+
+    public void setLogoFile(MultipartFile logoFile) {
+        this.logoFile = logoFile;
+    }
+
+    @Transient
+    private MultipartFile logoFile;
+
+    @Lob
+    private byte[] logo;
+
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
+
     @Transient
     private String repeatPassword;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Orders> orders;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Category> categories;
+
+    public Long getId() {
+        return id;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Ingredient> ingredients;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,6 +103,15 @@ public class User implements UserDetails {
         return true;
     }
 
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
 
     @Override
     public String getUsername() {

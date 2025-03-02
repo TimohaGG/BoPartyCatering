@@ -10,13 +10,14 @@
     <link href="/asserts/styles/Order/header.css" rel="stylesheet"/>
     <link href="/asserts/styles/Order/page.css" rel="stylesheet"/>
     <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
+    <link href="/asserts/styles/Order/shoppinglist.css" rel="stylesheet"/>
 </head>
 <body>
 
 <header th:replace="header::header"></header>
 
 <main style="overflow:hidden;position: relative">
-    <button class="btn btn-outline-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px">
+    <button class="btn btn-outline-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px;z-index: 1000">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket-fill" viewBox="0 0 16 16">
             <path d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"/>
         </svg>
@@ -25,50 +26,28 @@
 
         <div class="row align-items-center justify-content-between">
             <div class="col-lg-7 col-12 positions mt-3 pb-5" style="align-self: flex-start; height: 89vh">
-                <h2 class="categoryHead" style="background-color: #454545;">Нове замовлення</h2>
-                <form method="post" class="d-flex flex-column mt-3 pb-5" th:object="${order}" action="/create/order">
-                    <input type="hidden" th:field="*{id}" name="id" id="id"/>
-                    <div class="row justify-content-center w-100" style="height: fit-content;">
+                <h2 class="categoryHead" style="background-color: #454545;">Закупівля</h2>
 
-                        <div class="col-8 col-sm-6">
-
-                            <div class="mb-3">
-                                <label for="client" class="form-label">Замовник</label>
-                                <input type="text" name="client" id="client" class="form-control" th:field="*{client}"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="date" class="form-label">Дата</label>
-                                <input type="datetime-local" name="date" id="date" class="form-control" th:field="*{date}" th:value="*{date}"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="duration" class="form-label">Тривалість</label>
-                                <input type="number" min="0" name="duration" id="duration" class="form-control" th:field="*{duration}"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="guestsAmount" class="form-label">К-сть гостей</label>
-                                <input type="number" min="0" name="guestsAmount" id="guestsAmount" class="form-control" th:field="*{guestsAmount}"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="format" class="form-label">Формат</label>
-                                <input type="text" name="format" id="format" class="form-control" th:field="*{format}"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">Телефон</label>
-                                <input type="tel" name="phone" id="phone" class="form-control" th:field="*{phone}"/>
+                <div th:each="shoppingItem : ${ingredients}" style="box-sizing: content-box; height: auto !important;">
+                    <h3 th:text="${shoppingItem.getKey()}"></h3>
+                    <ul class="list-group">
+                        <li class="list-group-item p-3" th:each="item:${shoppingItem.getValue()}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <input type="checkbox" th:checked="${item.isBought()}" th:data-id="${item.getId()}" th:onclick="'changeState('+${item.getId()}+',event)'" style="transform: scale(2)"/>
+                                    <span class="ms-3" th:text="${item.getIngredient().getIngredient().getName()}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <span th:text="${item.getIngredient().getAmount()} + ' ' + ${item.getIngredient().getUnit().getUnitName()}"></span>
+                                </div>
                             </div>
 
 
-                        </div>
+                        </li>
+                    </ul>
+                </div>
 
 
-                    </div>
-                    <div class="d-flex col-10 col-sm-6 flex-row justify-content-between align-self-center mt-3 mb-3">
-
-                       <input type="submit" th:formaction="'/save/order'" class="btn btn-outline-warning" style="align-self: center;color: white !important;" value="Зберегти"/>
-                        <input type="submit" value="Додати позиції" class="btn btn-outline-light" style="align-self: center;color: white !important;"/>
-                    </div>
-
-                </form>
 
 
             </div>
@@ -78,13 +57,13 @@
                 <div class="col-12 m-0 pt-0" style="height: fit-content">
                     <div class="category">
 
-                        <div class="container row m-0 order-position " th:each="pos:${selectedPositions}">
+                        <div class="container row m-0 order-position mb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}">
 
                             <div class="position col-12">
                                 <h5 th:text="${pos.getPosName()}" ></h5>
 
                                 <div class="row align-items-center">
-                                    <div class="col-8">
+                                    <div class="col-6">
                                         <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price big"></span>
                                         <div class="weight">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
@@ -94,28 +73,25 @@
                                             <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>
                                         </div>
                                     </div>
-                                    <div class="col-4">
-                                        <span class="amount big" th:text="${pos.getAmount()} + ' шт'" th:id="'pos_'+${pos.getPositionId()}"></span>
+                                    <div class="col-6 text-end">
+                                        <span class="amount big" th:text="${pos.getAmount()} + ' шт'" th:id="'pos_'+${pos.getPositionId()}" ></span>
                                     </div>
-                                </div>
 
+
+
+
+
+                                </div>
                             </div>
 
 
                         </div>
-                        <div class="container row m-0" style="position: sticky;bottom: 0;">
-                            <h4>Загальна сума: <span id="total-header-big"></span></h4>
-                        </div>
+
 
                     </div>
-
-
-
-
                 </div>
 
             </div>
-
             <div style="background-color: #202020 !important;" class="offcanvas offcanvas-end text-bg-dark p-0" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
                     <h2  style="position: sticky;top:0;border:0">Позиції</h2>
@@ -125,16 +101,16 @@
                     <div class="mb-auto mt-0 ms-1" style="height: 89vh;overflow-y: scroll">
 
                         <div class="m-0 pt-0">
-                            <div class="category positions">
+                            <div class="category">
 
-                                <div class="container row m-0 " th:each="pos:${selectedPositions}" style="height: fit-content !important;">
+                                <div class="container row m-0 order-position mb-3 pb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}" style="border-bottom: 1px solid #454545">
 
                                     <div class="position col-12">
                                         <h5 th:text="${pos.getPosName()}" ></h5>
 
                                         <div class="row align-items-center">
-                                            <div class="col-8">
-                                                <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price small"></span>
+                                            <div class="col-6">
+                                                <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price big"></span>
                                                 <div class="weight">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
                                                         <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
@@ -143,22 +119,12 @@
                                                     <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                <span class="amount mobile" th:text="${pos.getAmount()}+' шт'" th:id="'pos_'+${pos.getPositionId()}+'_mob'"></span>
+                                            <div class="col-6 text-end">
+                                                <span class="amount big" th:text="${pos.getAmount()} + ' шт'" th:id="'pos_'+${pos.getPositionId()}" ></span>
                                             </div>
-
-
-
                                         </div>
                                     </div>
-
-
-
                                 </div>
-                                <div style="position: sticky;bottom: 0;" class="container d-flex align-items-center text-center">
-                                    <h4>Загальна сума: <span id="total-header-small"></span></h4>
-                                </div>
-
                             </div>
 
 
@@ -169,34 +135,64 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".list-group-item").forEach(li => {
+            li.addEventListener("click", function (event) {
+                if(event.target.tagName!=="INPUT"){
+                    const checkbox = li.querySelector("input[type='checkbox']");
+                    if (checkbox) {
 
+                        changeState(checkbox.dataset.id,checkbox);
+                    }
+                }
 
-    setInterval(getPrice,1000);
-
-    function getPrice(){
-        let pos = document.querySelectorAll(".order-position");
-        let totalHeaderBig = document.getElementById("total-header-big");
-        let totalHeaderSmall = document.getElementById("total-header-small");
-        let sum = 0;
-        pos.forEach(el=>{
-           let amount = +el.getElementsByClassName("amount")[0].innerText.replace(" шт","");
-           let price = +el.getElementsByClassName("price")[0].innerText.replace(" грн","");
-            sum+= (amount*price);
+            });
         });
+    });
 
-        totalHeaderBig.innerText = (sum + " грн");
-        totalHeaderSmall.innerText = (sum + " грн");
 
+    async function changeState(id, checkbox){
+        if(checkbox instanceof PointerEvent)
+            checkbox.preventDefault();
+        let resp = await fetch("/order/shopping/changeState/"+id,{
+            method:"POST"
+        })
+            .then(resp=>resp.text())
+            .then(resp=>{
+                console.log(resp);
+
+                if(checkbox instanceof PointerEvent){
+                    checkbox.target.checked = resp==="true";
+                }
+                else{
+                    checkbox.checked = resp==="true";
+                }
+
+            });
     }
 
 
+    async function checkState(){
 
+        let resp = await fetch("/order/shopping/getState/"+[[${shoppingList.getId()}]],{
+            method:"POST"
+        })
+            .then(resp=>resp.json())
+            .then(resp=>{
+                let arr = Array.from(resp);
+                console.log(arr);
+                document.querySelectorAll("[data-id]").forEach(el=>{
+                    el.checked = arr.includes(+el.dataset.id);
+                });
+            })
+    }
+    setInterval(checkState,10000);
 </script>
-
 </body>
 </html>

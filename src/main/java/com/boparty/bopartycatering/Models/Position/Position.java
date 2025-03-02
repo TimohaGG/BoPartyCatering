@@ -1,11 +1,13 @@
 package com.boparty.bopartycatering.Models.Position;
 
+import com.boparty.bopartycatering.Models.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -24,16 +26,17 @@ public class Position {
     @Column(nullable = false)
     private double price;
 
+
     @Lob
     private byte[] image;
 
     @Transient
     private MultipartFile multipartFile;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    @OneToMany(mappedBy = "position")
+    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientAmount> ingredients;
 
     public Position() {
@@ -68,6 +71,14 @@ public class Position {
     public byte[] getImage() {
 
         return image;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public String getImageBase64() {
@@ -112,6 +123,7 @@ public class Position {
     }
 
     public void setIngredients(List<IngredientAmount> ingredients) {
+        this.ingredients = new ArrayList<>();
         this.ingredients = ingredients;
     }
 
@@ -121,5 +133,12 @@ public class Position {
 
     public void setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
+    }
+
+    public void addIngredientAmount(IngredientAmount ingredientAmount) {
+        if(this.ingredients == null) {
+            this.ingredients = new ArrayList<>();
+        }
+        this.ingredients.add(ingredientAmount);
     }
 }

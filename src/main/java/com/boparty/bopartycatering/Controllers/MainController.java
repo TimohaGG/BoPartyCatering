@@ -1,17 +1,15 @@
 package com.boparty.bopartycatering.Controllers;
 
+import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.Orders;
-import com.boparty.bopartycatering.Models.Position.Category;
-import com.boparty.bopartycatering.Models.Position.Position;
-import com.boparty.bopartycatering.Models.Position.PositionAmount;
-import com.boparty.bopartycatering.Models.Position.ResponsePosAmount;
+import com.boparty.bopartycatering.Models.Order.ShoppingList;
+import com.boparty.bopartycatering.Models.Position.*;
 import com.boparty.bopartycatering.Models.User.User;
-import com.boparty.bopartycatering.Services.OrdersService;
-import com.boparty.bopartycatering.Services.PositionsService;
-import com.boparty.bopartycatering.Services.UserService;
+import com.boparty.bopartycatering.Services.*;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,36 +18,40 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
 
 
-    private OrdersService ordersService;
-    private PositionsService positionsService;
+    private final OrdersService ordersService;
+    private final PositionsService positionsService;
+    private final UserService userService;
+    private final ShoppingListService shoppingListService;
     private Orders tmpOrder;
     private List<PositionAmount> tmpPositions;
     private Map<Long,Integer> selectedIds;
     @Autowired
-    public MainController(OrdersService ordersService, PositionsService positionsService) {
+    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService) {
         this.ordersService = ordersService;
         this.positionsService = positionsService;
+        this.userService = userService;
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds  = new HashMap<>();
-
+        this.shoppingListService = shoppingListService;
     }
     @GetMapping("/")
     public String index(Model model) {
         List<Orders> orders = ordersService.getAllOrders();
-        for (Orders order : orders) {
-            System.out.println(order.getPositionsAmount());
-        }
         model.addAttribute("orders",ordersService.getAllOrders());
+        model.addAttribute("tempOrders",ordersService.getTempOrders());
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();
+
+       // List<IngredientAmount> res = ordersService.getShopping(new ArrayList<>());
         return "index";
     }
 
@@ -81,6 +83,16 @@ public class MainController {
             positionsService.saveAll(tmpPositions);
             tmpPositions.forEach(el->{el.setOrder(tm);});
             tm.setPositionsAmount(tmpPositions);
+
+            ShoppingList list = shoppingListService.getShoppingListByOrderId(order.getId());
+            if(list!=null){
+                list.setNeedsUpdate(true);
+                shoppingListService.save(list);
+            }
+
+            if(tm.getShoppingList()!=null){
+                tm.getShoppingList().setNeedsUpdate(true);
+            }
             ordersService.save(tm);
         }
 
@@ -90,14 +102,15 @@ public class MainController {
         return "redirect:/";
     }
 
+
     @GetMapping("/positions/add")
-    public String addPosition(Long categoryId,  Model model) {
+    public String addPosition(Long categoryId, Model model) {
         Orders ord = (Orders)model.getAttribute("order");
 
-        List<Category> categories = positionsService.getCategories();
+        List<Category> categories = userService.getCategories();
         model.addAttribute("categories", categories);
 
-        List<Position> positions = positionsService.getPositions();
+
         Category category;
         if(categoryId==null){
             category = categories.get(0);
@@ -105,6 +118,7 @@ public class MainController {
         else{
             category = categories.stream().filter(x->x.getId().equals(categoryId)).findFirst().orElse(null);
         }
+        List<Position> positions = userService.getPositions();
         model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(category.getName())).toList());
         model.addAttribute("categoryName", category.getName());
 
@@ -120,11 +134,17 @@ public class MainController {
 
 
     //fetch
+    @PostMapping("/positions/getTotalPrice")
+    public ResponseEntity<Integer> getTotalPrice(){
+        return ResponseEntity.ok(tmpPositions.stream().mapToInt(x-> (int) (x.getAmount() * x.getPosition().getPrice())).sum());
+    }
+
+    //fetch
     @GetMapping("/positions/addPosition")
-    public ResponseEntity<ResponsePosAmount> addPosition(Long positionId, int amount) {
+    public String addPosition(Long positionId, int amount, Model model) {
         Position pos = positionsService.getPositionById(positionId);
         if(pos == null) {
-            return ResponseEntity.ok(null);
+            return "";
         }
 
         PositionAmount tmp;
@@ -139,7 +159,9 @@ public class MainController {
         }
         if(selectedIds!=null)
             selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
-        return ResponseEntity.ok(new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPositionName()));
+        ResponsePosAmount res = new ResponsePosAmount(amount,tmp.getPositionId(),tmp.getPosName(),tmp.getPosition().getPriceInt());
+        model.addAttribute("pos", res);
+        return "fragments/_selectedItem :: selectedItem";
     }
     //fetch
     @GetMapping("/positions/remove/{id}")
@@ -171,6 +193,16 @@ public class MainController {
         return "Order/orderCreate";
 
     }
+
+
+//    @GetMapping("/order/generateShopping/{id}")
+//    public String generateShopping(Model model, @PathVariable String id) {
+//
+//    }
+
+
+
+
 
 
 

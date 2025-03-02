@@ -11,7 +11,7 @@
 <div class=" w-100" style="background-color: black;height:100vh">
     <div class="container rounded" style="background-color: #454545;width: 50%;position: relative;top:15%">
 
-        <form method="post" action="#" th:action="@{/registration}">
+        <form method="post" action="#" th:action="@{/registration}" enctype="multipart/form-data">
             <div class="row flex-column align-items-center justify-content-center">
 
             <div class="text-center p-3 rounded-top" style="background-color: white;">
@@ -26,14 +26,20 @@
             </div>
             <div class="col-lg-6 col-sm-12 col-md-10">
                 <div class="mb-3">
-                    <label class="form-label" for="password">Password</label>
+                    <label class="form-label" for="password">Пароль</label>
                     <input class="form-control" type="password" id="password" th:name="password" />
                 </div>
             </div>
             <div class="col-lg-6 col-sm-12 col-md-10">
                 <div class="mb-3">
-                    <label class="form-label" for="repeatPassword">Repeat Password</label>
+                    <label class="form-label" for="repeatPassword">Повторіть пароль</label>
                     <input class="form-control" type="password" id="repeatPassword" th:name="repeatPassword" />
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-12 col-md-10">
+                <div class="mb-3">
+                    <label class="form-label" for="repeatPassword">Лого</label>
+                    <input class="form-control" type="file" id="logoFile" name="logoFile" />
                 </div>
             </div>
             <div class="col-lg-6 col-sm-12 col-md-10">
