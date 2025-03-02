@@ -19,6 +19,8 @@
     <div class="container rounded">
 
         <div class="row align-items-center justify-content-center">
+
+
             <div class="col-3 p-3 d-none d-lg-block mb-auto">
                 <ul class="list-group text-decoration-none">
                     <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -38,6 +40,29 @@
                                     </button>
                                 </li>
                                 <li class="list-group-item"><a href="#" class="btn text-decoration-none">Новий інгредієнт</a></li>
+
+                                <li class="list-group-item" id="shoppingToggleBtn" >
+                                    <button class="btn btn-outline-light w-100"  onclick="toggleCheckboxes()">
+                                         Закупівля
+                                    </button>
+
+                                </li>
+
+                                <li class="list-group-item" style="display: none;" id="shoppingFormBtns">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <form  method="get"  action="/order/shopping/collect" id="shoppingForm">
+                                                <button type="submit" class="btn btn-outline-success" >
+                                                    Прорахувати
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="col-4" >
+                                            <button class="btn btn-outline-danger" onclick="toggleCheckboxes()">-</button>
+                                        </div>
+                                    </div>
+
+                                </li>
                             </ul>
                             <hr/>
                             <ul class="list-group">
@@ -49,26 +74,30 @@
                 </ul>
             </div>
 
-            <div class="col-lg-6 col-12 positions mb-4">
+            <div class="col-lg-5 col-12 positions mb-4 mx-1">
+
                 <h2 class="categoryHead" style="background-color: #454545;">Замовлення</h2>
-
-
-
                 <div th:each="order:${orders}" class="order_block row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
+                    <div class="col-12">
+                        <div class="row align-items-center ">
+                            <div class="col-1 select-check" style="visibility: hidden" >
+                                <input type="checkbox" style="transform: scale(2);" name="orderIds[]" id="orderIds" form="shoppingForm" th:value="${order.getId()}"/>
+                            </div>
+                            <div class="position col-6">
+                                <h4 th:if="${order.getClient()}!=''" >
+                                    <a th:text="${order.getClient()}" th:href="'/order/view/'+${order.getId()}" class="text-decoration-none"></a>
+                                </h4>
+                                <h4 th:unless="${order.getClient()}!=''">-</h4>
+                                <span th:text="${order.getPrice()}"></span>
 
-
-                    <div class="position col-4">
-                        <h4 th:if="${order.getClient()}!=''" >
-                            <a th:text="${order.getClient()}" th:href="'/order/view/'+${order.getId()}" class="text-decoration-none"></a>
-                        </h4>
-                        <h4 th:unless="${order.getClient()}!=''">-</h4>
-                        <span th:text="${order.getPrice()}"></span>
-
+                            </div>
+                            <div class="col-5 text-center" >
+                                <span th:text="${order.getDateFormatted()}"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-4 text-center" >
-                        <span th:text="${order.getDateFormatted()}"></span>
-                    </div>
-                    <div class="d-lg-flex d-sm-block text-center col-lg-4 col-sm-12 justify-content-end orderBtn">
+
+                    <div class="d-lg-flex d-sm-block text-center col-12 justify-content-center orderBtn">
 
                         <a class="btn btn-outline-warning" th:href="'/edit/order/'+${order.getId()}" >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
@@ -105,7 +134,33 @@
 
 
             </div>
-            <div class="col-3 d-none d-lg-block mb-auto">
+            <div class="col-3 d-none d-lg-flex mb-auto flex-column align-items-center positions" >
+                <h4 class="categoryHead w-100" style="background-color: #454545;">Об'єднані закупівлі</h4>
+
+                <div th:each="order:${tempOrders}" class="row align-items-center justify-content-center w-100 m-0 " style="height: fit-content;">
+                    <div class="col-12 position" style="height: fit-content;">
+                        <h4 class="text-center">
+                            <a th:text="${order.getClient()}" th:href="'/order/view/'+${order.getId()}" class="text-decoration-none"></a>
+                        </h4>
+                    </div>
+
+                    <div class="d-lg-flex d-sm-block text-center col-12 justify-content-center orderBtn" style="height: fit-content;">
+
+                        <a class="btn btn-outline-primary ms-2" th:href="'/order/shopping/'+${order.getId()}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket3" viewBox="0 0 16 16">
+                                <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6h1.717L5.07 1.243a.5.5 0 0 1 .686-.172zM3.394 15l-1.48-6h-.97l1.525 6.426a.75.75 0 0 0 .729.574h9.606a.75.75 0 0 0 .73-.574L15.056 9h-.972l-1.479 6z"/>
+                            </svg>
+                        </a>
+                        <a class="btn btn-outline-danger ms-2" th:href="'/order/remove/' + ${order.getId()}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                </div>
+
 
             </div>
         </div>
@@ -151,6 +206,18 @@
                 })
                 .catch(error=>console.log(error));
         }
+
+    }
+
+    function toggleCheckboxes() {
+        document.querySelectorAll('.select-check').forEach(element => element.style.visibility = element.style.visibility==='hidden' ? 'visible' : 'hidden');
+        let form = document.getElementById('shoppingFormBtns');
+        form.style.display = form.style.display==='none' ? 'block' : 'none';
+
+        let btn = document.getElementById('shoppingToggleBtn');
+        btn.style.display = btn.style.display==='none' ? 'block' : 'none';
+
+
 
     }
 </script>

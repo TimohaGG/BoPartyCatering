@@ -5,23 +5,14 @@ import com.boparty.bopartycatering.Models.User.User;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.Mapping;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -59,7 +50,7 @@ public class Orders {
     private String phone;
 
 
-    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PositionAmount> positionsAmount;
 
     @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
@@ -70,6 +61,8 @@ public class Orders {
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ShoppingList shoppingList;
+    @ColumnDefault("false")
+    private boolean temporary;
 
     public ShoppingList getShoppingList() {
         return shoppingList;
@@ -183,5 +176,13 @@ public class Orders {
 
     public int getOnOnePerson(){
         return (int)getTotalPrice() / guestsAmount;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
     }
 }

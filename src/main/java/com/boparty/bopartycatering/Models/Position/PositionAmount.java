@@ -17,6 +17,16 @@ public class PositionAmount {
     @ManyToOne(fetch = FetchType.LAZY)
     private Orders order;
     private int amount;
+
+    public static PositionAmount copyPositionAmount(PositionAmount old, Orders order){
+        PositionAmount positionAmount = new PositionAmount();
+        positionAmount.position = old.position;
+        positionAmount.order = order;
+        positionAmount.amount = old.amount;
+        return positionAmount;
+
+    }
+
     public PositionAmount() {
 
     }

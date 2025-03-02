@@ -45,14 +45,8 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         List<Orders> orders = ordersService.getAllOrders();
-
-        //orders = orders.reversed();
-
-
-        for (Orders order : orders) {
-            System.out.println(order.getPositionsAmount());
-        }
         model.addAttribute("orders",ordersService.getAllOrders());
+        model.addAttribute("tempOrders",ordersService.getTempOrders());
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();

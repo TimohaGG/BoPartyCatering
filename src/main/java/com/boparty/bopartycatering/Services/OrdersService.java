@@ -1,33 +1,22 @@
 package com.boparty.bopartycatering.Services;
 
-import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
-import com.boparty.bopartycatering.Models.Position.Ingredient;
 import com.boparty.bopartycatering.Models.Position.IngredientAmount;
-import com.boparty.bopartycatering.Models.Position.Position;
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
-import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Repos.IAdditionalInfoRepos;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Repos.PositionAmountRepos;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,9 +36,19 @@ public class OrdersService {
     }
 
     public List<Orders> getAllOrders() {
-
         String username = userService.getCurrentUser().getUsername();
-        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate())).toList();
+        return ordersRepos
+                .findAllByUserId(userService.getCurrentUser().getId())
+                .stream()
+                .filter(x->!x.isTemporary())
+                .sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate()))
+                .toList();
+
+//        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate())).toList();
+    }
+
+    public List<Orders> getTempOrders(){
+        return ordersRepos.findAllByUserIdAndTemporaryTrue(userService.getCurrentUser().getId());
     }
 
     public Orders save(Orders orders) {
@@ -190,5 +189,25 @@ public class OrdersService {
 
 
         return ings;
+    }
+
+    public Orders createTempOrder(long[] orderIds){
+        List<Orders> orders = new ArrayList<>();
+        Arrays.stream(orderIds).forEach(orderId -> {
+            ordersRepos.findById(orderId).ifPresent(orders::add);
+        });
+
+        Orders temp = new Orders();
+        temp.setUser(orders.get(0).getUser());
+        temp.setClient(orders.stream().map(Orders::getClient).collect(Collectors.joining(" + ")));
+        temp.setTemporary(true);
+        temp = ordersRepos.save(temp);
+
+        List<PositionAmount> t = orders.stream().map(Orders::getPositionsAmount).flatMap(List::stream).toList();
+        for(PositionAmount pa : t){
+            temp.addPosition(PositionAmount.copyPositionAmount(pa,temp));
+        }
+        temp = ordersRepos.save(temp);
+        return temp;
     }
 }

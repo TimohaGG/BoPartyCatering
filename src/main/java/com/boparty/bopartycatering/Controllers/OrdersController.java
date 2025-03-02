@@ -206,5 +206,10 @@ public class OrdersController {
         return ResponseEntity.ok(shoppingListService.findSelectedItems(shoppingId));
     }
 
+    @GetMapping("/order/shopping/collect")
+    public String collect(long[] orderIds, Model model) {
+        Orders temp = ordersService.createTempOrder(orderIds);
+        return "redirect:/order/shopping/"+temp.getId();
+    }
 
 }
