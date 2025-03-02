@@ -267,3 +267,40 @@ padding-bottom: 50px;
  .modal-backdrop{
      z-index: -10 !important;
  }
+
+
+#shoppingFormBtnsMobile{
+    position: absolute;
+    bottom: 21%;
+    right:3%;
+
+    animation: slideBtn 0.5s ease-in-out both;
+}
+
+@keyframes slideBtn {
+    from{
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+
+#shoppingBtnMobile{
+    animation: slideOutBtn 0.5s ease-in-out alternate;
+}
+
+@keyframes slideOutBtn {
+    from{
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
