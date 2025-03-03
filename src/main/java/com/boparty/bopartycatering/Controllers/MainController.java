@@ -74,6 +74,7 @@ public class MainController {
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();
+
             List<Event> items = events.getItems();
             if (items.isEmpty()) {
                 System.out.println("No upcoming events found.");
