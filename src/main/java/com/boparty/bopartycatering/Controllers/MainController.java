@@ -67,17 +67,24 @@ public class MainController {
                             .setApplicationName(CalendarQuickstart.APPLICATION_NAME)
                             .build();
 
-            Event ev = new Event()
-                    .setSummary("Welcome");
+            Event event = new Event()
+                .setSummary("Google I/O 2015")
+                .setLocation("800 Howard St., San Francisco, CA 94103")
+                .setDescription("A chance to hear more about Google's developer products.");
 
-            ev.setStart(new EventDateTime().setDate(new DateTime(new Date())));
+                DateTime startDateTime = new DateTime("2025-03-03T09:00:00-07:00");
+                EventDateTime start = new EventDateTime()
+                    .setDateTime(startDateTime)
+                    .setTimeZone("America/Los_Angeles");
+                event.setStart(start);
 
-            DateTime endDateTime = new DateTime("2025-03-03T18:00:00-07:00");
-            EventDateTime end = new EventDateTime()
-                    .setDateTime(endDateTime);
-            ev.setEnd(end);
+                DateTime endDateTime = new DateTime("2025-03-03T17:00:00-07:00");
+                EventDateTime end = new EventDateTime()
+                    .setDateTime(endDateTime)
+                    .setTimeZone("America/Los_Angeles");
+                event.setEnd(end);
             String calendarId = "primary";
-            service.events().insert(calendarId, ev).execute();
+            event = service.events().insert(calendarId, event).execute();
             // List the next 10 events from the primary calendar.
 //            DateTime now = new DateTime(System.currentTimeMillis());
 //            Events events = service.events().list("primary")
