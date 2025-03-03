@@ -59,57 +59,57 @@ public class MainController {
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();
 
-
-        try{
-            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            com.google.api.services.calendar.Calendar service =
-                    new Calendar.Builder(HTTP_TRANSPORT, CalendarQuickstart.JSON_FACTORY, CalendarQuickstart.getCredentials(HTTP_TRANSPORT))
-                            .setApplicationName(CalendarQuickstart.APPLICATION_NAME)
-                            .build();
-
-            Event event = new Event()
-                .setSummary("Google I/O 2015")
-                .setLocation("800 Howard St., San Francisco, CA 94103")
-                .setDescription("A chance to hear more about Google's developer products.");
-
-                DateTime startDateTime = new DateTime("2025-03-03T09:00:00-07:00");
-                EventDateTime start = new EventDateTime()
-                    .setDateTime(startDateTime)
-                    .setTimeZone("America/Los_Angeles");
-                event.setStart(start);
-
-                DateTime endDateTime = new DateTime("2025-03-03T17:00:00-07:00");
-                EventDateTime end = new EventDateTime()
-                    .setDateTime(endDateTime)
-                    .setTimeZone("America/Los_Angeles");
-                event.setEnd(end);
-            String calendarId = "primary";
-            event = service.events().insert(calendarId, event).execute();
-            // List the next 10 events from the primary calendar.
-//            DateTime now = new DateTime(System.currentTimeMillis());
-//            Events events = service.events().list("primary")
-//                    .setMaxResults(10)
-//                    .setTimeMin(now)
-//                    .setOrderBy("startTime")
-//                    .setSingleEvents(true)
-//                    .execute();
 //
-//            List<Event> items = events.getItems();
-//            if (items.isEmpty()) {
-//                System.out.println("No upcoming events found.");
-//            } else {
-//                System.out.println("Upcoming events");
-//                for (Event event : items) {
-//                    DateTime start = event.getStart().getDateTime();
-//                    if (start == null) {
-//                        start = event.getStart().getDate();
-//                    }
-//                    System.out.printf("%s (%s)\n", event.getSummary(), start);
-//                }
-//            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        try{
+//            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+//            com.google.api.services.calendar.Calendar service =
+//                    new Calendar.Builder(HTTP_TRANSPORT, CalendarQuickstart.JSON_FACTORY, CalendarQuickstart.getCredentials(HTTP_TRANSPORT))
+//                            .setApplicationName(CalendarQuickstart.APPLICATION_NAME)
+//                            .build();
+//
+//            Event event = new Event()
+//                .setSummary("Google I/O 2015")
+//                .setLocation("800 Howard St., San Francisco, CA 94103")
+//                .setDescription("A chance to hear more about Google's developer products.");
+//
+//                DateTime startDateTime = new DateTime("2025-03-03T09:00:00-07:00");
+//                EventDateTime start = new EventDateTime()
+//                    .setDateTime(startDateTime)
+//                    .setTimeZone("America/Los_Angeles");
+//                event.setStart(start);
+//
+//                DateTime endDateTime = new DateTime("2025-03-03T17:00:00-07:00");
+//                EventDateTime end = new EventDateTime()
+//                    .setDateTime(endDateTime)
+//                    .setTimeZone("America/Los_Angeles");
+//                event.setEnd(end);
+//            String calendarId = "primary";
+//            event = service.events().insert(calendarId, event).execute();
+//            // List the next 10 events from the primary calendar.
+////            DateTime now = new DateTime(System.currentTimeMillis());
+////            Events events = service.events().list("primary")
+////                    .setMaxResults(10)
+////                    .setTimeMin(now)
+////                    .setOrderBy("startTime")
+////                    .setSingleEvents(true)
+////                    .execute();
+////
+////            List<Event> items = events.getItems();
+////            if (items.isEmpty()) {
+////                System.out.println("No upcoming events found.");
+////            } else {
+////                System.out.println("Upcoming events");
+////                for (Event event : items) {
+////                    DateTime start = event.getStart().getDateTime();
+////                    if (start == null) {
+////                        start = event.getStart().getDate();
+////                    }
+////                    System.out.printf("%s (%s)\n", event.getSummary(), start);
+////                }
+////            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
 
        // List<IngredientAmount> res = ordersService.getShopping(new ArrayList<>());
         return "index";
