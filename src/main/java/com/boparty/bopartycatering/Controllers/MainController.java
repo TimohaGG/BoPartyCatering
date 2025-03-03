@@ -12,6 +12,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,28 +67,39 @@ public class MainController {
                             .setApplicationName(CalendarQuickstart.APPLICATION_NAME)
                             .build();
 
-            // List the next 10 events from the primary calendar.
-            DateTime now = new DateTime(System.currentTimeMillis());
-            Events events = service.events().list("primary")
-                    .setMaxResults(10)
-                    .setTimeMin(now)
-                    .setOrderBy("startTime")
-                    .setSingleEvents(true)
-                    .execute();
+            Event ev = new Event()
+                    .setSummary("Welcome");
 
-            List<Event> items = events.getItems();
-            if (items.isEmpty()) {
-                System.out.println("No upcoming events found.");
-            } else {
-                System.out.println("Upcoming events");
-                for (Event event : items) {
-                    DateTime start = event.getStart().getDateTime();
-                    if (start == null) {
-                        start = event.getStart().getDate();
-                    }
-                    System.out.printf("%s (%s)\n", event.getSummary(), start);
-                }
-            }
+            ev.setStart(new EventDateTime().setDate(new DateTime(new Date())));
+
+            DateTime endDateTime = new DateTime("2025-03-03T18:00:00-07:00");
+            EventDateTime end = new EventDateTime()
+                    .setDateTime(endDateTime);
+            ev.setEnd(end);
+            String calendarId = "primary";
+            service.events().insert(calendarId, ev).execute();
+            // List the next 10 events from the primary calendar.
+//            DateTime now = new DateTime(System.currentTimeMillis());
+//            Events events = service.events().list("primary")
+//                    .setMaxResults(10)
+//                    .setTimeMin(now)
+//                    .setOrderBy("startTime")
+//                    .setSingleEvents(true)
+//                    .execute();
+//
+//            List<Event> items = events.getItems();
+//            if (items.isEmpty()) {
+//                System.out.println("No upcoming events found.");
+//            } else {
+//                System.out.println("Upcoming events");
+//                for (Event event : items) {
+//                    DateTime start = event.getStart().getDateTime();
+//                    if (start == null) {
+//                        start = event.getStart().getDate();
+//                    }
+//                    System.out.printf("%s (%s)\n", event.getSummary(), start);
+//                }
+//            }
         }catch (Exception e){
             e.printStackTrace();
         }

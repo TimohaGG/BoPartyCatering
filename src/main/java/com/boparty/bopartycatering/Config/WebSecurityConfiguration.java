@@ -25,6 +25,7 @@ public class WebSecurityConfiguration {
                     auth
                             .requestMatchers("/login","/registration").permitAll()
                             .requestMatchers("/asserts/**").permitAll()
+                            .requestMatchers("/oauth2/authorize/google").permitAll()
                             .anyRequest().authenticated();
                 })
 

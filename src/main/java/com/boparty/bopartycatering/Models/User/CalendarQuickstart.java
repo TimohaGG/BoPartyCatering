@@ -26,7 +26,7 @@ public class CalendarQuickstart {
     public static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     public static final String TOKENS_DIRECTORY_PATH = "tokens";
     public static final List<String> SCOPES =
-            Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
+            Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
     public static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
 
@@ -45,7 +45,7 @@ public class CalendarQuickstart {
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
                 .setAccessType("offline")
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(9090).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         return credential;
     }
