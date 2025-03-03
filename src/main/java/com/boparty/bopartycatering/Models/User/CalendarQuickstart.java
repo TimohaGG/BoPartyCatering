@@ -45,23 +45,6 @@ public class CalendarQuickstart {
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
                 .setAccessType("offline")
                 .build();
-
-//        // Generate authorization URL
-//        String authorizationUrl = flow.newAuthorizationUrl().setRedirectUri("urn:ietf:wg:oauth:2.0:oob").build();
-//
-//        System.out.println("1. Open the following URL in your browser:");
-//        System.out.println(authorizationUrl);
-//        System.out.println("2. Authorize the application and copy the authorization code.");
-//
-//        // Read authorization code from user input
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.print("Enter the authorization code: ");
-//        String code = scanner.nextLine();
-//
-//        // Exchange the authorization code for an access token
-//        GoogleTokenResponse tokenResponse = flow.newTokenRequest(code)
-//                .setRedirectUri("urn:ietf:wg:oauth:2.0:oob")
-//                .execute();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         return credential;
