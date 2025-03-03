@@ -4,8 +4,15 @@ import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.ShoppingList;
 import com.boparty.bopartycatering.Models.Position.*;
+import com.boparty.bopartycatering.Models.User.CalendarQuickstart;
 import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Services.*;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Events;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +57,39 @@ public class MainController {
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();
+
+
+        try{
+            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+            com.google.api.services.calendar.Calendar service =
+                    new Calendar.Builder(HTTP_TRANSPORT, CalendarQuickstart.JSON_FACTORY, CalendarQuickstart.getCredentials(HTTP_TRANSPORT))
+                            .setApplicationName(CalendarQuickstart.APPLICATION_NAME)
+                            .build();
+
+            // List the next 10 events from the primary calendar.
+            DateTime now = new DateTime(System.currentTimeMillis());
+            Events events = service.events().list("primary")
+                    .setMaxResults(10)
+                    .setTimeMin(now)
+                    .setOrderBy("startTime")
+                    .setSingleEvents(true)
+                    .execute();
+            List<Event> items = events.getItems();
+            if (items.isEmpty()) {
+                System.out.println("No upcoming events found.");
+            } else {
+                System.out.println("Upcoming events");
+                for (Event event : items) {
+                    DateTime start = event.getStart().getDateTime();
+                    if (start == null) {
+                        start = event.getStart().getDate();
+                    }
+                    System.out.printf("%s (%s)\n", event.getSummary(), start);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
        // List<IngredientAmount> res = ordersService.getShopping(new ArrayList<>());
         return "index";
