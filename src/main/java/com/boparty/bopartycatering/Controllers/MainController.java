@@ -4,9 +4,11 @@ import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.ShoppingList;
 import com.boparty.bopartycatering.Models.Position.*;
-import com.boparty.bopartycatering.Models.User.CalendarQuickstart;
+
 import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Services.*;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.util.DateTime;
@@ -15,6 +17,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -25,6 +28,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -40,8 +44,11 @@ public class MainController {
     private Orders tmpOrder;
     private List<PositionAmount> tmpPositions;
     private Map<Long,Integer> selectedIds;
+    private final GoogleOAuthService googleOAuthService;
+    private final GoogleCalendarService calendarService;
+
     @Autowired
-    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService) {
+    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService,GoogleOAuthService googleOAuthService, GoogleCalendarService calendarService) {
         this.ordersService = ordersService;
         this.positionsService = positionsService;
         this.userService = userService;
@@ -49,70 +56,73 @@ public class MainController {
         tmpPositions = new ArrayList<>();
         selectedIds  = new HashMap<>();
         this.shoppingListService = shoppingListService;
+        this.googleOAuthService = googleOAuthService;
+        this.calendarService = calendarService;
+
+
     }
     @GetMapping("/")
     public String index(Model model) {
         List<Orders> orders = ordersService.getAllOrders();
         model.addAttribute("orders",ordersService.getAllOrders());
         model.addAttribute("tempOrders",ordersService.getTempOrders());
+        try{
+            model.addAttribute("authorized",googleOAuthService.isUserAuthorized(userService.getCurrentUser().getUsername()));
+        }catch (Exception e){
+            model.addAttribute("authorized",false);
+        }
+
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();
 
-//
-//        try{
-//            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-//            com.google.api.services.calendar.Calendar service =
-//                    new Calendar.Builder(HTTP_TRANSPORT, CalendarQuickstart.JSON_FACTORY, CalendarQuickstart.getCredentials(HTTP_TRANSPORT))
-//                            .setApplicationName(CalendarQuickstart.APPLICATION_NAME)
-//                            .build();
-//
-//            Event event = new Event()
-//                .setSummary("Google I/O 2015")
-//                .setLocation("800 Howard St., San Francisco, CA 94103")
-//                .setDescription("A chance to hear more about Google's developer products.");
-//
-//                DateTime startDateTime = new DateTime("2025-03-03T09:00:00-07:00");
-//                EventDateTime start = new EventDateTime()
-//                    .setDateTime(startDateTime)
-//                    .setTimeZone("America/Los_Angeles");
-//                event.setStart(start);
-//
-//                DateTime endDateTime = new DateTime("2025-03-03T17:00:00-07:00");
-//                EventDateTime end = new EventDateTime()
-//                    .setDateTime(endDateTime)
-//                    .setTimeZone("America/Los_Angeles");
-//                event.setEnd(end);
-//            String calendarId = "primary";
-//            event = service.events().insert(calendarId, event).execute();
-//            // List the next 10 events from the primary calendar.
-////            DateTime now = new DateTime(System.currentTimeMillis());
-////            Events events = service.events().list("primary")
-////                    .setMaxResults(10)
-////                    .setTimeMin(now)
-////                    .setOrderBy("startTime")
-////                    .setSingleEvents(true)
-////                    .execute();
-////
-////            List<Event> items = events.getItems();
-////            if (items.isEmpty()) {
-////                System.out.println("No upcoming events found.");
-////            } else {
-////                System.out.println("Upcoming events");
-////                for (Event event : items) {
-////                    DateTime start = event.getStart().getDateTime();
-////                    if (start == null) {
-////                        start = event.getStart().getDate();
-////                    }
-////                    System.out.printf("%s (%s)\n", event.getSummary(), start);
-////                }
-////            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-
-       // List<IngredientAmount> res = ordersService.getShopping(new ArrayList<>());
         return "index";
+    }
+
+    @GetMapping("/oauth2/authorize")
+    public String authorize() {
+        String res = googleOAuthService.getAuthorizationUrl();
+        return "redirect:"+googleOAuthService.getAuthorizationUrl();
+    }
+
+    @GetMapping("/oauth2/callback")
+    public String oauth2Callback(@RequestParam("code") String code, HttpServletRequest request) {
+        try {
+            Credential credential = googleOAuthService.getCredentials(code, userService.getCurrentUser().getUsername());
+            Calendar calendarService = googleOAuthService.getCalendarService(userService.getCurrentUser().getUsername());
+            request.getSession().setAttribute("calendarService", calendarService);
+            return "redirect:/";
+        } catch (IOException e) {
+            return "redirect:/error";
+        }
+    }
+
+    @GetMapping("/oauth2/logout")
+    public String logout() {
+        try{
+            googleOAuthService.logoutUser(userService.getCurrentUser().getUsername());
+        }catch (Exception e){
+            System.out.println("Error logging out");
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/order/addCalendar/{id}")
+    public String addCalendar(Model model, @PathVariable Long id) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            if(calendarService.createEvent(userService.getCurrentUser().getUsername(),order)){
+                return "redirect:/";
+            }
+            return "redirect:/error";
+
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/error")
+    public String error() {
+        return "error";
     }
 
     @GetMapping("/create/order")
