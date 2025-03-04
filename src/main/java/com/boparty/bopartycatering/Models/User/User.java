@@ -150,7 +150,7 @@ public class User implements UserDetails {
     }
 
     public String getDefaultCalendar() {
-        return defaultCalendar.isEmpty() ? "primary" : defaultCalendar;
+        return defaultCalendar==null ? "primary" : defaultCalendar;
     }
 
     public void setDefaultCalendar(String defaultCalendar) {
