@@ -110,18 +110,17 @@ public class MainController {
     }
 
     @GetMapping("/order/addCalendar/{id}")
-    public String addCalendar(Model model, @PathVariable Long id) {
+    public ResponseEntity<Boolean> addCalendar(Model model, @PathVariable Long id) {
         Orders order = ordersService.getOrderById(id);
         if(order != null){
-
             User user = userService.getCurrentUser();
             if(calendarService.createEvent(user.getUsername(),order, user.getDefaultCalendar())){
-                return "redirect:/";
+                return ResponseEntity.ok(true);
             }
-            return "redirect:/error";
+            return ResponseEntity.ok(false);
 
         }
-        return "redirect:/";
+        return ResponseEntity.ok(false);
     }
 
     @GetMapping("/error")
@@ -135,6 +134,20 @@ public class MainController {
         user.setDefaultCalendar(calendar);
         userService.save(user);
         return ResponseEntity.ok(calendar);
+    }
+
+    @GetMapping("/settings")
+    public String settings(Model model) {
+
+        User user = userService.getCurrentUser();
+        model.addAttribute("defCalendar",user.getDefaultCalendar());
+        try{
+            model.addAttribute("authorized",googleOAuthService.isUserAuthorized(user.getUsername()));
+            model.addAttribute("calendars",googleOAuthService.getAllCalendars(user.getUsername()));
+        }catch (Exception e){
+            model.addAttribute("authorized",false);
+        }
+        return "User/settings";
     }
 
     @GetMapping("/create/order")
