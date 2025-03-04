@@ -112,6 +112,10 @@ public class GoogleOAuthService {
         return flow.loadCredential(userId);
     }
 
+    public List<CalendarListEntry> getAllCalendars(String userId) throws IOException {
+        return getCalendarService(userId).calendarList().list().execute().getItems();
+    }
+
     public String getCalendarId(String userId, String calendarName) throws IOException {
         List<CalendarListEntry> list = getCalendarService(userId).calendarList().list().execute().getItems();
         CalendarListEntry res= list.stream().filter(x->x.getSummary().equalsIgnoreCase(calendarName)).findFirst().orElse(null);

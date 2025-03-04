@@ -51,6 +51,9 @@ public class User implements UserDetails {
     @Lob
     private byte[] logo;
 
+    private String defaultCalendar;
+
+
     public byte[] getLogo() {
         return logo;
     }
@@ -144,6 +147,14 @@ public class User implements UserDetails {
 
     public void setRepeatPassword(String repeatPassword) {
         this.repeatPassword = repeatPassword;
+    }
+
+    public String getDefaultCalendar() {
+        return defaultCalendar.isEmpty() ? "primary" : defaultCalendar;
+    }
+
+    public void setDefaultCalendar(String defaultCalendar) {
+        this.defaultCalendar = defaultCalendar;
     }
 }
 

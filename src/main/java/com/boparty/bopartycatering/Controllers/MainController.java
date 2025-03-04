@@ -66,8 +66,10 @@ public class MainController {
         List<Orders> orders = ordersService.getAllOrders();
         model.addAttribute("orders",ordersService.getAllOrders());
         model.addAttribute("tempOrders",ordersService.getTempOrders());
+        model.addAttribute("defCalendar",userService.getCurrentUser().getDefaultCalendar());
         try{
             model.addAttribute("authorized",googleOAuthService.isUserAuthorized(userService.getCurrentUser().getUsername()));
+            model.addAttribute("calendars",googleOAuthService.getAllCalendars(userService.getCurrentUser().getUsername()));
         }catch (Exception e){
             model.addAttribute("authorized",false);
         }
@@ -111,7 +113,9 @@ public class MainController {
     public String addCalendar(Model model, @PathVariable Long id) {
         Orders order = ordersService.getOrderById(id);
         if(order != null){
-            if(calendarService.createEvent(userService.getCurrentUser().getUsername(),order)){
+
+            User user = userService.getCurrentUser();
+            if(calendarService.createEvent(user.getUsername(),order, user.getDefaultCalendar())){
                 return "redirect:/";
             }
             return "redirect:/error";
@@ -123,6 +127,14 @@ public class MainController {
     @GetMapping("/error")
     public String error() {
         return "error";
+    }
+
+    @GetMapping("/user/changeDefCalendar")
+    public ResponseEntity<String> changeDefColor(@RequestParam String calendar, Model model) {
+        User user = userService.getCurrentUser();
+        user.setDefaultCalendar(calendar);
+        userService.save(user);
+        return ResponseEntity.ok(calendar);
     }
 
     @GetMapping("/create/order")

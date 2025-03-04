@@ -27,7 +27,7 @@ public class GoogleCalendarService {
        this.service = service;
     }
 
-    public boolean createEvent(String userId, Orders order) {
+    public boolean createEvent(String userId, Orders order, String calendarId) {
         try{
 
             Calendar calendar = service.getCalendarService(userId);
@@ -52,7 +52,7 @@ public class GoogleCalendarService {
                 event.setEnd(end);
             }
 
-            String calendarId = service.getCalendarId(userId, "Алиса");
+
             calendar.events().insert(calendarId, event).execute();
         }catch (Exception e){
             return false;
@@ -62,12 +62,25 @@ public class GoogleCalendarService {
 
     public EventDateTime convertToEventDateTime(LocalDateTime localDateTime, ZoneId zoneId) {
         // Convert LocalDateTime to ZonedDateTime
+//        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+//
+//        // Convert to Google's DateTime (which uses milliseconds from epoch)
+//        DateTime googleDateTime = new DateTime(zonedDateTime.toInstant().toEpochMilli());
+//
+//        // Create EventDateTime object
+//        return new EventDateTime()
+//                .setDateTime(googleDateTime)
+//                .setTimeZone(zoneId.toString());
+
+
         ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
 
-        // Convert to Google's DateTime (which uses milliseconds from epoch)
-        DateTime googleDateTime = new DateTime(zonedDateTime.toInstant().toEpochMilli());
+        // 2. Convert to Instant to avoid unwanted shifts
+        Instant instant = zonedDateTime.toInstant();
 
-        // Create EventDateTime object
+        // 3. Convert to Google API DateTime (which uses milliseconds)
+        DateTime googleDateTime = new DateTime(instant.toEpochMilli());
+
         return new EventDateTime()
                 .setDateTime(googleDateTime)
                 .setTimeZone(zoneId.toString());

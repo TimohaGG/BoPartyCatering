@@ -77,4 +77,10 @@ public class UserService implements UserDetailsService {
     public Long getFirstCategory() {
         return getCurrentUser().getCategories().get(0).getId();
     }
+
+
+    public void save(User user){
+        userRepos.save(user);
+    }
+
 }
