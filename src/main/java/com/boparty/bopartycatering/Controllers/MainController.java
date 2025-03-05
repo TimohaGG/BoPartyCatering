@@ -114,7 +114,7 @@ public class MainController {
         Orders order = ordersService.getOrderById(id);
         if(order != null){
             User user = userService.getCurrentUser();
-            if(calendarService.createEvent(user.getUsername(),order, user.getDefaultCalendar())){
+            if(calendarService.createEvent(user.getUsername(),order, user.getDefaultCalendar(), user.getDefaultColor())){
                 return ResponseEntity.ok(true);
             }
             return ResponseEntity.ok(false);
@@ -129,11 +129,19 @@ public class MainController {
     }
 
     @GetMapping("/user/changeDefCalendar")
-    public ResponseEntity<String> changeDefColor(@RequestParam String calendar, Model model) {
+    public ResponseEntity<String> changeDefCalendar(@RequestParam String calendar, Model model) {
         User user = userService.getCurrentUser();
         user.setDefaultCalendar(calendar);
         userService.save(user);
         return ResponseEntity.ok(calendar);
+    }
+
+    @GetMapping("/user/changeDefColor")
+    public ResponseEntity<String> changeDefColor(@RequestParam String color, Model model) {
+        User user = userService.getCurrentUser();
+        user.setDefaultColor(color);
+        userService.save(user);
+        return ResponseEntity.ok(color);
     }
 
     @GetMapping("/settings")
@@ -141,9 +149,11 @@ public class MainController {
 
         User user = userService.getCurrentUser();
         model.addAttribute("defCalendar",user.getDefaultCalendar());
+        model.addAttribute("defColor",user.getDefaultColor());
         try{
             model.addAttribute("authorized",googleOAuthService.isUserAuthorized(user.getUsername()));
             model.addAttribute("calendars",googleOAuthService.getAllCalendars(user.getUsername()));
+            model.addAttribute("colors",googleOAuthService.getColors(user.getUsername()));
         }catch (Exception e){
             model.addAttribute("authorized",false);
         }

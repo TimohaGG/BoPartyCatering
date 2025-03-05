@@ -52,6 +52,7 @@ public class User implements UserDetails {
     private byte[] logo;
 
     private String defaultCalendar;
+    private String defaultColor;
 
 
     public byte[] getLogo() {
@@ -155,6 +156,14 @@ public class User implements UserDetails {
 
     public void setDefaultCalendar(String defaultCalendar) {
         this.defaultCalendar = defaultCalendar;
+    }
+
+    public String getDefaultColor() {
+        return defaultColor==null ? "1" : defaultColor;
+    }
+
+    public void setDefaultColor(String defaultColor) {
+        this.defaultColor = defaultColor;
     }
 }
 

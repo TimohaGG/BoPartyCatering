@@ -32,9 +32,20 @@
                     </li>
                     <li class="list-group-item" th:if="${authorized}">
                         <label class="form-label">Календар за замовчуванням</label>
-                        <select name="calendarSelect" id="calendarSelect" onchange="changeDefColor()" class="form-select rounded-input" >
+                        <select name="calendarSelect" id="calendarSelect" onchange="changeDefCalendar()" class="form-select rounded-input" >
                             <option th:each="cal:${calendars}" th:text="${cal.getSummary()}" th:value="${cal.getId()}" th:selected="${defCalendar.equals(cal.getId())}"></option>
                         </select>
+                    </li>
+                    <li class="list-group-item " th:if="${authorized}">
+                        <label class="form-label">Колір за замовчуванням</label>
+
+
+                        <select name="colorSelect" id="colorSelect" onchange="changeDefColor()" class="form-select rounded-input">
+                            <option th:each="color:${colors}" th:value="${color.getKey()}" th:text="${color.getValue().getBackground()}" th:selected="${defColor.equals(color.getKey())}">
+                            </option>
+                        </select>
+
+
                     </li>
                 </ul>
             </div>
@@ -45,7 +56,7 @@
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
-    async function changeDefColor(){
+    async function changeDefCalendar(){
         let value = document.getElementById("calendarSelect").value;
         let resp = await fetch("/user/changeDefCalendar?calendar=" + value,{
             method:"GET"
@@ -56,6 +67,25 @@
             })
             .catch(error=>console.log(error));
     }
+
+    async function changeDefColor(){
+        setBackground();
+
+        let resp = await fetch("/user/changeDefColor?color=" + document.getElementById("colorSelect").value,{
+            method:"GET"
+        })
+            .then(res=>res.text())
+            .then(resp=>{
+
+            })
+            .catch(error=>console.log(error));
+    }
+
+    function setBackground(){
+        let select = document.getElementById("colorSelect");
+        select.style.backgroundColor = select.selectedOptions[0].text;
+    }
+    setBackground();
 </script>
 
 </body>

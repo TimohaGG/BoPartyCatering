@@ -28,7 +28,7 @@ public class GoogleCalendarService {
        this.service = service;
     }
 
-    public boolean createEvent(String userId, Orders order, String calendarId) {
+    public boolean createEvent(String userId, Orders order, String calendarId, String colorId) {
         try{
 
             Calendar calendar = service.getCalendarService(userId);
@@ -42,7 +42,8 @@ public class GoogleCalendarService {
 
             Event event = new Event()
                     .setSummary(title)
-                    .setDescription(order.getFormat());
+                    .setDescription(order.getFormat())
+                    .setColorId(colorId);
             if(order.getDate()!=null){
 
 

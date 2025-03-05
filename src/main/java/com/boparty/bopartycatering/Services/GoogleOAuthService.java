@@ -18,6 +18,8 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
+import com.google.api.services.calendar.model.ColorDefinition;
+import com.google.api.services.calendar.model.Colors;
 import org.apache.http.client.methods.HttpTrace;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,7 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 @Component
 public class GoogleOAuthService {
@@ -120,6 +123,17 @@ public class GoogleOAuthService {
         List<CalendarListEntry> list = getCalendarService(userId).calendarList().list().execute().getItems();
         CalendarListEntry res= list.stream().filter(x->x.getSummary().equalsIgnoreCase(calendarName)).findFirst().orElse(null);
         return res==null ? "primary" : res.getId();
+
+    }
+
+    public Map<String, ColorDefinition> getColors(String userId){
+        try{
+            Calendar service = getCalendarService(userId);
+            return service.colors().get().execute().getEvent();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
 
     }
 
