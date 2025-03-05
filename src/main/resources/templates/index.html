@@ -111,12 +111,7 @@
                                     </a>
 
                                 </li>
-                                <li class="list-group-item" th:if="${authorized}">
-                                    <label class="form-label">Календар за замовчуванням</label>
-                                    <select name="calendarSelect" id="calendarSelect" onchange="changeDefColor()" class="form-select rounded-input" >
-                                        <option th:each="cal:${calendars}" th:text="${cal.getSummary()}" th:value="${cal.getId()}" th:selected="${defCalendar.equals(cal.getId())}"></option>
-                                    </select>
-                                </li>
+
                             </ul>
                         </div>
                     </li>

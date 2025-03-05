@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
