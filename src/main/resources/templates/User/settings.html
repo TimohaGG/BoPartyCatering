@@ -21,15 +21,7 @@
         <div class="row align-items-center pt-2" style="justify-content: space-around;height: 100vh">
             <div class="col-sm-12 col-lg-6 positions mb-4" style="overflow-y: scroll;overflow-x: hidden;height: 100%">
                 <ul class="list-group">
-                    <li class="list-group-item">
-                        <a href="/oauth2/authorize" class="text-decoration-none btn btn-outline-danger w-100" th:if="${!authorized}">
-                            Увійти з   <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"/>
-                        </a>
-                        <a href="/oauth2/logout" class="text-decoration-none btn btn-outline-danger w-100" th:if="${authorized}">
-                            Змінити акаунт
-                        </a>
 
-                    </li>
                     <li class="list-group-item" th:if="${authorized}">
                         <label class="form-label">Календар за замовчуванням</label>
                         <select name="calendarSelect" id="calendarSelect" onchange="changeDefCalendar()" class="form-select rounded-input" >
@@ -45,6 +37,15 @@
                             </option>
                         </select>
 
+
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/oauth2/authorize" class="text-decoration-none btn btn-outline-danger w-100" th:if="${!authorized}">
+                            Увійти з   <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"/>
+                        </a>
+                        <a href="/oauth2/logout" class="text-decoration-none btn btn-outline-danger w-100" th:if="${authorized}">
+                            Змінити акаунт
+                        </a>
 
                     </li>
                 </ul>
