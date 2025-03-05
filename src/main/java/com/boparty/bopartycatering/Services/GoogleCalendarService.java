@@ -9,6 +9,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Colors;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,12 @@ public class GoogleCalendarService {
 
 
                 ZoneId zoneId = ZoneId.systemDefault();
-                EventDateTime start = convertToEventDateTime(order.getDate(), zoneId);
-                EventDateTime end = convertToEventDateTime(order.getDate().plusHours(1), zoneId);
+                EventDateTime start = convertToEventDateTime(order.getDate(), "Europe/Kyiv");
+                EventDateTime end = convertToEventDateTime(order.getDate().plusHours(1), "Europe/Kyiv");
                 event.setStart(start);
                 event.setEnd(end);
             }
+
 
 
             calendar.events().insert(calendarId, event).execute();
@@ -60,30 +62,14 @@ public class GoogleCalendarService {
         return true;
     }
 
-    public EventDateTime convertToEventDateTime(LocalDateTime localDateTime, ZoneId zoneId) {
-        // Convert LocalDateTime to ZonedDateTime
-//        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
-//
-//        // Convert to Google's DateTime (which uses milliseconds from epoch)
-//        DateTime googleDateTime = new DateTime(zonedDateTime.toInstant().toEpochMilli());
-//
-//        // Create EventDateTime object
-//        return new EventDateTime()
-//                .setDateTime(googleDateTime)
-//                .setTimeZone(zoneId.toString());
-
-
-        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
-
-        // 2. Convert to Instant to avoid unwanted shifts
+    public EventDateTime convertToEventDateTime(LocalDateTime localDateTime, String timezone) {
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(timezone));
         Instant instant = zonedDateTime.toInstant();
-
-        // 3. Convert to Google API DateTime (which uses milliseconds)
         DateTime googleDateTime = new DateTime(instant.toEpochMilli());
 
         return new EventDateTime()
                 .setDateTime(googleDateTime)
-                .setTimeZone(zoneId.toString());
+                .setTimeZone(timezone);
     }
 
 }
