@@ -27,8 +27,8 @@ public class Orders {
         client = "";
         guestsAmount = 0;
         duration = 0;
-        format = "";
-        phone = "";
+        format = "Бокси";
+        phone = "0688714410";
         id = 0L;
         positionsAmount = new ArrayList<>();
     }

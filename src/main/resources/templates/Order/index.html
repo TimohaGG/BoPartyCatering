@@ -151,7 +151,7 @@
                                     <div class="modal-body" style="background-color: #202020">
 
                                         <div class="mb-3">
-                                            <label class="fourm-label" for="infoTemplate">Шаблон</label>
+                                            <label class="form-label" for="infoTemplate">Шаблон</label>
                                             <select class="form-select" id="infoTemplate" name="infoTemplate" style="color: black !important;" onchange="func()">
                                                 <option value="0" th:text="'-'"></option>
                                                 <option  th:each="inf:${common}" th:value="${inf.getId()}" th:text="${inf.getTitle()}" ></option>
@@ -181,8 +181,8 @@
 
                                     </div>
                                     <div class="modal-footer" style="background-color: #454545">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відмінити</button>
+                                        <button type="submit" class="btn btn-primary">Зберегти</button>
                                     </div>
                                     </form>
                                 </div>
