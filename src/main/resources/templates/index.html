@@ -122,9 +122,16 @@
             <div class="col-lg-5 col-12 positions mb-4 mx-1">
 
                 <h2 class="categoryHead" style="background-color: #454545;">Замовлення</h2>
-                <div th:each="order:${orders}" class="order_block row align-items-center justify-content-center w-100 m-0" style="height: fit-content;">
+                <div th:each="order:${orders}" th:id="'order_div_'+${order.getId()}" class="order_block row align-items-center justify-content-center w-100 m-0" style="height: fit-content !important;" th:style="'background-color: ' + ${order.status.getColor()} + ';'">
+                    <div style="position: absolute;top:5px;right:5px;width: fit-content" class="mb-2">
+                        <select th:id="'order_status_select_'+${order.getId()}" class="rounded-input" th:onchange="'changeStatus('+${order.getId()}+')'">
+                            <option th:each="status:${statuses}" th:text="${status.getTitle()}" th:value="${status}" th:selected="${order.getStatus().equals(status)}">
+
+                            </option>
+                        </select>
+                    </div>
                     <div class="col-12">
-                        <div class="row align-items-center ">
+                        <div class="row align-items-center pt-4">
                             <div class="col-1 select-check"  style="visibility: hidden">
                                 <input type="checkbox" style="transform: scale(2);display: none" name="orderIds[]" id="orderIds" form="shoppingForm" th:value="${order.getId()}" class="orderIds"/>
                                 <input type="checkbox" style="transform: scale(2);display: none" name="orderIds[]" id="orderIdsMobile" form="shoppingFormMobile" th:value="${order.getId()}" class="orderIdsMobile"/>
@@ -369,6 +376,28 @@
                     setTimeout(()=>btn.innerHTML=oldVal,2000);
                 }
 
+            });
+    }
+
+
+    async function changeStatus(id){
+        let select = document.getElementById("order_status_select_" + id);
+        let resp = await fetch("/order/changeStatus/" + id + "?status=" +select.value ,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+            .then(resp=>resp.text())
+            .then(resp=>{
+                if(resp){
+                    console.log(document.getElementById("order_div_"+id));
+                    document.getElementById("order_div_"+id).style.backgroundColor=resp;
+                }
+
+            })
+            .catch(err=>{
+                console.log(err);
             });
     }
 </script>

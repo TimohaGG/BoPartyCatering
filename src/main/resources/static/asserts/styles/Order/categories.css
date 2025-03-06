@@ -311,3 +311,8 @@ body{
 .offcanvas{
     padding:0;
 }
+
+.order_block{
+    position: relative;
+    height: fit-content !important;
+}

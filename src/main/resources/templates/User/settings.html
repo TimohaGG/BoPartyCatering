@@ -30,14 +30,10 @@
                     </li>
                     <li class="list-group-item " th:if="${authorized}">
                         <label class="form-label">Колір за замовчуванням</label>
-
-
                         <select name="colorSelect" id="colorSelect" onchange="changeDefColor()" class="form-select rounded-input">
                             <option th:each="color:${colors}" th:value="${color.getKey()}" th:text="${color.getValue().getBackground()}" th:selected="${defColor.equals(color.getKey())}">
                             </option>
                         </select>
-
-
                     </li>
                     <li class="list-group-item">
                         <a href="/oauth2/authorize" class="text-decoration-none btn btn-outline-danger w-100" th:if="${!authorized}">

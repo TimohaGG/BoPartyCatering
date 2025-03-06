@@ -206,10 +206,23 @@ public class OrdersController {
         return ResponseEntity.ok(shoppingListService.findSelectedItems(shoppingId));
     }
 
+
+
     @GetMapping("/order/shopping/collect")
     public String collect(long[] orderIds, Model model) {
         Orders temp = ordersService.createTempOrder(orderIds);
         return "redirect:/order/shopping/"+temp.getId();
+    }
+
+    @PostMapping("/order/changeStatus/{id}")
+    public ResponseEntity<String> changeStatus(@PathVariable Long id,@RequestParam Status status, Model model) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            order.setStatus(status);
+            ordersService.save(order);
+            return ResponseEntity.ok(order.getStatus().getColor());
+        }
+        return ResponseEntity.ok("");
     }
 
 }

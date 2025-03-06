@@ -3,6 +3,7 @@ package com.boparty.bopartycatering.Controllers;
 import com.boparty.bopartycatering.Models.Order.AmountUnit;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.ShoppingList;
+import com.boparty.bopartycatering.Models.Order.Status;
 import com.boparty.bopartycatering.Models.Position.*;
 
 import com.boparty.bopartycatering.Models.User.User;
@@ -66,7 +67,8 @@ public class MainController {
         List<Orders> orders = ordersService.getAllOrders();
         model.addAttribute("orders",ordersService.getAllOrders());
         model.addAttribute("tempOrders",ordersService.getTempOrders());
-        model.addAttribute("defCalendar",userService.getCurrentUser().getDefaultCalendar());
+//        model.addAttribute("defCalendar",userService.getCurrentUser().getDefaultCalendar());
+        model.addAttribute("statuses", Status.values());
         try{
             model.addAttribute("authorized",googleOAuthService.isUserAuthorized(userService.getCurrentUser().getUsername()));
             model.addAttribute("calendars",googleOAuthService.getAllCalendars(userService.getCurrentUser().getUsername()));

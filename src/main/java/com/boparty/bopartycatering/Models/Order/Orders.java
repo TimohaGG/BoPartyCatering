@@ -63,6 +63,9 @@ public class Orders {
     @ColumnDefault("false")
     private boolean temporary;
 
+    @ColumnDefault("3")
+    private Status status;
+
     public ShoppingList getShoppingList() {
         return shoppingList;
     }
@@ -183,5 +186,13 @@ public class Orders {
 
     public void setTemporary(boolean temporary) {
         this.temporary = temporary;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
