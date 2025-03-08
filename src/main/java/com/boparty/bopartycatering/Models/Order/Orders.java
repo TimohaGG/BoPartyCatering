@@ -30,6 +30,7 @@ public class Orders {
         phone = "0688714410";
         id = 0L;
         positionsAmount = new ArrayList<>();
+        status = Status.CALCULATED;
     }
 
     @Nullable

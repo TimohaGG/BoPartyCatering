@@ -125,6 +125,7 @@ public class OrdersController {
             newOrd.setFormat(order.getFormat());
             newOrd.setPhone(order.getPhone());
             newOrd.setGuestsAmount(order.getGuestsAmount());
+            newOrd.setStatus(order.getStatus());
             newOrd = ordersService.save(newOrd);
             for(PositionAmount pos : order.getPositionsAmount()){
                 PositionAmount p = new PositionAmount();
