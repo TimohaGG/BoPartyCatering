@@ -54,11 +54,14 @@
                 </div>
             </div>
 
-            <div class="col-12 d-block d-lg-none ">
-                <input class="rounded-input w-100 my-3" type="text" id="pos_search" name="pos_search" placeholder="Пошук" onchange="searchPos()"/>
-            </div>
+
 
             <div class="col-lg-6 col-12 positions" style="height: 100%" >
+                <div class="col-12 d-block p-0" style="height: fit-content;position: sticky;top:0;background-color: #202020;">
+                    <form method="get" action="/positions/search" id="searchForm" onsubmit="return false;">
+                        <input class="rounded-input w-100 my-3" type="text" id="pos_search" name="searchVal" placeholder="Пошук" onchange="searchPos(event)" th:value="${searchVal==null ? '' : searchVal}"/>
+                    </form>
+                </div>
                 <h2 class="categoryHead" th:text="${categoryName}"></h2>
 
                 <div class="row w-100 p-0" style="align-content: start">
@@ -166,11 +169,7 @@
 
 
             <div class="col-3 d-none d-lg-block mb-auto" style="height: 90vh;overflow-y: hidden">
-                <div style="margin-bottom:20px">
-                    <form >
-                        <input class="form-control searchbar" type="text" name="positionSearch" id="positionSearch" placeholder="Пошук.."/>
-                    </form>
-                </div>
+
 
 <!--                <ul class="list-group selected">-->
 <!--                    <li class="list-group-item row d-flex align-items-center order-position" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">-->
@@ -212,7 +211,7 @@
 
 
                     <div class="m-0 pt-0">
-                        <div class="category positions selected-big" style="height:81vh">
+                        <div class="category positions selected-big">
 
 
                             <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
@@ -422,22 +421,31 @@
             }).catch(error=>console.log(error));
     }
 
-    function searchPos(){
+    function searchPos(event){
+        event.preventDefault();
         let name = document.getElementById("pos_search").value;
-        console.log(name);
+        alert(name);
         if(name===""){
             for(let elem of document.querySelectorAll(".col-12.container:not(.template)")){
                 elem.style.display = "block";
             }
         }
         else{
+            let count = 0;
             for(let elem of document.querySelectorAll(".col-12.container:not(.template)")){
 
                 if(elem.getElementsByTagName("h5")[0].innerText.includes(name)){
                     elem.style.display = "block";
+                    count++;
                 }else{
                     elem.style.display = "none";
                 }
+            }
+
+            alert(count);
+            if(count===0){
+                let form = document.getElementById("searchForm");
+                form.submit();
             }
         }
     }
@@ -469,7 +477,6 @@
 
     }
     document.addEventListener("DOMContentLoaded", function(event) {
-        console.log("DOM funciona");
         document.getElementById("loading").style.display = "none";
     });
 

@@ -220,13 +220,16 @@ public class MainController {
 
         Category category;
         if(categoryId==null){
-            category = categories.get(0);
+            if(!categories.isEmpty())
+                category = categories.get(0);
+            else
+                return "redirect:/error";
         }
         else{
             category = categories.stream().filter(x->x.getId().equals(categoryId)).findFirst().orElse(null);
         }
-        List<Position> positions = userService.getPositions();
-        model.addAttribute("positions", positions.stream().filter(x->x.getCategory().getName().equals(category.getName())).toList());
+//        List<Position> positions = userService.getPositions();
+        model.addAttribute("positions", positionsService.getPositionsByCategory(category));
         model.addAttribute("categoryName", category.getName());
 
 
@@ -234,6 +237,27 @@ public class MainController {
         model.addAttribute("selectedPositions", tmpPositions);
 
         model.addAttribute("order", ord);
+
+
+        return "Order/addPositions";
+    }
+
+    @GetMapping("/positions/search")
+    public String addPositionSearch(@RequestParam String searchVal, Model model) {
+
+        List<Category> categories = userService.getCategories();
+        model.addAttribute("categories", categories);
+
+        List<Position> positions = positionsService.getPositionsByNamePart(searchVal);
+        model.addAttribute("positions", positions);
+        model.addAttribute("categoryName", searchVal);
+
+
+        model.addAttribute("selected", selectedIds);
+        model.addAttribute("selectedPositions", tmpPositions);
+
+
+        model.addAttribute("searchVal", searchVal);
 
 
         return "Order/addPositions";

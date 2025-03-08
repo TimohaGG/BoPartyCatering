@@ -62,16 +62,18 @@ public class UserService implements UserDetailsService {
         return getCurrentUser().getCategories();
     }
 
-    public List<Position> getPositions(){
-        //User cur = getCurrentUser();
-        List<Category> categories = getCategories();
-        List<Position> pos = getCurrentUser().getCategories()
-                .stream()
-                .flatMap(x->
-                        x.getPositions().stream())
-                .collect(Collectors.toList());
-        return pos;
-    }
+//    public List<Position> getPositions(){
+//        //User cur = getCurrentUser();
+//        List<Category> categories = getCategories();
+//        List<Position> pos = getCurrentUser().getCategories()
+//                .stream()
+//                .flatMap(x->
+//                        x.getPositions().stream())
+//                .toList();
+//        return pos;
+//    }
+
+
 
 
     public Long getFirstCategory() {

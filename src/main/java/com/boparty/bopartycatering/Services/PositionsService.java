@@ -146,4 +146,12 @@ public class PositionsService {
     public IngredientCategory findIngById(long id){
         return iIngCategoryRepos.findById(id).orElse(null);
     }
+
+    public List<Position> getPositionsByCategory(Category category){
+        return positionsRepos.findAllByCategoryId(category.getId());
+    }
+
+    public List<Position> getPositionsByNamePart(String namePart){
+        return positionsRepos.findAllByNameContainsIgnoreCase(namePart);
+    }
 }
