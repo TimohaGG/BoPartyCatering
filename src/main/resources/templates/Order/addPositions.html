@@ -424,7 +424,7 @@
     function searchPos(event){
         event.preventDefault();
         let name = document.getElementById("pos_search").value;
-        alert(name);
+
         if(name===""){
             for(let elem of document.querySelectorAll(".col-12.container:not(.template)")){
                 elem.style.display = "block";
@@ -442,7 +442,7 @@
                 }
             }
 
-            alert(count);
+
             if(count===0){
                 let form = document.getElementById("searchForm");
                 form.submit();
