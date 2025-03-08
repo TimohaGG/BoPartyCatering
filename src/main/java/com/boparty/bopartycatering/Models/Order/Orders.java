@@ -63,7 +63,7 @@ public class Orders {
     @ColumnDefault("false")
     private boolean temporary;
 
-    @ColumnDefault("3")
+    @ColumnDefault("CALCULATED")
     private Status status;
 
     public ShoppingList getShoppingList() {
