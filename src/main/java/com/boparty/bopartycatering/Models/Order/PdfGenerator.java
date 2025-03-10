@@ -37,6 +37,8 @@ public class PdfGenerator {
     public PdfGenerator(Orders order) {
         this.order = order;
 
+
+
         DateTimeFormatter date = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm");
 

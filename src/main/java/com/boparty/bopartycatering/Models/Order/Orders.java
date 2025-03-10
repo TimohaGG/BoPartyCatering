@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -130,7 +131,7 @@ public class Orders {
     }
 
     public List<PositionAmount> getPositionsAmount() {
-        return positionsAmount;
+        return positionsAmount.stream().sorted(Comparator.comparing(x->x.getPosition().getCategory().getId())).toList();
     }
 
     public User getUser() {
