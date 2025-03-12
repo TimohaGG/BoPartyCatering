@@ -316,10 +316,12 @@ public class MainController {
         }
 
         tmpOrder = order;
-        tmpPositions = order.getPositionsAmount();
+        tmpPositions = new ArrayList<>(order.getPositionsAmount());
 
         model.addAttribute("order", order);
         model.addAttribute("selectedPositions", order.getPositionsAmount());
+
+//        tmpPositions.stream().collect(Collectors.groupingBy(PositionAmount::getPositionId));
         selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
         return "Order/orderCreate";
 
