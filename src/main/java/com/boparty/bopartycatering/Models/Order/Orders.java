@@ -34,7 +34,6 @@ public class Orders {
         status = Status.CALCULATED;
     }
 
-    @Nullable
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime date;
 

@@ -37,12 +37,15 @@ public class OrdersService {
 
     public List<Orders> getAllOrders() {
         String username = userService.getCurrentUser().getUsername();
-        return ordersRepos
+        List<Orders> orders = ordersRepos
                 .findAllByUserId(userService.getCurrentUser().getId())
                 .stream()
                 .filter(x->!x.isTemporary())
                 .sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate()))
                 .toList();
+
+//        orders.sort(Comparator.comparing(Orders::getDate));
+        return orders;
 
 //        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate())).toList();
     }
