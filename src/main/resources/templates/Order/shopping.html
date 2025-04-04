@@ -55,12 +55,16 @@
             <div class="col-4 d-none d-lg-block mb-auto positions mt-0 ms-1 mt-3" style="height: 89vh;">
                 <h2 class="categoryHead" style="background-color: #454545; position: sticky;top:0;">Позиції</h2>
                 <div class="col-12 m-0 pt-0" style="height: fit-content">
-                    <div class="category">
+                    <div class="category accordion" id="accordionExample">
 
-                        <div class="container row m-0 order-position mb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}">
+                        <div class="container row m-0 order-position mb-3 accordion-item border-0" th:each="pos:${shoppingList.getOrder().getPositionsAmount()}">
 
-                            <div class="position col-12">
-                                <h5 th:text="${pos.getPosName()}" ></h5>
+                            <div class="position col-12 accordion-header" data-bs-toggle="collapse" th:data-bs-target="'#collapse_'+${pos.getId()}">
+
+                                <h5 th:text="${pos.getPosName()}">
+
+                                </h5>
+
 
                                 <div class="row align-items-center">
                                     <div class="col-6">
@@ -76,10 +80,19 @@
                                     <div class="col-6 text-end">
                                         <span class="amount big" th:text="${pos.getAmount()} + ' шт'" th:id="'pos_'+${pos.getPositionId()}" ></span>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="accordion-collapse collapse" data-bs-parent="#accordionExample" th:id="'collapse_'+${pos.getId()}">
+                                <div class="accordion-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between" th:each="ing:${pos.getPosition().getIngredients()}">
+                                            <span th:text="${ing.getIngredient().getName()}"></span>
 
+                                            <span class="text-end" th:text="${ing.getAmount()} +' ' + ${ing.getUnit().getUnitName()}">
 
-
-
+                                            </span>
+                                        </li>
+                                    </ul>
 
                                 </div>
                             </div>
@@ -103,10 +116,15 @@
                         <div class="m-0 pt-0">
                             <div class="category">
 
-                                <div class="container row m-0 order-position mb-3 pb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}" style="border-bottom: 1px solid #454545">
 
-                                    <div class="position col-12">
-                                        <h5 th:text="${pos.getPosName()}" ></h5>
+                                <div class="container row m-0 order-position mb-3 pb-3 accordion-item border-0" th:each="pos:${shoppingList.getOrder().getPositionsAmount()}">
+
+                                    <div class="position col-12 accordion-header" data-bs-toggle="collapse" th:data-bs-target="'#collapse_'+${pos.getId()}">
+
+                                        <h5 th:text="${pos.getPosName()}">
+
+                                        </h5>
+
 
                                         <div class="row align-items-center">
                                             <div class="col-6">
@@ -124,7 +142,45 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="accordion-collapse collapse" data-bs-parent="#accordionExample" th:id="'collapse_'+${pos.getId()}">
+                                        <div class="accordion-body">
+                                            <ul class="list-group">
+                                                <li class="list-group-item d-flex justify-content-between" th:each="ing:${pos.getPosition().getIngredients()}">
+                                                    <span th:text="${ing.getIngredient().getName()}"></span>
+
+                                                    <span class="text-end" th:text="${ing.getAmount()} +' ' + ${ing.getUnit().getUnitName()}">
+
+                                            </span>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </div>
+
+
                                 </div>
+<!--                                <div class="container row m-0 order-position mb-3 pb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}" style="border-bottom: 1px solid #454545">-->
+
+<!--                                    <div class="position col-12">-->
+<!--                                        <h5 th:text="${pos.getPosName()}" ></h5>-->
+
+<!--                                        <div class="row align-items-center">-->
+<!--                                            <div class="col-6">-->
+<!--                                                <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price big"></span>-->
+<!--                                                <div class="weight">-->
+<!--                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">-->
+<!--                                                        <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>-->
+<!--                                                        <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>-->
+<!--                                                    </svg>-->
+<!--                                                    <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-6 text-end">-->
+<!--                                                <span class="amount big" th:text="${pos.getAmount()} + ' шт'" th:id="'pos_'+${pos.getPositionId()}" ></span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                             </div>
 
 
