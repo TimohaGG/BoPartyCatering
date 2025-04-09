@@ -76,6 +76,8 @@ public class MainController {
             model.addAttribute("authorized",false);
         }
 
+        model.addAttribute("statuses",Status.values());
+
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds = new HashMap<>();

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.FrameworkServlet;
+import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -216,14 +217,14 @@ public class OrdersController {
     }
 
     @PostMapping("/order/changeStatus/{id}")
-    public ResponseEntity<String> changeStatus(@PathVariable Long id,@RequestParam Status status, Model model) {
+    public ResponseEntity<StatusResponse> changeStatus(@PathVariable Long id, @RequestParam Status status, Model model) {
         Orders order = ordersService.getOrderById(id);
         if(order != null){
             order.setStatus(status);
             ordersService.save(order);
-            return ResponseEntity.ok(order.getStatus().getColor());
+            return ResponseEntity.ok(new StatusResponse(order.getStatus(),order.getStatus().getColor()));
         }
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(null);
     }
 
 }
