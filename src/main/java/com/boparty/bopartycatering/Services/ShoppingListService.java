@@ -119,4 +119,24 @@ public class ShoppingListService {
         return null;
 
     }
+
+    public ShoppingListItem addCommentToItem(String comment, long itemId){
+        ShoppingListItem item = getItemById(itemId);
+        if(item != null) {
+            item.setComment(comment);
+            shoppingListItemRepo.save(item);
+            return item;
+        }
+        return null;
+    }
+
+    public ShoppingListItem removeComment(long shoppingItemId) {
+        ShoppingListItem item = getItemById(shoppingItemId);
+        if(item != null) {
+            item.setComment(null);
+            shoppingListItemRepo.save(item);
+            return item;
+        }
+        return null;
+    }
 }

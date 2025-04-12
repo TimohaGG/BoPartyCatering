@@ -193,6 +193,22 @@ public class OrdersController {
         return "Order/shopping";
     }
 
+    @PostMapping("/order/shopping/{shoppingItemId}/addComment")
+    public ResponseEntity<String> addComment(@PathVariable long shoppingItemId, @RequestParam String comment) {
+        if(!comment.isBlank()){
+            ShoppingListItem item = this.shoppingListService.addCommentToItem(comment, shoppingItemId);
+            return ResponseEntity.ok(item.getComment());
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/order/shopping/{shoppingItemId}/removeComment")
+    public ResponseEntity<Boolean> removeComment(@PathVariable long shoppingItemId) {
+
+        ShoppingListItem item = this.shoppingListService.removeComment(shoppingItemId);
+        return ResponseEntity.ok(item==null);
+    }
+
     @PostMapping("/order/shopping/changeState/{ingId}")
     public ResponseEntity<Boolean> changeState(@PathVariable Long ingId, Model model) {
         ShoppingListItem item = shoppingListService.getItemById(ingId);
@@ -215,6 +231,8 @@ public class OrdersController {
         Orders temp = ordersService.createTempOrder(orderIds);
         return "redirect:/order/shopping/"+temp.getId();
     }
+
+
 
     @PostMapping("/order/changeStatus/{id}")
     public ResponseEntity<StatusResponse> changeStatus(@PathVariable Long id, @RequestParam Status status, Model model) {

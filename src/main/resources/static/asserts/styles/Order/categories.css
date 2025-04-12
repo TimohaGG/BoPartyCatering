@@ -320,3 +320,7 @@ body{
     position: relative;
     height: fit-content !important;
 }
+
+.popover-body{
+    color:black !important;
+}
