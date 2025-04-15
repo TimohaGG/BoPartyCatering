@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -186,7 +187,19 @@ public class OrdersController {
 
             model.addAttribute("shoppingList",list);
             Map<String, List<ShoppingListItem>> res = list.getItems()
-                    .stream().collect(Collectors.groupingBy(x->x.getIngredient().getIngredient().getIngCategory().getName()));
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            x -> x.getIngredient().getIngredient().getIngCategory().getName(),
+                            Collectors.collectingAndThen(
+                                    Collectors.toList(),
+                                    it -> it.stream()
+                                            .sorted(Comparator.comparing(
+                                                    itm -> itm.getIngredient().getIngredient().getName()
+                                            ))
+                                            .collect(Collectors.toList())
+                            )
+                    ));
+
             model.addAttribute("ingredients",res);
 
         }

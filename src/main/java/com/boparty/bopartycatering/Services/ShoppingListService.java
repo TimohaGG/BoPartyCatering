@@ -33,9 +33,6 @@ public class ShoppingListService {
         }
         shoppingList.setOrder(order);
 
-
-
-
         List<ShoppingListItem> items = new ArrayList<>();
         for(IngredientAmount ing : ingredients) {
             items.add(new ShoppingListItem(ing, shoppingList));
@@ -47,8 +44,6 @@ public class ShoppingListService {
         else{
             shoppingList.setItems(items);
         }
-
-
 
         shoppingList.setNeedsUpdate(false);
 

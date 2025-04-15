@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 
@@ -76,4 +77,20 @@ public class IngredientAmount {
     public void setPosition(Position position) {
         this.position = position;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof IngredientAmount other) {
+            return Objects.equals(this.getIngredient().getId(), other.getIngredient().getId())
+                    && Objects.equals(this.getUnit().getId(), other.getUnit().getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIngredient().getId(), getUnit().getId());
+    }
+
+
 }
