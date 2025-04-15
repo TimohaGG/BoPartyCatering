@@ -33,14 +33,14 @@
                     <ul class="list-group">
                         <li class="list-group-item p-3" th:each="item:${shoppingItem.getValue()}">
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-6 p-0">
                                     <input type="checkbox" th:checked="${item.isBought()}" th:data-id="${item.getId()}" th:onclick="'changeState('+${item.getId()}+',event)'" style="transform: scale(2)"/>
                                     <span class="ms-3" th:text="${item.getIngredient().getIngredient().getName()}"></span>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-3 p-0">
                                     <span th:text="${item.getIngredient().getAmount()} + ' ' + ${item.getIngredient().getUnit().getUnitName()}"></span>
                                 </div>
-                                <div class="col-2">
+                                <div class="col-3 p-0 text-center">
                                     <div th:if="${item.getComment() != null}">
                                         <button type="button"   data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true"
                                                 th:data-bs-content="${item.getComment()}"
@@ -200,33 +200,7 @@
 
 
                                 </div>
-<!--                                <div class="container row m-0 order-position mb-3 pb-3 " th:each="pos:${shoppingList.getOrder().getPositionsAmount()}" style="border-bottom: 1px solid #454545">-->
-
-<!--                                    <div class="position col-12">-->
-<!--                                        <h5 th:text="${pos.getPosName()}" ></h5>-->
-
-<!--                                        <div class="row align-items-center">-->
-<!--                                            <div class="col-6">-->
-<!--                                                <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price big"></span>-->
-<!--                                                <div class="weight">-->
-<!--                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">-->
-<!--                                                        <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>-->
-<!--                                                        <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>-->
-<!--                                                    </svg>-->
-<!--                                                    <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="col-6 text-end">-->
-<!--                                                <span class="amount big" th:text="${pos.getAmount()} + ' шт'" th:id="'pos_'+${pos.getPositionId()}" ></span>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
                             </div>
-
-
-
-
                         </div>
 
                     </div>

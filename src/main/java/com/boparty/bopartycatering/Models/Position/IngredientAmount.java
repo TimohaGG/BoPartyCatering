@@ -63,7 +63,7 @@ public class IngredientAmount {
     }
 
     public double getAmount() {
-        return amount;
+        return Math.round(amount * 100.0) / 100.0;
     }
 
     public void setAmount(double amount) {
