@@ -50,6 +50,9 @@ public class Orders {
     @ColumnDefault("0688714410")
     private String phone;
 
+    private boolean needsWaiter = false;
+    private int waiterPrice = 0;
+
 
     @OneToMany(mappedBy = "order",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PositionAmount> positionsAmount;
@@ -91,7 +94,9 @@ public class Orders {
 
     }
 
-    public int getTotalPrice(){
+    public double getTotalPrice(){
+//        int tmpPrice = positionsAmount.stream().mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount()).sum();
+//        return this.needsWaiter ? Math.floor (tmpPrice + (tmpPrice * 0.05)) : tmpPrice;
         return positionsAmount.stream().mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount()).sum();
     }
 

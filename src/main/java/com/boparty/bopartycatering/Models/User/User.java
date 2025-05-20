@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Getter
+
 
 
 public class User implements UserDetails {
@@ -66,20 +66,20 @@ public class User implements UserDetails {
     @Transient
     private String repeatPassword;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<Orders> orders;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<Category> categories;
 
     public Long getId() {
         return id;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<Ingredient> ingredients;
 
     @Override
@@ -164,6 +164,10 @@ public class User implements UserDetails {
 
     public void setDefaultColor(String defaultColor) {
         this.defaultColor = defaultColor;
+    }
+
+    public List<Orders> getOrders() {
+        return orders;
     }
 }
 

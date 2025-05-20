@@ -5,6 +5,7 @@ import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
 import com.boparty.bopartycatering.Models.Position.IngredientAmount;
 import com.boparty.bopartycatering.Models.Position.PositionAmount;
+import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Repos.IAdditionalInfoRepos;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Repos.PositionAmountRepos;
@@ -36,14 +37,20 @@ public class OrdersService {
     }
 
     public List<Orders> getAllOrders() {
+        List<Orders> res;
         String username = userService.getCurrentUser().getUsername();
-        return ordersRepos
+
+
+        User user = userService.getCurrentUser();
+        List<Orders> orders = user.getOrders();
+        res =  ordersRepos
                 .findAllByUserId(userService.getCurrentUser().getId())
                 .stream()
                 .filter(x->!x.isTemporary())
                 .sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate()))
                 .toList();
 
+        return res;
 //        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate())).toList();
     }
 
