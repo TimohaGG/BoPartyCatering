@@ -33,9 +33,6 @@ public class ShoppingListService {
         }
         shoppingList.setOrder(order);
 
-
-
-
         List<ShoppingListItem> items = new ArrayList<>();
         for(IngredientAmount ing : ingredients) {
             items.add(new ShoppingListItem(ing, shoppingList));
@@ -47,8 +44,6 @@ public class ShoppingListService {
         else{
             shoppingList.setItems(items);
         }
-
-
 
         shoppingList.setNeedsUpdate(false);
 
@@ -118,5 +113,25 @@ public class ShoppingListService {
         }
         return null;
 
+    }
+
+    public ShoppingListItem addCommentToItem(String comment, long itemId){
+        ShoppingListItem item = getItemById(itemId);
+        if(item != null) {
+            item.setComment(comment);
+            shoppingListItemRepo.save(item);
+            return item;
+        }
+        return null;
+    }
+
+    public ShoppingListItem removeComment(long shoppingItemId) {
+        ShoppingListItem item = getItemById(shoppingItemId);
+        if(item != null) {
+            item.setComment(null);
+            shoppingListItemRepo.save(item);
+            return item;
+        }
+        return null;
     }
 }

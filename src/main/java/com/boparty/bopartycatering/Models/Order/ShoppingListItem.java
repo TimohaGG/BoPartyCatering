@@ -2,6 +2,8 @@ package com.boparty.bopartycatering.Models.Order;
 
 import com.boparty.bopartycatering.Models.Position.IngredientAmount;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
@@ -22,6 +24,10 @@ public class ShoppingListItem {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ShoppingList shoppingList;
+
+    @Column(nullable = true)
+    private String comment;
+
 
     public ShoppingListItem(IngredientAmount ingredient, ShoppingList shoppingList) {
         this.ingredient = ingredient;
@@ -57,5 +63,13 @@ public class ShoppingListItem {
 
     public void setShoppingList(ShoppingList shoppingList) {
         this.shoppingList = shoppingList;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

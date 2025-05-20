@@ -24,11 +24,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.FrameworkServlet;
+import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -185,11 +187,39 @@ public class OrdersController {
 
             model.addAttribute("shoppingList",list);
             Map<String, List<ShoppingListItem>> res = list.getItems()
-                    .stream().collect(Collectors.groupingBy(x->x.getIngredient().getIngredient().getIngCategory().getName()));
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            x -> x.getIngredient().getIngredient().getIngCategory().getName(),
+                            Collectors.collectingAndThen(
+                                    Collectors.toList(),
+                                    it -> it.stream()
+                                            .sorted(Comparator.comparing(
+                                                    itm -> itm.getIngredient().getIngredient().getName()
+                                            ))
+                                            .collect(Collectors.toList())
+                            )
+                    ));
+
             model.addAttribute("ingredients",res);
 
         }
         return "Order/shopping";
+    }
+
+    @PostMapping("/order/shopping/{shoppingItemId}/addComment")
+    public ResponseEntity<String> addComment(@PathVariable long shoppingItemId, @RequestParam String comment) {
+        if(!comment.isBlank()){
+            ShoppingListItem item = this.shoppingListService.addCommentToItem(comment, shoppingItemId);
+            return ResponseEntity.ok(item.getComment());
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/order/shopping/{shoppingItemId}/removeComment")
+    public ResponseEntity<Boolean> removeComment(@PathVariable long shoppingItemId) {
+
+        ShoppingListItem item = this.shoppingListService.removeComment(shoppingItemId);
+        return ResponseEntity.ok(item==null);
     }
 
     @PostMapping("/order/shopping/changeState/{ingId}")
@@ -215,15 +245,17 @@ public class OrdersController {
         return "redirect:/order/shopping/"+temp.getId();
     }
 
+
+
     @PostMapping("/order/changeStatus/{id}")
-    public ResponseEntity<String> changeStatus(@PathVariable Long id,@RequestParam Status status, Model model) {
+    public ResponseEntity<StatusResponse> changeStatus(@PathVariable Long id, @RequestParam Status status, Model model) {
         Orders order = ordersService.getOrderById(id);
         if(order != null){
             order.setStatus(status);
             ordersService.save(order);
-            return ResponseEntity.ok(order.getStatus().getColor());
+            return ResponseEntity.ok(new StatusResponse(order.getStatus(),order.getStatus().getColor()));
         }
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(null);
     }
 
 }

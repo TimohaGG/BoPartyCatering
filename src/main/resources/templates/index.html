@@ -115,9 +115,15 @@
             </div>
 
             <div class="col-lg-5 col-12 positions mb-4 mx-1">
+                <div style="height: max-content">
+                    <div class="d-flex align-items-center scrollbar" style="overflow-x: auto;gap:10px">
+                        <button class="btn btn-outline-light text-decoration-none mobile-menu-item active" onclick="filterOrders(event)" data-bs-title="Усі">Усі</button>
+                        <button class="btn btn-outline-light text-decoration-none mobile-menu-item" th:each="stat:${statuses}" th:text="${stat.getTitle()}" th:data-bs-title="${stat}" onclick="filterOrders(event)"></button>
 
+                    </div>
+                </div>
                 <h2 class="categoryHead" style="background-color: #454545;">Замовлення</h2>
-                <div th:each="order:${orders}" th:id="'order_div_'+${order.getId()}" class="order_block row align-items-center justify-content-center w-100 m-0" style="height: fit-content !important;" th:style="'background-color: ' + ${order.status.getColor()} + ';'">
+                <div th:each="order:${orders}" th:id="'order_div_'+${order.getId()}" th:class="'order_block row align-items-center justify-content-center w-100 m-0 '" th:data-bs-status="${order.getStatus()}" style="height: fit-content !important;" th:style="'background-color: ' + ${order.status.getColor()} + ';'">
                     <div style="position: absolute;top:5px;right:5px;width: fit-content" class="mb-2">
                         <select th:id="'order_status_select_'+${order.getId()}" class="rounded-input" th:onchange="'changeStatus('+${order.getId()}+')'">
                             <option th:each="status:${statuses}" th:text="${status.getTitle()}" th:value="${status}" th:selected="${order.getStatus().equals(status)}">
@@ -381,19 +387,45 @@
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Response-type": "json"
             }
         })
-            .then(resp=>resp.text())
+            .then(resp=>resp.json())
             .then(resp=>{
                 if(resp){
-                    console.log(document.getElementById("order_div_"+id));
-                    document.getElementById("order_div_"+id).style.backgroundColor=resp;
+
+                    let elem = document.getElementById("order_div_"+id);
+                    elem.style.backgroundColor=resp.color;
+                    elem.dataset.bsStatus=resp.title;
+
                 }
 
             })
             .catch(err=>{
                 console.log(err);
             });
+    }
+
+    function filterOrders(event){
+        let text = event.target.dataset.bsTitle;
+        document.querySelector(".mobile-menu-item.active").classList.remove("active");
+        event.target.classList.add("active");
+
+
+        document.querySelectorAll(".order_block").forEach((el)=> {
+            console.log(el.dataset.bsStatus);
+            if (text==="Усі"){
+                el.style.display="block";
+            }
+
+            else if(el.dataset.bsStatus===text){
+                el.style.display="block";
+                console.log("ok");
+            }
+            else{
+                el.style.display="none";
+            }
+        });
     }
 </script>
 

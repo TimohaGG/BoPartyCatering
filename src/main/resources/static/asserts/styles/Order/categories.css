@@ -182,6 +182,10 @@ padding-bottom: 50px;
     color: #454545 !important;
 }
 
+.mobile-menu-item.active{
+    color: black !important;
+}
+
 .btn-outline-light:hover{
     color: black !important;
 }
@@ -315,4 +319,8 @@ body{
 .order_block{
     position: relative;
     height: fit-content !important;
+}
+
+.popover-body{
+    color:black !important;
 }

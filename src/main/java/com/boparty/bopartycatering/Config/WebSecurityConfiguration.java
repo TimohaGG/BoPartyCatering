@@ -43,7 +43,7 @@ public class WebSecurityConfiguration {
                                 .invalidateHttpSession(true)
                                 .deleteCookies("JSESSIONID")
                                 .permitAll())
-                .rememberMe(rem->rem.key("uniqueAndSecret").tokenValiditySeconds(86400));
+                .rememberMe(rem->rem.key("uniqueAndSecret").tokenValiditySeconds(604800));
 
         return http.build();
 

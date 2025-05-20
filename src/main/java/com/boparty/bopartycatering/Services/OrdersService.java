@@ -181,21 +181,39 @@ public class OrdersService {
                 .map(e -> new PositionAmount(e.getKey(), e.getValue()))
                 .toList();
 
-        List<IngredientAmount> ings = positions.stream()
-                .flatMap(pos -> pos.getPosition().getIngredients().stream()
-                        .map(ingAm -> new IngredientAmount(ingAm.getIngredient(),
-                                ingAm.getAmount() * pos.getAmount(), ingAm.getUnit())))
-                .collect(Collectors.toMap(
-                        ing->ing.getIngredient().getId(),
-                        item->item,
-                        (existIt,newIt)->new IngredientAmount(existIt.getId(), existIt.getIngredient(),existIt.getUnit(),existIt.getAmount() + newIt.getAmount(), existIt.getPosition())
-                ))
-                .values().stream().toList();
+//        List<IngredientAmount> ings = positions.stream()
+//                .flatMap(pos -> pos.getPosition().getIngredients().stream()
+//                        .map(ingAm -> new IngredientAmount(ingAm.getIngredient(),
+//                                ingAm.getAmount() * pos.getAmount(), ingAm.getUnit())))
+//                .collect(Collectors.toMap(
+//                        ing->ing.getIngredient().getId(),
+//                        item->item,
+//                        (existIt,newIt)->new IngredientAmount(existIt.getId(), existIt.getIngredient(),existIt.getUnit(),existIt.getAmount() + newIt.getAmount(), existIt.getPosition())
+//                ))
+//                .values().stream().toList();
 
-        ings.forEach(v -> System.out.println(v.getIngredient().getName() + " " + v.getAmount() + " " + v.getUnit().getUnitName()));
+        List<IngredientAmount> res = new ArrayList<>();
 
+        for (PositionAmount position : positions) {
+            for (IngredientAmount ingredient : position.getPosition().getIngredients()) {
+                if(!res.contains(ingredient)){
+                    IngredientAmount tmp = new IngredientAmount(ingredient.getIngredient(), ingredient.getAmount(), ingredient.getUnit());
+                    tmp.setAmount(ingredient.getAmount() * position.getAmount());
+                    res.add(tmp);
+                }
+                else{
+                    int index = res.indexOf(ingredient);
+                    IngredientAmount tmp = res.get(index);
+                    tmp.setAmount(tmp.getAmount() + position.getAmount()*ingredient.getAmount());
+                }
+            }
+        }
 
-        return ings;
+        res.forEach(el-> System.out.println(el.getIngredient().getName() + " " + el.getAmount()));
+
+//        ings.forEach(v -> System.out.println(v.getIngredient().getName() + " " + v.getAmount() + " " + v.getUnit().getUnitName()));
+
+        return res;
     }
 
     public Orders createTempOrder(long[] orderIds){

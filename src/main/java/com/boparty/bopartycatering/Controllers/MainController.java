@@ -65,7 +65,7 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         List<Orders> orders = ordersService.getAllOrders();
-        model.addAttribute("orders",ordersService.getAllOrders());
+        model.addAttribute("orders",orders);
         model.addAttribute("tempOrders",ordersService.getTempOrders());
 //        model.addAttribute("defCalendar",userService.getCurrentUser().getDefaultCalendar());
         model.addAttribute("statuses", Status.values());
@@ -75,6 +75,8 @@ public class MainController {
         }catch (Exception e){
             model.addAttribute("authorized",false);
         }
+
+        model.addAttribute("statuses",Status.values());
 
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
