@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.pdfbox.pdmodel.graphics.optionalcontent.PDOptionalContentGroup;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +57,7 @@ public class OrdersController {
             model.addAttribute("order", order);
             model.addAttribute("info", new InfoDTO());
             model.addAttribute("common",ordersService.getCommonAdditionalInfo());
+            model.addAttribute("orderInfo", new OrderInfo());
             return "Order/index";
         }
         return "redirect:/";
@@ -72,23 +73,55 @@ public class OrdersController {
     }
 
     @PostMapping("/order/generate/{id}")
-    public String generatePdf(HttpServletResponse response, @PathVariable Long id, String color) {
-        String filename = ordersService.getOrderFileName(id);
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id,
+                                              @ModelAttribute OrderInfo orderInfo) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            String filename = ordersService.getOrderFileName(id);
 
-        // Create a new document
-        Document document = new Document();
 
-        try (OutputStream out = response.getOutputStream()) {
-           ordersService.GeneratePdf(document,out,id,color);
 
-           return "redirect:/order/view/"+id;
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
+            document.open();
+            ordersService.GeneratePdf(document, out, id, orderInfo);
+            document.close();
+
+            byte[] pdfBytes = out.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition
+                    .attachment()
+                    .filename(filename)
+                    .build());
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (Exception e) {
-            return "redirect:/";
-
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+//    @PostMapping("/order/generate/{id}")
+//    public String generatePdf(HttpServletResponse response, @PathVariable Long id, String color, @ModelAttribute OrderInfo orderInfo, Model model) {
+//        String filename = ordersService.getOrderFileName(id);
+//        color="250,187,7";
+//        response.setContentType("application/pdf");
+//        response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+//
+//        // Create a new document
+//        Document document = new Document();
+//
+//        try (OutputStream out = response.getOutputStream()) {
+//           ordersService.GeneratePdf(document,out,id,color);
+//
+//           return "redirect:/order/view/"+id;
+//        } catch (Exception e) {
+//            return "redirect:/";
+//
+//        }
+//    }
 
     @PostMapping("/order/addinfo/{id}")
     public String addInfo(@PathVariable Long id, @ModelAttribute InfoDTO infoDTO, Model model) {

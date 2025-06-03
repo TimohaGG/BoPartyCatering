@@ -49,9 +49,21 @@ public class Orders {
     @ColumnDefault("0688714410")
     private String phone;
 
-    private boolean needsWaiter = false;
-    private int waiterPrice = 0;
+    public boolean isNeedsTax() {
+        return needsTax;
+    }
 
+    public void setNeedsTax(boolean needsTax) {
+        this.needsTax = needsTax;
+    }
+
+    private boolean needsTax = false;
+
+    private double taxPercentage = 0.06D;
+    public double getTaxPercentageCalc() {
+        double totalPrice = getPrice() + getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum();
+        return Math.floor(totalPrice - totalPrice * (1-taxPercentage)) ;
+    }
 
     @OneToMany(mappedBy = "order",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PositionAmount> positionsAmount;
@@ -93,11 +105,7 @@ public class Orders {
 
     }
 
-    public double getTotalPrice(){
-//        int tmpPrice = positionsAmount.stream().mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount()).sum();
-//        return this.needsWaiter ? Math.floor (tmpPrice + (tmpPrice * 0.05)) : tmpPrice;
-        return positionsAmount.stream().mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount()).sum();
-    }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -112,6 +120,14 @@ public class Orders {
         return positionsAmount.stream()
                 .mapToInt(x -> (int)x.getPosition().getPrice() * x.getAmount())
                 .sum();
+    }
+
+    public int getTotalPrice(){
+        int sum = getPrice() + getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum();
+        if(needsTax){
+            sum += getTaxPercentageCalc();
+        }
+        return sum;
     }
 
     public String getClient() {
@@ -183,7 +199,7 @@ public class Orders {
     }
 
     public int getOnOnePerson(){
-        return (int)getTotalPrice() / guestsAmount;
+        return (int)getPrice() / guestsAmount;
     }
 
     public boolean isTemporary() {

@@ -1,6 +1,7 @@
 package com.boparty.bopartycatering.Services;
 
 import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
+import com.boparty.bopartycatering.Models.Order.OrderInfo;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.PdfGenerator;
 import com.boparty.bopartycatering.Models.Position.IngredientAmount;
@@ -68,19 +69,23 @@ public class OrdersService {
 
 
 
-    public PdfWriter GeneratePdf(Document document, OutputStream out, long id, String backColor) throws DocumentException {
-        PdfGenerator generator = new PdfGenerator(getOrderById(id));
+    public PdfWriter GeneratePdf(Document document, OutputStream out, long id, OrderInfo info) throws DocumentException {
+
+        Orders order = getOrderById(id);
+        order.setNeedsTax(info.isTax());
+        ordersRepos.save(order);
+
+        PdfGenerator generator = new PdfGenerator(order, info);
 
 
         PdfGenerator.backgroundColor = BaseColor.WHITE;
         PdfGenerator.fontColor = BaseColor.BLACK;
         PdfGenerator.containerColor = BaseColor.WHITE;
-        if(backColor.isEmpty()){
+        if(info.getColor().isEmpty()){
             PdfGenerator.posHeaderColor = new BaseColor(250,187,7);
         }
         else{
-            String[] res = backColor.split(",");
-            int[] color = Arrays.stream(backColor.split(",")).mapToInt(x->Integer.parseInt(x.trim())).toArray();
+            int[] color = Arrays.stream(info.getColor().split(",")).mapToInt(x->Integer.parseInt(x.trim())).toArray();
             PdfGenerator.posHeaderColor = new BaseColor(color[0],color[1],color[2]);
         }
 

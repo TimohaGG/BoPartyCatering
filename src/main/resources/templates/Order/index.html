@@ -30,24 +30,7 @@
                     <li class="list-group-item"> <b>К-сть запрошених: </b><br/><span th:text="${order.getGuestsAmount()}"></span></li>
                     <li class="list-group-item"> <b>Формат: </b><br/><span th:text="${order.getFormat()}"></span></li>
                     <li class="list-group-item"> <b>Телефон відповідального: </b><br/><span th:text="${order.getPhone()}"></span></li>
-                    <li class="list-group-item">
-                        <b>Колір фону: </b><br/>
-                        <div class="d-flex justify-content-evenly">
-                            <div class="color-square selected"  style="background-color: #fabb07" onclick="selectColor(event)">
 
-                            </div>
-                            <div class="color-square " style="background-color: #5c84ac" onclick="selectColor(event)">
-
-                            </div>
-
-                        </div>
-
-                    </li>
-                    <li class="list-group-item">
-                        <form method="post" th:action="'/order/generate/'+${order.getId()}" onsubmit="appendColor(event)">
-                            <input type="submit" value="Generate" class="btn btn-outline-success w-100" style="color: white !important;"/>
-                        </form>
-                    </li>
                 </ul>
             </div>
 
@@ -82,10 +65,11 @@
                     <h5 class="col-6">
                         Загальна ціна:
                     </h5>
-                    <div class="col-6" th:text="${order.getTotalPrice()} + ' грн'" style="text-align: end">
+                    <div class="col-6" th:text="${order.getPrice()} + ' грн'" style="text-align: end">
 
                     </div>
                 </div>
+
 <!--                <div class="row align-items-center justify-content-center w-100 m-0 preview" style="height: initial">-->
 <!--                    <h5 class="col-6">-->
 <!--                        На 1 людину:-->
@@ -114,76 +98,58 @@
                     </div>
 
 
+
                 </div>
-                <div class="row justify-content-center align-items-center d-lg-none d-sm-flex" style="height: fit-content">
-                    <div class="col-sm-5 col-lg-3">
-                        <b>Колір фону: </b><br/>
-                        <div class="d-flex justify-content-evenly">
-                            <div class="color-square selected"  style="background-color: #fabb07" onclick="selectColor(event)">
 
-                            </div>
-                            <div class="color-square " style="background-color: #5c84ac" onclick="selectColor(event)">
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="row align-items-center justify-content-center w-100 m-0 py-3 preview" style="height: fit-content">
-
-                    <div class="col-sm-7 col-lg-5" style="width: unset">
-                        <form method="post" th:action="'/order/generate/'+${order.getId()}" onsubmit="appendColor(event)">
-                            <input type="submit" value="Generate" class="btn btn-outline-success w-100" style="color: white !important;"/>
-                        </form>
-                    </div>
-                    <div class="col-sm-3 col-lg-12 " style="width: unset">
+                <div class="row align-items-center justify-content-center" style="height: initial;" >
+                    <div class="col-8">
                         <button type="button" class="btn btn-outline-light w-100 " data-bs-toggle="modal" data-bs-target="#addModal">
                             +
                         </button>
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form  method="post" th:action="'/order/addinfo/'+${order.getId()}" th:object="${info}" enctype="multipart/form-data">
-                                    <div class="modal-header" style="background-color: #454545">
-                                        <h1 class="modal-title fs-5" id="addModalLabel">Modal title</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body" style="background-color: #202020">
+                                    <form  method="post" th:action="'/order/addinfo/'+${order.getId()}" th:object="${info}" enctype="multipart/form-data" id="addInfoForm">
+                                        <div class="modal-header" style="background-color: #454545">
+                                            <h1 class="modal-title fs-5" id="addModalLabel">Modal title</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" style="background-color: #202020">
 
-                                        <div class="mb-3">
-                                            <label class="form-label" for="infoTemplate">Шаблон</label>
-                                            <select class="form-select" id="infoTemplate" name="infoTemplate" style="color: black !important;" onchange="func()">
-                                                <option value="0" th:text="'-'"></option>
-                                                <option  th:each="inf:${common}" th:value="${inf.getId()}" th:text="${inf.getTitle()}" ></option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="title" class="form-label">Заголовок</label>
-                                            <input type="text" name="title" id="title" class="form-control" th:field="*{title}" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="description"  class="form-label">Опис</label>
-                                            <input type="text" name="description" id="description" class="form-control" th:field="*{description}"/>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="image"  class="form-label">Зображення</label>
-                                           <input type="file" name="image" id="image" class="form-control" th:field="*{image}"/>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="price"  class="form-label">Ціна</label>
-                                            <input type="number" name="price" id="price" class="form-control" th:field="*{price}"/>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="price2"  class="form-label">Зберігти</label>
-                                            <input type="checkbox" name="price2" id="price2" class="form-check" th:field="*{save}"/>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label" for="infoTemplate">Шаблон</label>
+                                                <select class="form-select" id="infoTemplate" name="infoTemplate" style="color: black !important;" onchange="func()">
+                                                    <option value="0" th:text="'-'"></option>
+                                                    <option  th:each="inf:${common}" th:value="${inf.getId()}" th:text="${inf.getTitle()}" ></option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="title" class="form-label">Заголовок</label>
+                                                <input type="text" name="title" id="title" class="form-control" th:field="*{title}" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="description"  class="form-label">Опис</label>
+                                                <input type="text" name="description" id="description" class="form-control" th:field="*{description}"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="image"  class="form-label">Зображення</label>
+                                                <input type="file" name="image" id="image" class="form-control" th:field="*{image}"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="price"  class="form-label">Ціна</label>
+                                                <input type="number" name="price" id="price" class="form-control" th:field="*{price}"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="price2"  class="form-label">Зберігти</label>
+                                                <input type="checkbox" name="price2" id="price2" class="form-check" th:field="*{save}"/>
+                                            </div>
 
 
-                                    </div>
-                                    <div class="modal-footer" style="background-color: #454545">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відмінити</button>
-                                        <button type="submit" class="btn btn-primary">Зберегти</button>
-                                    </div>
+                                        </div>
+                                        <div class="modal-footer" style="background-color: #454545">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відмінити</button>
+                                            <button type="submit" class="btn btn-primary">Зберегти</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -191,6 +157,72 @@
                     </div>
 
                 </div>
+                <div>
+                    <form method="post" th:action="'/order/generate/'+${order.getId()}"  id="generateForm" th:object="${orderInfo}">
+
+                        <div class="row justify-content-center align-items-center" style="height: fit-content">
+                            <div class="col-12">
+                                <b>Колір фону: </b><br/>
+                                <div class="d-flex justify-content-evenly">
+                                    <div class="color-square selected"  style="background-color: #fabb07" onclick="selectColor(event)">
+
+                                    </div>
+                                    <div class="color-square " style="background-color: #5c84ac" onclick="selectColor(event)">
+
+                                    </div>
+                                    <input th:field="*{color}" type="hidden" id="color" name="color" value="250, 187, 7"/>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center justify-content-center w-100 m-0 py-3 preview" style="height: fit-content">
+
+                            <div class="col-lg-3 col-sm-3">
+                                <input th:field="*{tax}" type="checkbox" id="fop" name="fop" class="form-check-input" onclick="toogleTax(event)" th:value="${order.needsTax}"/>
+                            </div>
+                            <div class="col-lg-6 col-sm-6" >
+                                <label class="form-check-label" for="fop">Оплата на ФОП +6%</label>
+                            </div>
+                            <div class="col-lg-3 col-sm-3" id="fop-amount" th:style="${orderInfo.isTax() ? 'visibility: visible' : 'visibility: hidden'}">
+                                <span th:text="${order.getTaxPercentageCalc()} + 'грн'"></span>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-3">
+                                <input th:field="*{needsForOne}" type="checkbox" id="for-one" name="fop" class="form-check-input" onclick="toogleTax(event)"/>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <label class="form-check-label" for="for-one">На 1 людину</label>
+                            </div>
+                            <div class="col-lg-3 col-sm-3" id="for-one-amount" th:style="${orderInfo.isNeedsForOne() ? 'visibility: visible' : 'visibility: hidden'}">
+                                <span th:text="${order.getOnOnePerson()} + 'грн'"></span>
+                            </div>
+
+                            <div class="col-sm-7 col-lg-5 mt-3" style="width: unset">
+
+                                <input type="submit" value="Generate" class="btn btn-outline-success w-100" style="color: white !important;"/>
+
+                            </div>
+                            <div class="col-sm-3 col-lg-12 " style="width: unset">
+
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+
+<!--                <div class="row align-items-center justify-content-center w-100 m-0 preview" style="height: initial">-->
+<!--                    <div class="col-3">-->
+<!--                        <input type="checkbox" id="fop" form="generateForm" name="fop" class="form-check-input"/>-->
+<!--                    </div>-->
+<!--                    <div class="col-6">-->
+<!--                        <label class="form-check-label" for="fop">Оплата на ФОП +6%</label>-->
+<!--                    </div>-->
+<!--                    <div class="col-3">-->
+<!--                        <span th:text="${order.getTaxPercentage()}"></span>-->
+<!--                    </div>-->
+<!--                </div>-->
 
                 <div class="row align-items-center justify-content-between w-100 m-0 preview" style="visibility: hidden">
                     <div class="col-3" style=" width: initial">
@@ -219,6 +251,16 @@
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
+
+    function toogleTax(event) {
+        let id = event.target.id+"-amount";
+        if (event.target.checked) {
+            document.getElementById(id).style.visibility = "visible";
+        }
+        else {
+            document.getElementById(id).style.visibility = "hidden";
+        }
+    }
 
     let selectedColor = "rgb(250,187,7)";
     function insertData(title, desc, price){
@@ -278,8 +320,8 @@
             event.target.nextElementSibling.classList.remove("selected");
         }
         event.target.classList.add("selected");
-        selectedColor = event.target.style.backgroundColor;
-
+        let color = document.getElementById("color");
+        color.value = event.target.style.backgroundColor.replace("rgb(","").replace(")","");
     }
 </script>
 

@@ -34,10 +34,8 @@ public class PdfGenerator {
     String summaryHeader = "Загалом";
     Map<String, Tuple<String,byte[]>> summary = new LinkedHashMap<>();
 
-    public PdfGenerator(Orders order) {
+    public PdfGenerator(Orders order, OrderInfo info) {
         this.order = order;
-
-
 
         DateTimeFormatter date = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm");
@@ -59,13 +57,18 @@ public class PdfGenerator {
         posHeader.add("К-сть порцій");
         posHeader.add("Ціна, \nгрн");
 
-        summary.put("Разом по меню, грн",new Tuple<>((int) order.getTotalPrice() + " грн",null));
-//        summary.put("На 1 особу, грн", new Tuple<>((int) order.getTotalPrice() / order.getGuestsAmount() + " грн",null));
-        for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
-            summary.put(info.getTitle(),new Tuple<>( info.getDescription () + "\n" + ((int)info.getPrice()==0 ? "" : info.getPrice() + " грн"),info.getImage()));
+        summary.put("Разом по меню, грн",new Tuple<>((int) order.getPrice() + " грн",null));
+        if(info.isTax()){
+            summary.put("Оплата на ФОП +6%", new Tuple<>((int) order.getTaxPercentageCalc() + " грн",null));
+        }
+        if(info.isNeedsForOne())
+            summary.put("На 1 особу, грн", new Tuple<>((int) order.getPrice() / order.getGuestsAmount() + " грн",null));
+
+        for (OrderAdditionalInfo infoT : order.getAdditionalInfo()) {
+            summary.put(infoT.getTitle(),new Tuple<>( infoT.getDescription () + "\n" + ((int)infoT.getPrice()==0 ? "" : infoT.getPrice() + " грн"),infoT.getImage()));
         }
 
-        summary.put("Всього за заходом: ",new Tuple<>((int) order.getTotalPrice() + (int) order.getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum() + " грн",null));
+        summary.put("Всього за заходом: ",new Tuple<>(order.getTotalPrice() + " грн",null));
 
         try (InputStream fontStream = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getInputStream()) {
             BaseFont baseFont = BaseFont.createFont("Arial Unicode.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontStream.readAllBytes(), null);
