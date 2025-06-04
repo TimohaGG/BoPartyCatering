@@ -15,6 +15,8 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.pdfbox.pdmodel.graphics.optionalcontent.PDOptionalContentGroup;
 import org.modelmapper.ModelMapper;
@@ -24,15 +26,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.FrameworkServlet;
-import org.yaml.snakeyaml.util.Tuple;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.web.IWebExchange;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -41,14 +42,23 @@ public class OrdersController {
     private final FrameworkServlet frameworkServlet;
     private final ShoppingListService shoppingListService;
     private OrdersService ordersService;
+    private SpringTemplateEngine templateEngine;
 
+    private HttpServletRequest request;
 
+    private HttpServletResponse response;
+
+    private ServletContext servletContext;
 
     @Autowired
-    public OrdersController(OrdersService ordersService, FrameworkServlet frameworkServlet, ShoppingListService shoppingListService) {
+    public OrdersController(OrdersService ordersService, FrameworkServlet frameworkServlet, ShoppingListService shoppingListService, SpringTemplateEngine templateEngine, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
         this.ordersService = ordersService;
         this.frameworkServlet = frameworkServlet;
         this.shoppingListService = shoppingListService;
+        this.templateEngine = templateEngine;
+        this.request = request;
+        this.response = response;
+        this.servletContext = servletContext;
     }
     @GetMapping("/order/view/{id}")
     public String index(@PathVariable long id, Model model){
@@ -240,12 +250,14 @@ public class OrdersController {
     }
 
     @PostMapping("/order/shopping/{shoppingItemId}/addComment")
-    public ResponseEntity<String> addComment(@PathVariable long shoppingItemId, @RequestParam String comment) {
+    public String addComment(@PathVariable long shoppingItemId, @RequestParam String comment, Model model) {
         if(!comment.isBlank()){
             ShoppingListItem item = this.shoppingListService.addCommentToItem(comment, shoppingItemId);
-            return ResponseEntity.ok(item.getComment());
+
+            model.addAttribute("item",item);
+            return "fragments/_showComment_button :: button";
         }
-        return ResponseEntity.badRequest().build();
+        return "";
     }
 
     @PostMapping("/order/shopping/{shoppingItemId}/removeComment")
