@@ -101,6 +101,12 @@
                             <option th:selected="${sel.getUnit().getId() == unit.getId()}" th:each="unit:${units}" th:value="${unit.getId()}" th:text="${unit.getUnitName()}" style="color: black !important"></option>
                         </select>
                     </div>
+                    <div class="col-2 p-0 delButton" style="display: none">
+                        <button type="button" class="btn btn-outline-danger ms-3" data-bs-toggle="modal" th:data-bs-target="'#removeModal_'+${sel.getId()}">
+                            -
+                        </button>
+
+                    </div>
 
 
                 </div>
@@ -174,11 +180,11 @@
             .then(res=>res.text())
             .then(resp=>{
                 if(resp){
-                    console.log(resp);
+                    console.log("New amount is "+resp);
                     if(+resp===0.0)
-                        replaceItem('item_'+id,"others", false);
+                        removeItem('item_'+id,"others", false);
                     else
-                        replaceItem('item_'+id,"selected", true);
+                        addItem('item_'+id,"selected", true);
                 }
 
 
@@ -202,15 +208,46 @@
         return 0;
     }
 
-    function replaceItem(itemId, target, hideControl){
+
+   function removeItem(itemId, target, hideControl) {
+       let temp;
+       let elem = document.getElementById(itemId);
+       if (elem.parentElement.id === "selected") {
+           console.log("Item removed");
+           temp = elem;
+           elem.remove();
+           document.getElementById(target).appendChild(temp);
+           console.log(temp);
+           temp.querySelector(".delButton").style.display = hideControl ? "none" : "block";
+       }
+   }
+
+    function addItem(itemId, target, hideControl){
+       console.log("add func");
+
+       let temp;
+        let elem = document.getElementById(itemId);
+
+        if(elem.parentElement.parentElement.parentElement.id==="others" || elem.parentElement.id==="others"){
+            console.log("Item added");
+            temp = elem;
+            elem.remove();
+            document.getElementById(target).appendChild(temp);
+            temp.querySelector(".delButton").style.display = hideControl ? "none" : "block";
+        }
+
+
+
+
+    }
+
+    function updateItem(itemId){
         let temp;
         let elem = document.getElementById(itemId);
         temp = elem;
-
-        temp.querySelector(".delButton").style.display = hideControl ? "none" : "block";
-
-        elem.remove();
-        document.getElementById(target).appendChild(temp);
+        // document.getElementById(target).appendChild(temp);
+        // elem.append(temp);
+        // elem.remove();
     }
 
     async function updateUnits(event){

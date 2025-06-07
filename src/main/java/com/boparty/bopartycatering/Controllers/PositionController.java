@@ -125,7 +125,7 @@ public class PositionController {
             return ResponseEntity.ok(tmp.getAmount());
         }
         if(tmp != null) {
-            IngredientAmount selTmp = selectedIngredients.stream().filter(x->x.getIngredient().getId() == tmp.getIngredient().getId()).findFirst().orElse(null);
+            IngredientAmount selTmp = selectedIngredients.stream().filter(x-> Objects.equals(x.getIngredient().getId(), tmp.getIngredient().getId())).findFirst().orElse(null);
             if(selTmp==null)
                 selectedIngredients.add(tmp);
             else
