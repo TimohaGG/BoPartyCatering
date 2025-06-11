@@ -199,6 +199,9 @@ public class Orders {
     }
 
     public int getOnOnePerson(){
+        if(guestsAmount==0){
+            return 0;
+        }
         return (int)getPrice() / guestsAmount;
     }
 
