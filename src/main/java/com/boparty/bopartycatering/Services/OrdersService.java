@@ -16,6 +16,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.OutputStream;
 import java.util.*;
@@ -239,5 +240,16 @@ public class OrdersService {
         }
         temp = ordersRepos.save(temp);
         return temp;
+    }
+
+    public void removePositions(Long id) {
+        Orders orders = ordersRepos.findById(id).orElse(null);
+        if(orders!=null){
+            for(PositionAmount pa : orders.getPositionsAmount()){
+                orders.removePosition(pa);
+            }
+            save(orders);
+
+        }
     }
 }

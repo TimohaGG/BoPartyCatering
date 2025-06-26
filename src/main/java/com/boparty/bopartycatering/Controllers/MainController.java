@@ -187,8 +187,16 @@ public class MainController {
 
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             order.setUser(user);
+            if(order.getId() != null){
+                ordersService.removePositions(order.getId());
+                this.tmpPositions.forEach(PositionAmount::removeId);
+            }
+
             Orders tm =  ordersService.save(order);
-            positionsService.removeZeroPositions(order.getId(), tmpPositions);
+
+            this.tmpPositions.removeIf(pos->pos.getAmount()==0);
+
+//            positionsService.removeZeroPositions(order.getId(), tmpPositions);
             positionsService.saveAll(tmpPositions);
             tmpPositions.forEach(el->{el.setOrder(tm);});
             tm.setPositionsAmount(tmpPositions);

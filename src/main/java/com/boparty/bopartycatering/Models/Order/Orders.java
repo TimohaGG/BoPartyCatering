@@ -220,4 +220,9 @@ public class Orders {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public void removePosition(PositionAmount positionAmount) {
+        this.positionsAmount.remove(positionAmount);
+        positionAmount.setOrder(null);
+    }
 }
