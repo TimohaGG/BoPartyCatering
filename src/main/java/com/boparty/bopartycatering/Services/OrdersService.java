@@ -13,9 +13,14 @@ import com.boparty.bopartycatering.Repos.PositionAmountRepos;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.OutputStream;
 import java.util.*;
@@ -240,4 +245,26 @@ public class OrdersService {
         temp = ordersRepos.save(temp);
         return temp;
     }
+
+    public String parseOrder(MultipartFile menu) {
+        StringBuilder builder = new StringBuilder();
+        PdfReader reader = null;
+        try{
+            reader = new PdfReader(menu.getInputStream());
+            for (int i = 1;i <= reader.getNumberOfPages(); ++i) {
+                TextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+                String text = PdfTextExtractor.getTextFromPage(reader, i, strategy);
+                builder.append(text).append("\n");
+            }
+        }catch (Exception e){
+            return null;
+        }finally {
+            if(reader != null){
+                reader.close();
+            }
+
+        }
+        return builder.toString();
+    }
+
 }

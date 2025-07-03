@@ -2,10 +2,15 @@ package com.boparty.bopartycatering.Services;
 
 import com.boparty.bopartycatering.Models.Position.*;
 import com.boparty.bopartycatering.Repos.*;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -153,5 +158,35 @@ public class PositionsService {
 
     public List<Position> getPositionsByNamePart(String namePart){
         return positionsRepos.findAllByNameContainsIgnoreCase(namePart);
+    }
+
+    public List<PositionAmount> parsePositions(String text) {
+        System.out.println(text);
+        text = text.replaceAll("\n"," ");
+        int index = text.indexOf("грн");
+        if(index != -1){
+            text = text.substring(index+4);
+        }
+        System.out.println(text);
+        List<PositionAmount> positionAmounts = new ArrayList<>();
+        Pattern pattern = Pattern.compile("(?<text>.*?)\\s(?<n1>\\d+)\\s(?<n2>\\d+)\\s(?<n3>\\d+)(?=\\s|$)");
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find()) {
+            PositionAmount posAmount = parsePosition(matcher);
+            if(posAmount!=null)
+                positionAmounts.add(posAmount);
+        }
+
+
+        return positionAmounts;
+    }
+
+    private PositionAmount parsePosition(Matcher text){
+        String name = text.group("text").trim();
+        int amount = Integer.parseInt(text.group("n2"));
+        System.out.println(name);
+        System.out.println(amount);
+        return null;
     }
 }

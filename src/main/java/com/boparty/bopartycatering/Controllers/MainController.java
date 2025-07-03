@@ -17,6 +17,10 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -327,6 +332,20 @@ public class MainController {
         selectedIds = tmpPositions.stream().collect( Collectors.toMap(x->x.getPositionId(),PositionAmount::getAmount));
         return "Order/orderCreate";
 
+    }
+
+    @GetMapping("/parse")
+    public String parse(Model model) {
+        return "Order/parseDocument";
+    }
+
+    @PostMapping("/parse")
+    public String parseDocument(MultipartFile menu, Model model) {
+
+        String text = this.ordersService.parseOrder(menu);
+
+        List<PositionAmount> positions = this.positionsService.parsePositions(text);
+        return "redirect:/";
     }
 
 
