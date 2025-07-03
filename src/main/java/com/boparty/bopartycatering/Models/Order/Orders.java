@@ -199,6 +199,9 @@ public class Orders {
     }
 
     public int getOnOnePerson(){
+        if(guestsAmount==0){
+            return 0;
+        }
         return (int)getPrice() / guestsAmount;
     }
 
@@ -216,5 +219,10 @@ public class Orders {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void removePosition(PositionAmount positionAmount) {
+        this.positionsAmount.remove(positionAmount);
+        positionAmount.setOrder(null);
     }
 }

@@ -79,7 +79,12 @@ public class PositionsService {
     }
 
     public IngredientAmount addIngredient(IngAmountDTO ingredient, long posId){
-        IngredientAmount tmp = new IngredientAmount();
+        //find existing ing amount with the same posId and ing
+
+        IngredientAmount tmp = this.ingAmountRepos.findByPositionIdAndIngredientId(posId, ingredient.getIngId()).orElse(null);
+        if(tmp==null){
+            tmp = new IngredientAmount();
+        }
         Position pos = positionsRepos.findById(posId).orElse(null);
         if(pos != null){
             tmp.setPosition(pos);

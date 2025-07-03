@@ -200,6 +200,10 @@ padding-bottom: 50px;
     .preview>*{
         width: initial;
     }
+
+    .small-hide{
+        column-span: 2;
+    }
 }
 
 .disable-dbl-tap-zoom {
@@ -323,4 +327,8 @@ body{
 
 .popover-body{
     color:black !important;
+}
+
+.table-dark td{
+    background-color: #202020 !important;
 }
