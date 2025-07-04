@@ -3,9 +3,11 @@ package com.boparty.bopartycatering.Models.Position;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Entity
 @AllArgsConstructor
+@Builder
 public class PositionAmount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -21,9 +21,15 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
+import com.spire.pdf.PdfDocument;
+import com.spire.pdf.utilities.PdfTable;
+import com.spire.pdf.utilities.PdfTableExtractor;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
@@ -31,9 +37,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import technology.tabula.ObjectExtractor;
+import technology.tabula.Page;
+import technology.tabula.RectangularTextContainer;
+import technology.tabula.Table;
+import technology.tabula.extractors.SpreadsheetExtractionAlgorithm;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -53,8 +67,12 @@ public class MainController {
     private final GoogleOAuthService googleOAuthService;
     private final GoogleCalendarService calendarService;
 
+    private final ErrorAttributes errorAttributes;
+
+
+
     @Autowired
-    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService,GoogleOAuthService googleOAuthService, GoogleCalendarService calendarService) {
+    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService,GoogleOAuthService googleOAuthService, GoogleCalendarService calendarService, ErrorAttributes errorAttributes) {
         this.ordersService = ordersService;
         this.positionsService = positionsService;
         this.userService = userService;
@@ -64,6 +82,7 @@ public class MainController {
         this.shoppingListService = shoppingListService;
         this.googleOAuthService = googleOAuthService;
         this.calendarService = calendarService;
+        this.errorAttributes = errorAttributes;
 
 
     }
@@ -132,10 +151,7 @@ public class MainController {
         return ResponseEntity.ok(false);
     }
 
-    @GetMapping("/error")
-    public String error() {
-        return "error";
-    }
+
 
     @GetMapping("/user/changeDefCalendar")
     public ResponseEntity<String> changeDefCalendar(@RequestParam String calendar, Model model) {
@@ -349,11 +365,15 @@ public class MainController {
 
     @PostMapping("/parse")
     public String parseDocument(MultipartFile menu, Model model) {
+        Orders order = null;
+        List<String[]> cells = this.ordersService.parseOrder(menu);
+        order = this.ordersService.createOrderDetailsFromText(cells);
+        List<PositionAmount> positions = this.positionsService.parsePositions(cells, order);
+        order.setPositionsAmount(positions);
+        ordersService.save(order);
 
-        String text = this.ordersService.parseOrder(menu);
 
-        List<PositionAmount> positions = this.positionsService.parsePositions(text);
-        return "redirect:/";
+        return order==null ?"redirect:/": "redirect:/order/view/"+order.getId();
     }
 
 

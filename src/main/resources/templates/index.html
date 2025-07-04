@@ -79,6 +79,13 @@
 
                                 </li>
 
+                                <li class="list-group-item" >
+                                    <a class="btn btn-outline-light w-100" th:href="${'/parse'}">
+                                        Створити з документу
+                                    </a>
+
+                                </li>
+
                                 <li class="list-group-item" style="display: none;" id="shoppingFormBtns">
                                     <div class="row">
                                         <div class="col-8">
@@ -143,7 +150,9 @@
                                 <h4 th:if="${order.getClient()}!=''" >
                                     <a th:text="${order.getClient()}" th:href="'/order/view/'+${order.getId()}" class="text-decoration-none"></a>
                                 </h4>
-                                <h4 th:unless="${order.getClient()}!=''">-</h4>
+                                <h4 th:unless="${order.getClient()}!=''">
+                                    <a th:text="${order.getDateFormatted()}" th:href="'/order/view/'+${order.getId()}" class="text-decoration-none"></a>
+                                </h4>
                                 <span th:text="${order.getPrice()}"></span>
 
                             </div>
