@@ -324,7 +324,7 @@ public class OrdersService {
                     }break;
                     case "тривалість":{
                         try{
-                            order.setDuration(Integer.parseInt(row[i+1]));
+                            order.setDuration(Integer.parseInt(nextRowWithData(row)));
                         }catch (Exception e){
                             order.setDuration(0);
                         }
@@ -333,7 +333,7 @@ public class OrdersService {
                     }break;
                     case "к-стьзапрошених":{
                         try{
-                            order.setGuestsAmount(Integer.parseInt(row[i+1]));
+                            order.setGuestsAmount(Integer.parseInt(nextRowWithData(row)));
                         }catch (Exception e){
                             order.setGuestsAmount(0);
                         }
@@ -341,11 +341,11 @@ public class OrdersService {
 
                     }break;
                     case  "форматзаходу":{
-                        order.setFormat(row[i+1]);
+                        order.setFormat(nextRowWithData(row));
                         i=row.length-1;
                     }break;
                     case "телефонвідповідальногоменеджера":{
-                        order.setPhone(row[i+1]);
+                        order.setPhone(nextRowWithData(row));
                         i=row.length-1;
                     }break;
                     case "меню":
@@ -383,7 +383,7 @@ public class OrdersService {
                 .appendLiteral('.')
                 .appendValue(ChronoField.MONTH_OF_YEAR) // accepts 1 or 2 digits
                 .appendLiteral('.')
-                .appendValueReduced(ChronoField.YEAR, 2, 2, 2000) // "25" becomes 2025
+                .appendValueReduced(ChronoField.YEAR, 2, 4, 2000) // "25" becomes 2025
                 .appendLiteral(' ')
                 .appendPattern("HH:mm")
                 .toFormatter();
