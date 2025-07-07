@@ -365,15 +365,19 @@ public class MainController {
 
     @PostMapping("/parse")
     public String parseDocument(MultipartFile menu, Model model) {
+        List<String> errors = new ArrayList<>();
         Orders order = null;
         List<String[]> cells = this.ordersService.parseOrder(menu);
-        order = this.ordersService.createOrderDetailsFromText(cells);
-        List<PositionAmount> positions = this.positionsService.parsePositions(cells, order);
+
+        order = this.ordersService.createOrderDetailsFromText(cells,errors);
+        List<PositionAmount> positions = this.positionsService.parsePositions(cells, order,errors);
         order.setPositionsAmount(positions);
         ordersService.save(order);
 
-
-        return order==null ?"redirect:/": "redirect:/order/view/"+order.getId();
+        model.addAttribute("errors", errors);
+        model.addAttribute("orderId", order.getId());
+        return "Order/parseResult";
+//        return order==null ?"redirect:/": "redirect:/order/view/"+order.getId();
     }
 
 

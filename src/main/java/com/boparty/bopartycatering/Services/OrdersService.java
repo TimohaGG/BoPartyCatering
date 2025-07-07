@@ -295,72 +295,96 @@ public class OrdersService {
        return null;
     }
 
-    public Orders createOrderDetailsFromText(List<String[]> cells) {
-        return  save(setOrderInfo(cells));
+    public Orders createOrderDetailsFromText(List<String[]> cells, List<String> errors) {
+        try{
+            return save(setOrderInfo(cells, errors));
+        }
+        catch (Exception e){
+            errors.add("Не вдалось створити замовлення:" + e.getMessage());
+            return null;
+        }
     }
 
-    private Orders setOrderInfo(List<String[]> cells ){
+    private Orders setOrderInfo(List<String[]> cells, List<String> errors ) {
         Orders order = new Orders();
-        for (String[] row : cells) {
+        int splitIndex = 0;
+        for (int rowIndex = 0; rowIndex < cells.size(); rowIndex++) {
             boolean finish = false;
-            for (int i = 0; i < row.length; i++) {
-                switch (simlpifyText(row[i])) {
+            for (int i = 0; i < cells.get(rowIndex).length; i++) {
+                switch (simlpifyText(cells.get(rowIndex)[i])) {
 
                     case "замовник":{
-                        order.setClient(nextRowWithData(row));
-                        i=row.length-1;
+                        order.setClient(nextRowWithData(cells.get(rowIndex)));
+                        i=cells.get(rowIndex).length-1;
                     }break;
                     case "дата":{
                         LocalDateTime date = order.getDate();
-                        LocalDateTime res = parseDate(nextRowWithData(row),date.format(DateTimeFormatter.ofPattern("HH:mm")));
-                        order.setDate(res==null ? date:res);
-                        i=row.length-1;
+                        LocalDateTime res = parseDate(nextRowWithData(cells.get(rowIndex)),date.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        if(res==null){
+                            errors.add("Не вдалось розшифрувати дату: "+nextRowWithData(cells.get(rowIndex)));
+                        }
+                        else{
+                            order.setDate(res);
+                        }
+                        i=cells.get(rowIndex).length-1;
                     }break;
                     case "початокзаходу":{
                         LocalDateTime date = order.getDate();
-                        LocalDateTime res = parseDate(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),nextRowWithData(row));
-                        order.setDate(res==null ? date:res);
-                        i=row.length-1;
+                        LocalDateTime res = parseDate(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),nextRowWithData(cells.get(rowIndex)));
+
+                        if(res==null){
+                            errors.add("Не вдалось розшифрувати початок заходу: "+nextRowWithData(cells.get(rowIndex)));
+                        }
+                        else{
+                            order.setDate(res);
+                        }
+                        i=cells.get(rowIndex).length-1;
                     }break;
                     case "тривалість":{
                         try{
-                            order.setDuration(Integer.parseInt(nextRowWithData(row)));
+                            order.setDuration(Integer.parseInt(nextRowWithData(cells.get(rowIndex))));
                         }catch (Exception e){
                             order.setDuration(0);
+                            errors.add("Не вдалось розшифрувати тривалість: "+nextRowWithData(cells.get(rowIndex)));
                         }
-                        i=row.length-1;
+                        i=cells.get(rowIndex).length-1;
 
                     }break;
                     case "к-стьзапрошених":{
                         try{
-                            order.setGuestsAmount(Integer.parseInt(nextRowWithData(row)));
+                            order.setGuestsAmount(Integer.parseInt(nextRowWithData(cells.get(rowIndex))));
                         }catch (Exception e){
                             order.setGuestsAmount(0);
+                            errors.add("Не вдалось розшифрувати к-сть запрошених: "+nextRowWithData(cells.get(rowIndex)));
                         }
-                        i=row.length-1;
+                        i=cells.get(rowIndex).length-1;
 
                     }break;
                     case  "форматзаходу":{
-                        order.setFormat(nextRowWithData(row));
-                        i=row.length-1;
+                        order.setFormat(nextRowWithData(cells.get(rowIndex)));
+                        i=cells.get(rowIndex).length-1;
                     }break;
                     case "телефонвідповідальногоменеджера":{
-                        order.setPhone(nextRowWithData(row));
-                        i=row.length-1;
+                        order.setPhone(nextRowWithData(cells.get(rowIndex)));
+                        i=cells.get(rowIndex).length-1;
                     }break;
                     case "меню":
                     case "позиції":{
                         finish = true;
-                        i=row.length-1;
+                        i=cells.get(rowIndex).length-1;
                     }break;
                 }
             }
             if(finish){
+                splitIndex = rowIndex;
                 break;
             }
         }
         order.setUser(this.userService.getCurrentUser());
         order.setTemporary(false);
+
+        cells.subList(0,splitIndex+1).clear();
+
         return order;
     }
 

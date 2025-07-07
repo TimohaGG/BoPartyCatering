@@ -166,10 +166,13 @@ public class PositionsService {
         return positionsRepos.findAllByNameContainsIgnoreCase(namePart);
     }
 
-    public List<PositionAmount> parsePositions(List<String[]> cells, Orders order) {
+    public List<PositionAmount> parsePositions(List<String[]> cells, Orders order, List<String> errors) {
         List<PositionAmount> res = new ArrayList<>();
         for (String[] cell : cells) {
             for (int i = 0; i < cell.length; i++) {
+                if(cell[i].equals("Загалом")){
+                    return res;
+                }
                 if(!cell[i].isEmpty()){
                     Position pos = parsePosition(cell[i]);
                     if(pos != null){
@@ -178,8 +181,12 @@ public class PositionsService {
                         amount.setOrder(order);
                         amount.setAmount(getSecondNumber(cell,i));
                         res.add(amount);
-                        break;
+
                     }
+                    else{
+                        errors.add("Не вдалось знайти позицію: " + cell[i]);
+                    }
+                    break;
                 }
 
             }

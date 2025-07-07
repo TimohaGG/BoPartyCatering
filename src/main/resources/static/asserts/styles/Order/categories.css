@@ -215,7 +215,7 @@ padding-bottom: 50px;
     display: none;
 }
 
-.list-group-item:last-child:hover{
+.list-group-item:last-child:not(.error-item):hover{
     background-color: #202020 !important;
 }
 
