@@ -212,7 +212,6 @@ public class MainController {
                 ordersService.removePositions(order.getId());
                 this.tmpPositions.forEach(PositionAmount::removeId);
             }
-
             Orders tm =  ordersService.save(order);
 
             this.tmpPositions.removeIf(pos->pos.getAmount()==0);

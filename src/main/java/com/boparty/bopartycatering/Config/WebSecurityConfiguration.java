@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -17,7 +18,7 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         http
                 .csrf(x->x.disable())
                 .authorizeHttpRequests(auth -> {
@@ -34,16 +35,18 @@ public class WebSecurityConfiguration {
                     login
                             .loginPage("/login")
                             .defaultSuccessUrl("/", true)
-
                             .permitAll();
                 })
                 .logout(logout ->
                         logout.logoutUrl("/logout")
                                 .logoutSuccessUrl("/login")
                                 .invalidateHttpSession(true)
-                                .deleteCookies("JSESSIONID")
+                                .deleteCookies("JSESSIONID","remember-me")
                                 .permitAll())
-                .rememberMe(rem->rem.key("uniqueAndSecret").tokenValiditySeconds(604800));
+                .rememberMe(rem->
+                        rem.userDetailsService(userDetailsService)
+                        .key("uniqueAndSecret")
+                                .tokenValiditySeconds(604800));
 
         return http.build();
 

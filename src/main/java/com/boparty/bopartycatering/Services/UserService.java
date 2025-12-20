@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepos userRepos;
-    private RolesRepos rolesRepos;
+    private final UserRepos userRepos;
+    private final RolesRepos rolesRepos;
     @Autowired
     public UserService(UserRepos userRepos, RolesRepos rolesRepos) {
         this.userRepos = userRepos;

@@ -87,9 +87,6 @@ public class OrdersController {
                                               @ModelAttribute OrderInfo orderInfo) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             String filename = ordersService.getOrderFileName(id);
-
-
-
             Document document = new Document();
             PdfWriter.getInstance(document, out);
             document.open();
@@ -100,12 +97,18 @@ public class OrdersController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDisposition(ContentDisposition
-                    .attachment()
-                    .filename(filename)
-                    .build());
+//            headers.setContentDisposition(ContentDisposition
+//                    .attachment()
+//                    .name(filename)
+//                    .filename(filename)
+//                    .build());
 
-            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+//            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK)
+//            ;
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
