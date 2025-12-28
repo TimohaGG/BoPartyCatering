@@ -58,4 +58,6 @@ public class InfoDTO {
     public void setPrice(int price) {
         this.price = price;
     }
+
+
 }

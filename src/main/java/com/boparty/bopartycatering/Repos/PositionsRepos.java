@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PositionsRepos extends JpaRepository<Position,Long> {
     List<Position> findAllByCategoryId(Long categoryId);
-
+    List<Position> findAllByCategory_User_id(Long categoryUserId);
     List<Position> findAllByNameContainsIgnoreCase(String name);
 
     Optional<Position> findByName(String name);

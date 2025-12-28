@@ -27,6 +27,7 @@ public class WebSecurityConfiguration {
                             .requestMatchers("/login").permitAll()
                             .requestMatchers("/asserts/**").permitAll()
                             .requestMatchers("/oauth2/authorize/google").permitAll()
+                            .requestMatchers("/order/view/**").permitAll()
                             .anyRequest().authenticated();
                 })
 

@@ -426,4 +426,7 @@ public class OrdersService {
     private String simlpifyText(String text){
         return text.toLowerCase().replaceAll(" ","").replaceAll("\n","");
     }
+
+
+
 }

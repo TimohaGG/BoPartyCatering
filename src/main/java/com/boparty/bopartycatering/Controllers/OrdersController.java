@@ -7,6 +7,7 @@ import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Services.OrdersService;
 
 import com.boparty.bopartycatering.Services.ShoppingListService;
+import com.boparty.bopartycatering.Services.UserService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -68,6 +69,7 @@ public class OrdersController {
             model.addAttribute("info", new InfoDTO());
             model.addAttribute("common",ordersService.getCommonAdditionalInfo());
             model.addAttribute("orderInfo", new OrderInfo());
+            model.addAttribute("isLogged", UserService.isLoggedIn());
             return "Order/index";
         }
         return "redirect:/";
