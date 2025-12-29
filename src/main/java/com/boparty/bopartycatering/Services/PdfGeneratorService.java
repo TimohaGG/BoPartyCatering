@@ -1,19 +1,14 @@
 package com.boparty.bopartycatering.Services;
 
 import com.boparty.bopartycatering.Models.Position.Category;
-import com.boparty.bopartycatering.Models.Position.Ingredient;
 import com.boparty.bopartycatering.Models.Position.IngredientAmount;
 import com.boparty.bopartycatering.Models.Position.Position;
 import com.boparty.bopartycatering.Repos.CategoriesRepos;
-import com.boparty.bopartycatering.Repos.IIngAmountRepos;
 import com.boparty.bopartycatering.Repos.PositionsRepos;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.spire.pdf.utilities.PdfTable;
-import jakarta.annotation.Nullable;
-import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +66,7 @@ public class PdfGeneratorService {
         try{
 
 
-            PdfPTable table = new PdfPTable(new float[]{30,30,30});
+            PdfPTable table = new PdfPTable(new float[]{30,20,30});
             table.setWidthPercentage(100);
             for(Position position : positions){
 
