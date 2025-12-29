@@ -345,9 +345,9 @@ public class OrdersService {
                     }break;
                     case "тривалість":{
                         try{
-                            order.setDuration(Integer.parseInt(nextRowWithData(cells.get(rowIndex))));
+//                            order.setDuration(Integer.parseInt(nextRowWithData(cells.get(rowIndex))));
                         }catch (Exception e){
-                            order.setDuration(0);
+                            order.setDuration("");
                             errors.add("Не вдалось розшифрувати тривалість: "+nextRowWithData(cells.get(rowIndex)));
                         }
                         i=cells.get(rowIndex).length-1;
@@ -428,5 +428,7 @@ public class OrdersService {
     }
 
 
-
+    public OrderAdditionalInfo getOrderInfoById(Long id) {
+        return this.iAdditionalInfoRepos.findById(id).orElse(null);
+    }
 }

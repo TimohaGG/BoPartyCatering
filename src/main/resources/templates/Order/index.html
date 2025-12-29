@@ -69,10 +69,7 @@
                         </td>
                     </tr>
 
-                    <tr>
-                        <td>Загальна ціна:</td>
-                        <td th:text="${order.getPrice()} + ' грн'" colspan="3"></td>
-                    </tr>
+
                     <tr th:each="info:${order.getAdditionalInfo()}">
                         <td th:text="${info.getTitle()}" ></td>
 
@@ -86,17 +83,24 @@
                         </td>
                         <td>
 
-                            <button th:if="${isLogged}" type="button" class="text-decoration-none btn btn-outline-warning">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
-                                </svg>
-                            </button>
-                            <form th:if="${isLogged}" method="post" th:action="'/order/deleteInfo/'+${info.getId()}">
-                                <input type="hidden" name="orderId" id="orderId" th:value="${order.getId()}"/>
-                                <input type="submit" style="width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger w-100 mt-2" value="x"/>
-                            </form>
+                            <div class="d-flex justify-content-center" style="gap:10px">
+                                <button th:if="${isLogged}" type="button" class="text-decoration-none btn btn-outline-warning mt-2" data-bs-toggle="modal" data-bs-target="#editInfoModal" th:onclick="'editData('+${info.getId()}+')'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                    </svg>
+                                </button>
+                                <form th:if="${isLogged}" method="post" th:action="'/order/deleteInfo/'+${info.getId()}">
+                                    <input type="hidden" name="orderId" id="orderId" th:value="${order.getId()}"/>
+                                    <input type="submit" style="width: fit-content;color: white !important;" class="text-decoration-none btn btn-outline-danger w-100 mt-2" value="x"/>
+                                </form>
+                            </div>
+
 
                         </td>
+                    </tr>
+                    <tr>
+                        <td>Загальна ціна:</td>
+                        <td th:text="${order.getTotalPrice()} + ' грн'" colspan="3"></td>
                     </tr>
                     <tr>
 
@@ -127,7 +131,10 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="description"  class="form-label">Опис</label>
-                                                    <input type="text" name="description" id="description" class="form-control" th:field="*{description}"/>
+                                                    <textarea name="description" id="description" class="form-control" th:field="*{description}">
+
+                                                    </textarea>
+
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="image"  class="form-label">Зображення</label>
@@ -219,36 +226,39 @@
 
     </div>
 
-<!--    <div class="modal" tabindex="-1">-->
-<!--        <div class="modal-dialog">-->
-<!--            <div class="modal-content">-->
-<!--                <div class="modal-header">-->
-<!--                    <h5 class="modal-title">Редагувати додаток</h5>-->
-<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                </div>-->
-<!--                <div class="modal-body">-->
-<!--                    <form id="editForm" action="/info/edit" method="post">-->
-<!--                        <div class="mb-3">-->
-<!--                            <label for="title" class="form-label">Заголовок</label>-->
-<!--                            <input type="text" name="title" id="title_edit" class="form-control" th:field="*{title}" />-->
-<!--                        </div>-->
-<!--                        <div class="mb-3">-->
-<!--                            <label for="description"  class="form-label">Опис</label>-->
-<!--                            <input type="text" name="description" id="description_edit" class="form-control" th:field="*{description}"/>-->
-<!--                        </div>-->
-<!--                        <div class="mb-3">-->
-<!--                            <label for="price"  class="form-label">Ціна</label>-->
-<!--                            <input type="number" name="price" id="price_edit" class="form-control" th:field="*{price}"/>-->
-<!--                        </div>-->
-<!--                    </form>-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>-->
-<!--                    <button type="button" class="btn btn-primary" form="editForm">Зберігти</button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="modal fade" id="editInfoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редагувати додаток</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="/info/edit" method="post" th:object="${orderInfoEditModel}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Заголовок</label>
+                            <input type="text" name="title" id="title_edit" class="form-control" th:field="*{title}" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="description"  class="form-label">Опис</label>
+                            <input type="text" name="description" id="description_edit" class="form-control" th:field="*{description}"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price"  class="form-label">Ціна</label>
+                            <input type="number" name="price" id="price_edit" class="form-control" th:field="*{price}"/>
+                        </div>
+                        <input type="hidden" id="order_edit_id" name="id"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="button" class="btn btn-primary" form="editForm">Зберігти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
@@ -266,6 +276,19 @@
     let selectedColor = "rgb(250,187,7)";
     function insertData(title, desc, price){
         console.log(title);
+    }
+
+    async function editData(id){
+        let resp = await fetch("/edit/orderInfo/"+id,{
+            method: "POST"
+        })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("title_edit").value = data.title;
+                document.getElementById("description_edit").value = data.description;
+                document.getElementById("price_edit").value = data.price;
+                document.getElementById("order_edit_id").value = data.orderId;
+            })
     }
 
     async function func(){

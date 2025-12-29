@@ -70,6 +70,7 @@ public class OrdersController {
             model.addAttribute("common",ordersService.getCommonAdditionalInfo());
             model.addAttribute("orderInfo", new OrderInfo());
             model.addAttribute("isLogged", UserService.isLoggedIn());
+            model.addAttribute("orderInfoEditModel", new OrderAdditionalInfo());
             return "Order/index";
         }
         return "redirect:/";
@@ -304,6 +305,21 @@ public class OrdersController {
             order.setStatus(status);
             ordersService.save(order);
             return ResponseEntity.ok(new StatusResponse(order.getStatus(),order.getStatus().getColor()));
+        }
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/edit/orderInfo/{id}")
+    public ResponseEntity<OrderInfoEditDto> editOrderInfo(@PathVariable Long id) {
+        OrderAdditionalInfo info = this.ordersService.getOrderInfoById(id);
+        if (info != null) {
+            OrderInfoEditDto res = OrderInfoEditDto.builder()
+                    .title(info.getTitle())
+                    .orderId(info.getOrder().getId())
+                    .price(info.getPrice())
+                    .description(info.getDescription())
+                    .build();
+            return ResponseEntity.ok(res);
         }
         return ResponseEntity.ok(null);
     }
