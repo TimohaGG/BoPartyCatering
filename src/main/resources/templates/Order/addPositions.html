@@ -16,12 +16,12 @@
 
 <main style="overflow-y: hidden;position: relative">
 
-    <button class="btn btn-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px">
+    <button class="btn btn-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px;z-index: 101">
         <svg style="color: black !important" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket-fill" viewBox="0 0 16 16">
             <path style="color: black !important" d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"/>
         </svg>
     </button>
-    <a class="btn btn-light d-lg-none d-sm-flex d-flex justify-content-center align-items-center" style="border-radius: 50%;position: absolute;bottom: 20%;left: 6%;width: 50px;height: 50px;" href="/create/order" >
+    <a class="btn btn-light d-lg-none d-sm-flex d-flex justify-content-center align-items-center" style="border-radius: 50%;position: absolute;bottom: 20%;left: 6%;width: 50px;height: 50px;z-index: 101" href="/create/order" >
         <span >
             <svg style="color: black !important;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
               <path style="color: black !important;" fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
@@ -56,8 +56,8 @@
 
 
 
-            <div class="col-lg-6 col-12 positions" style="height: 100%" >
-                <div class="col-12 d-block p-0" style="height: fit-content;position: sticky;top:0;background-color: #202020;">
+            <div class="col-lg-6 col-12 positions" style="height: 100%;z-index: 100" >
+                <div class="col-12 d-block p-0" style="height: fit-content;position: sticky;top:0;background-color: #202020;z-index: 100">
                     <form method="get" action="/positions/search" id="searchForm" onsubmit="return false;">
                         <input class="rounded-input w-100 my-3" type="text" id="pos_search" name="searchVal" placeholder="Пошук" onchange="searchPos(event)" th:value="${searchVal==null ? '' : searchVal}"/>
                     </form>
@@ -67,7 +67,7 @@
                 <div class="row w-100 p-0" style="align-content: start">
                     <div class="col-12 container" th:each="position:${positions}" style="height: auto">
                         <div class="row justify-content-center align-items-center">
-                            <div class="position col-6">
+                            <div class="position col-6" style="position: relative;">
                                 <h5 th:text="${position.getName()}"></h5>
                                 <span th:text="${position.getPrice()} + ' грн'"></span>
                                 <div class="d-flex flex-column">
@@ -85,6 +85,9 @@
                                         <input class="rounded-input amount" th:id="'pos_'+${position.getId()}" th:unless="${selected.keySet().contains(position.getId())}" value="0" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
                                         <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',1)'" >+</button>
                                     </div>
+                                </div>
+                                <div class="userIndicator" th:style="'background-color:'+${position.getCategory().getUser().getDefaultColor()}">
+
                                 </div>
                             </div>
                             <div class="image col-3" th:if="${position.getImage()==null}" style="background-image: url('/asserts/img/logo.png');">

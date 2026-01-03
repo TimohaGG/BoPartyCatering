@@ -7,6 +7,7 @@ import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Services.OrdersService;
 
 import com.boparty.bopartycatering.Services.ShoppingListService;
+import com.boparty.bopartycatering.Services.UserService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -68,6 +69,8 @@ public class OrdersController {
             model.addAttribute("info", new InfoDTO());
             model.addAttribute("common",ordersService.getCommonAdditionalInfo());
             model.addAttribute("orderInfo", new OrderInfo());
+            model.addAttribute("isLogged", UserService.isLoggedIn());
+            model.addAttribute("orderInfoEditModel", new OrderAdditionalInfo());
             return "Order/index";
         }
         return "redirect:/";
@@ -87,9 +90,6 @@ public class OrdersController {
                                               @ModelAttribute OrderInfo orderInfo) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             String filename = ordersService.getOrderFileName(id);
-
-
-
             Document document = new Document();
             PdfWriter.getInstance(document, out);
             document.open();
@@ -100,12 +100,18 @@ public class OrdersController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDisposition(ContentDisposition
-                    .attachment()
-                    .filename(filename)
-                    .build());
+//            headers.setContentDisposition(ContentDisposition
+//                    .attachment()
+//                    .name(filename)
+//                    .filename(filename)
+//                    .build());
 
-            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+//            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK)
+//            ;
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -299,6 +305,21 @@ public class OrdersController {
             order.setStatus(status);
             ordersService.save(order);
             return ResponseEntity.ok(new StatusResponse(order.getStatus(),order.getStatus().getColor()));
+        }
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/edit/orderInfo/{id}")
+    public ResponseEntity<OrderInfoEditDto> editOrderInfo(@PathVariable Long id) {
+        OrderAdditionalInfo info = this.ordersService.getOrderInfoById(id);
+        if (info != null) {
+            OrderInfoEditDto res = OrderInfoEditDto.builder()
+                    .title(info.getTitle())
+                    .orderId(info.getOrder().getId())
+                    .price(info.getPrice())
+                    .description(info.getDescription())
+                    .build();
+            return ResponseEntity.ok(res);
         }
         return ResponseEntity.ok(null);
     }

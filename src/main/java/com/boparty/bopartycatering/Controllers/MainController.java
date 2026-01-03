@@ -9,34 +9,21 @@ import com.boparty.bopartycatering.Models.Position.*;
 import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Services.*;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.Events;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
-import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Controller
@@ -52,18 +39,25 @@ public class MainController {
     private Map<Long,Integer> selectedIds;
     private final GoogleOAuthService googleOAuthService;
     private final GoogleCalendarService calendarService;
+    private final PdfGeneratorService pdfGeneratorService;
+
+    private final ErrorAttributes errorAttributes;
+
+
 
     @Autowired
-    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService,GoogleOAuthService googleOAuthService, GoogleCalendarService calendarService) {
+    public MainController(OrdersService ordersService, PositionsService positionsService, UserService userService, ShoppingListService shoppingListService, GoogleOAuthService googleOAuthService, GoogleCalendarService calendarService, PdfGeneratorService pdfGeneratorService, ErrorAttributes errorAttributes) {
         this.ordersService = ordersService;
         this.positionsService = positionsService;
         this.userService = userService;
+        this.pdfGeneratorService = pdfGeneratorService;
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();
         selectedIds  = new HashMap<>();
         this.shoppingListService = shoppingListService;
         this.googleOAuthService = googleOAuthService;
         this.calendarService = calendarService;
+        this.errorAttributes = errorAttributes;
 
 
     }
@@ -132,10 +126,7 @@ public class MainController {
         return ResponseEntity.ok(false);
     }
 
-    @GetMapping("/error")
-    public String error() {
-        return "error";
-    }
+
 
     @GetMapping("/user/changeDefCalendar")
     public ResponseEntity<String> changeDefCalendar(@RequestParam String calendar, Model model) {
@@ -196,7 +187,6 @@ public class MainController {
                 ordersService.removePositions(order.getId());
                 this.tmpPositions.forEach(PositionAmount::removeId);
             }
-
             Orders tm =  ordersService.save(order);
 
             this.tmpPositions.removeIf(pos->pos.getAmount()==0);
@@ -349,11 +339,19 @@ public class MainController {
 
     @PostMapping("/parse")
     public String parseDocument(MultipartFile menu, Model model) {
+        List<String> errors = new ArrayList<>();
+        Orders order = null;
+        List<String[]> cells = this.ordersService.parseOrder(menu);
 
-        String text = this.ordersService.parseOrder(menu);
+        order = this.ordersService.createOrderDetailsFromText(cells,errors);
+        List<PositionAmount> positions = this.positionsService.parsePositions(cells, order,errors);
+        order.setPositionsAmount(positions);
+        ordersService.save(order);
 
-        List<PositionAmount> positions = this.positionsService.parsePositions(text);
-        return "redirect:/";
+        model.addAttribute("errors", errors);
+        model.addAttribute("orderId", order.getId());
+        return "Order/parseResult";
+//        return order==null ?"redirect:/": "redirect:/order/view/"+order.getId();
     }
 
 
@@ -361,6 +359,28 @@ public class MainController {
 //    public String generateShopping(Model model, @PathVariable String id) {
 //
 //    }
+
+
+    @GetMapping("/pos-ings/view")
+    public String PosingsView(Model model){
+
+        List<Category>  categories = userService.getCategories();
+        model.addAttribute("categories", categories);
+        return "Positions/PdfView";
+    }
+
+
+    @PostMapping("/pos-ings/generate")
+    public ResponseEntity<byte[]> generatePosings(Model model, Long categorySelect) {
+        byte[] pdfBytes = this.pdfGeneratorService.generate(categorySelect);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "file.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
 
 
 

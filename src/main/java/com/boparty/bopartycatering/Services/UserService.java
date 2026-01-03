@@ -7,6 +7,8 @@ import com.boparty.bopartycatering.Models.User.User;
 import com.boparty.bopartycatering.Repos.RolesRepos;
 import com.boparty.bopartycatering.Repos.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,8 +21,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepos userRepos;
-    private RolesRepos rolesRepos;
+    private final UserRepos userRepos;
+    private final RolesRepos rolesRepos;
     @Autowired
     public UserService(UserRepos userRepos, RolesRepos rolesRepos) {
         this.userRepos = userRepos;
@@ -29,6 +31,10 @@ public class UserService implements UserDetailsService {
     public User getCurrentUser() {
         User usr = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepos.findByUsername(usr.getUsername());
+    }
+
+    public static User getCurrent(){
+        return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public boolean saveUser(User user) {
@@ -83,6 +89,15 @@ public class UserService implements UserDetailsService {
 
     public void save(User user){
         userRepos.save(user);
+    }
+
+    public static boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || AnonymousAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 
 }

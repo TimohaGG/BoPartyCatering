@@ -42,7 +42,9 @@
                             </div>
                             <div class="mb-3">
                                 <label for="duration" class="form-label">Тривалість</label>
-                                <input type="number" min="0" name="duration" id="duration" class="form-control" th:field="*{duration}"/>
+                                <textarea class="form-control" name="duration" id="duration" th:field="*{duration}" style="color:black !important;" rows="3" >
+
+                                </textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="guestsAmount" class="form-label">К-сть гостей</label>

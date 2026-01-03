@@ -13,18 +13,21 @@
 
     <header th:replace="header::header"></header>
 
-    <div class="row justify-content-center align-items-center">
-        <form method="post" enctype="multipart/form-data" class="col-3">
-            <div class="mb-3">
-                <label for="menu">Меню:</label>
-                <input class="form-control" type="file" name="menu" id="menu">
-            </div>
-            <div class="mb-3">
-                <input type="submit" name="submit" class="btn btn-outline-light" id="submit">
-            </div>
-        </form>
+    <div class="container rounded mt-3" style="background-color: #454545">
+        <div class="row justify-content-center align-items-center">
+            <form method="post" enctype="multipart/form-data" class="col-lg-8 col-10 d-flex flex-column align-items-center justify-content-center">
+                <div class="mb-3 mt-3">
+                    <label for="menu" class="form-label">Меню:</label>
+                    <input class="form-control" type="file"  name="menu" id="menu" accept="application/pdf">
+                </div>
+                <div class="mb-3">
+                    <input type="submit" name="submit" value="Сформувати" class="btn btn-outline-light text-white text-center" id="submit">
+                </div>
+            </form>
 
+        </div>
     </div>
+
 
 
 </body>

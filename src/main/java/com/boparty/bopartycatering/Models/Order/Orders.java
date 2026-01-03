@@ -26,7 +26,7 @@ public class Orders {
         date = LocalDate.now().atStartOfDay();
         client = "";
         guestsAmount = 0;
-        duration = 0;
+        duration = "";
         format = "Бокси";
         phone = "0688714410";
         id = 0L;
@@ -43,7 +43,7 @@ public class Orders {
     @Column(nullable = true)
     private int guestsAmount;
     @Column(nullable = true)
-    private int duration;
+    private String duration;
     @Column(nullable = true)
     private String format;
     @ColumnDefault("0688714410")
@@ -138,7 +138,7 @@ public class Orders {
         return guestsAmount;
     }
 
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 
@@ -170,7 +170,7 @@ public class Orders {
         this.guestsAmount = guestsAmount;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
     }
 

@@ -18,12 +18,20 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
+import com.spire.pdf.PdfDocument;
+import com.spire.pdf.utilities.PdfTable;
+import com.spire.pdf.utilities.PdfTableExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.OutputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -171,12 +179,15 @@ public class OrdersService {
         return null;
     }
 
+
     public String getOrderFileName(long id){
         Orders tmp = ordersRepos.findById(id).orElse(null);
         if(tmp==null){
             return "";
         }
-        return tmp.getClient() + " " + tmp.getDate()+".pdf";
+
+
+        return tmp.getDateFormatted()+".pdf";
     }
 
     public List<IngredientAmount> getShopping(List<Orders> orders) {
@@ -258,25 +269,166 @@ public class OrdersService {
         }
     }
 
-    public String parseOrder(MultipartFile menu) {
-        StringBuilder builder = new StringBuilder();
-        PdfReader reader = null;
+    public List<String[]> parseOrder(MultipartFile menu) {
+        List<String[]> res = new ArrayList<>();
         try{
-            reader = new PdfReader(menu.getInputStream());
-            for (int i = 1;i <= reader.getNumberOfPages(); ++i) {
-                TextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
-                String text = PdfTextExtractor.getTextFromPage(reader, i, strategy);
-                builder.append(text).append("\n");
-            }
-        }catch (Exception e){
-            return null;
-        }finally {
-            if(reader != null){
-                reader.close();
-            }
+            PdfDocument pdfDocument = new PdfDocument(menu.getInputStream());
 
+            PdfTableExtractor extractor = new PdfTableExtractor(pdfDocument);
+
+            for (int pIndex = 0;pIndex<pdfDocument.getPages().getCount();pIndex++) {
+                PdfTable[] tabelsList = extractor.extractTable(pIndex);
+                if(tabelsList != null) {
+                    for (PdfTable table : tabelsList) {
+                        for (int i = 0; i < table.getRowCount(); i++) {
+                            String[] arr = new String[table.getColumnCount()];
+                            for (int j = 0; j < table.getColumnCount(); j++) {
+                                String text = table.getText(i, j);
+                                arr[j] = text;
+                            }
+                            res.add(arr);
+                        }
+                    }
+                }
+            }
+            return res;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return builder.toString();
+       return null;
     }
 
+    public Orders createOrderDetailsFromText(List<String[]> cells, List<String> errors) {
+        try{
+            return save(setOrderInfo(cells, errors));
+        }
+        catch (Exception e){
+            errors.add("Не вдалось створити замовлення:" + e.getMessage());
+            return null;
+        }
+    }
+
+    private Orders setOrderInfo(List<String[]> cells, List<String> errors ) {
+        Orders order = new Orders();
+        int splitIndex = 0;
+        for (int rowIndex = 0; rowIndex < cells.size(); rowIndex++) {
+            boolean finish = false;
+            for (int i = 0; i < cells.get(rowIndex).length; i++) {
+                switch (simlpifyText(cells.get(rowIndex)[i])) {
+
+                    case "замовник":{
+                        order.setClient(nextRowWithData(cells.get(rowIndex)));
+                        i=cells.get(rowIndex).length-1;
+                    }break;
+                    case "дата":{
+                        LocalDateTime date = order.getDate();
+                        LocalDateTime res = parseDate(nextRowWithData(cells.get(rowIndex)),date.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        if(res==null){
+                            errors.add("Не вдалось розшифрувати дату: "+nextRowWithData(cells.get(rowIndex)));
+                        }
+                        else{
+                            order.setDate(res);
+                        }
+                        i=cells.get(rowIndex).length-1;
+                    }break;
+                    case "початокзаходу":{
+                        LocalDateTime date = order.getDate();
+                        LocalDateTime res = parseDate(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),nextRowWithData(cells.get(rowIndex)));
+
+                        if(res==null){
+                            errors.add("Не вдалось розшифрувати початок заходу: "+nextRowWithData(cells.get(rowIndex)));
+                        }
+                        else{
+                            order.setDate(res);
+                        }
+                        i=cells.get(rowIndex).length-1;
+                    }break;
+                    case "тривалість":{
+                        try{
+//                            order.setDuration(Integer.parseInt(nextRowWithData(cells.get(rowIndex))));
+                        }catch (Exception e){
+                            order.setDuration("");
+                            errors.add("Не вдалось розшифрувати тривалість: "+nextRowWithData(cells.get(rowIndex)));
+                        }
+                        i=cells.get(rowIndex).length-1;
+
+                    }break;
+                    case "к-стьзапрошених":{
+                        try{
+                            order.setGuestsAmount(Integer.parseInt(nextRowWithData(cells.get(rowIndex))));
+                        }catch (Exception e){
+                            order.setGuestsAmount(0);
+                            errors.add("Не вдалось розшифрувати к-сть запрошених: "+nextRowWithData(cells.get(rowIndex)));
+                        }
+                        i=cells.get(rowIndex).length-1;
+
+                    }break;
+                    case  "форматзаходу":{
+                        order.setFormat(nextRowWithData(cells.get(rowIndex)));
+                        i=cells.get(rowIndex).length-1;
+                    }break;
+                    case "телефонвідповідальногоменеджера":{
+                        order.setPhone(nextRowWithData(cells.get(rowIndex)));
+                        i=cells.get(rowIndex).length-1;
+                    }break;
+                    case "меню":
+                    case "позиції":{
+                        finish = true;
+                        i=cells.get(rowIndex).length-1;
+                    }break;
+                }
+            }
+            if(finish){
+                splitIndex = rowIndex;
+                break;
+            }
+        }
+        order.setUser(this.userService.getCurrentUser());
+        order.setTemporary(false);
+
+        cells.subList(0,splitIndex+1).clear();
+
+        return order;
+    }
+
+    private String nextRowWithData(String[] cells){
+       for (int i = 1; i < cells.length; i++) {
+           if(!cells[i].isEmpty()){
+               return cells[i];
+           }
+       }
+       return "";
+    }
+
+    private LocalDateTime parseDate(String date, String time){
+
+
+        String fDate = date + " " + time;
+
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendValue(ChronoField.DAY_OF_MONTH) // accepts 1 or 2 digits
+                .appendLiteral('.')
+                .appendValue(ChronoField.MONTH_OF_YEAR) // accepts 1 or 2 digits
+                .appendLiteral('.')
+                .appendValueReduced(ChronoField.YEAR, 2, 4, 2000) // "25" becomes 2025
+                .appendLiteral(' ')
+                .appendPattern("HH:mm")
+                .toFormatter();
+
+        try{
+            return LocalDateTime.parse(fDate, formatter);
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    private String simlpifyText(String text){
+        return text.toLowerCase().replaceAll(" ","").replaceAll("\n","");
+    }
+
+
+    public OrderAdditionalInfo getOrderInfoById(Long id) {
+        return this.iAdditionalInfoRepos.findById(id).orElse(null);
+    }
 }

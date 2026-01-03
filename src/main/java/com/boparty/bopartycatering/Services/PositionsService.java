@@ -1,5 +1,6 @@
 package com.boparty.bopartycatering.Services;
 
+import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Position.*;
 import com.boparty.bopartycatering.Repos.*;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -165,33 +166,56 @@ public class PositionsService {
         return positionsRepos.findAllByNameContainsIgnoreCase(namePart);
     }
 
-    public List<PositionAmount> parsePositions(String text) {
-        System.out.println(text);
-        text = text.replaceAll("\n"," ");
-        int index = text.indexOf("грн");
-        if(index != -1){
-            text = text.substring(index+4);
+    public List<PositionAmount> parsePositions(List<String[]> cells, Orders order, List<String> errors) {
+        List<PositionAmount> res = new ArrayList<>();
+        for (String[] cell : cells) {
+            for (int i = 0; i < cell.length; i++) {
+                if(cell[i].equals("Загалом")){
+                    return res;
+                }
+                if(!cell[i].isEmpty()){
+                    Position pos = parsePosition(cell[i]);
+                    if(pos != null){
+                        PositionAmount amount = new PositionAmount();
+                        amount.setPosition(pos);
+                        amount.setOrder(order);
+                        amount.setAmount(getSecondNumber(cell,i));
+                        res.add(amount);
+
+                    }
+                    else{
+                        errors.add("Не вдалось знайти позицію: " + cell[i]);
+                    }
+                    break;
+                }
+
+            }
         }
-        System.out.println(text);
-        List<PositionAmount> positionAmounts = new ArrayList<>();
-        Pattern pattern = Pattern.compile("(?<text>.*?)\\s(?<n1>\\d+)\\s(?<n2>\\d+)\\s(?<n3>\\d+)(?=\\s|$)");
-        Matcher matcher = pattern.matcher(text);
 
-        while (matcher.find()) {
-            PositionAmount posAmount = parsePosition(matcher);
-            if(posAmount!=null)
-                positionAmounts.add(posAmount);
-        }
-
-
-        return positionAmounts;
+        return res;
     }
 
-    private PositionAmount parsePosition(Matcher text){
-        String name = text.group("text").trim();
-        int amount = Integer.parseInt(text.group("n2"));
-        System.out.println(name);
-        System.out.println(amount);
-        return null;
+    private Position parsePosition(String posName){
+        posName = posName.trim().replaceAll("\n","").replaceAll(" ","");
+        Position position = this.positionsRepos.findByNameIgnoreCaseAndWhitespace(posName).orNull();
+        return position;
+
+    }
+
+    private int getSecondNumber(String[] row, int start){
+        boolean isFound = false;
+
+        for (int i = start; i < row.length; i++) {
+            try{
+                int res = Integer.parseInt(row[i]);
+                if(isFound)
+                    return res;
+                else
+                    isFound = true;
+            }catch (NumberFormatException e){
+                continue;
+            }
+        }
+        return 1;
     }
 }
