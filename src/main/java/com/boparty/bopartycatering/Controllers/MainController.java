@@ -1,6 +1,6 @@
 package com.boparty.bopartycatering.Controllers;
 
-import com.boparty.bopartycatering.Models.Order.AmountUnit;
+import com.boparty.bopartycatering.Models.Order.DTOs.OrderPaginationDto;
 import com.boparty.bopartycatering.Models.Order.Orders;
 import com.boparty.bopartycatering.Models.Order.ShoppingList;
 import com.boparty.bopartycatering.Models.Order.Status;
@@ -62,11 +62,17 @@ public class MainController {
 
     }
     @GetMapping("/")
-    public String index(Model model) {
-        List<Orders> orders = ordersService.getAllOrders();
-        model.addAttribute("orders",orders);
+    public String index(Model model,
+                        @RequestParam(defaultValue = "1", required = false) Long pageNumber,
+                        @RequestParam(defaultValue = "10", required = false) Long amount,
+                        @RequestParam(defaultValue = "",required = false) String searchValue) {
+        OrderPaginationDto orders = ordersService.getAllOrders(10,pageNumber, searchValue);
+        model.addAttribute("orders",orders.getOrdersList());
+        model.addAttribute("totalPages", (int) Math.ceil((double) orders.getTotalAmount()/amount));
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("maxPaginationButtonsAmount", 5);
+
         model.addAttribute("tempOrders",ordersService.getTempOrders());
-//        model.addAttribute("defCalendar",userService.getCurrentUser().getDefaultCalendar());
         model.addAttribute("statuses", Status.values());
         try{
             model.addAttribute("authorized",googleOAuthService.isUserAuthorized(userService.getCurrentUser().getUsername()));
@@ -75,7 +81,7 @@ public class MainController {
             model.addAttribute("authorized",false);
         }
 
-        model.addAttribute("statuses",Status.values());
+
 
         tmpOrder = new Orders();
         tmpPositions = new ArrayList<>();

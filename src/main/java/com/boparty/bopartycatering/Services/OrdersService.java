@@ -1,5 +1,6 @@
 package com.boparty.bopartycatering.Services;
 
+import com.boparty.bopartycatering.Models.Order.DTOs.OrderPaginationDto;
 import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
 import com.boparty.bopartycatering.Models.Order.OrderInfo;
 import com.boparty.bopartycatering.Models.Order.Orders;
@@ -53,11 +54,6 @@ public class OrdersService {
 
     public List<Orders> getAllOrders() {
         List<Orders> res;
-        String username = userService.getCurrentUser().getUsername();
-
-
-        User user = userService.getCurrentUser();
-        List<Orders> orders = user.getOrders();
         res =  ordersRepos
                 .findAllByUserId(userService.getCurrentUser().getId())
                 .stream()
@@ -66,8 +62,20 @@ public class OrdersService {
                 .toList();
 
         return res;
-//        return ordersRepos.findAll().stream().filter(x->x.getUser().getUsername().equals(username)).sorted((order1, order2) -> order2.getDate().compareTo(order1.getDate())).toList();
     }
+
+    public OrderPaginationDto getAllOrders(long amount, long pageNumber, String searchValue){
+        List<Orders> ordersList = getAllOrders();
+        if(!searchValue.isEmpty()){
+            ordersList = ordersList.stream().filter(x->x.getDateFormatted().contains(searchValue) || x.getClient().toLowerCase().contains(searchValue.toLowerCase())).toList();
+        }
+        OrderPaginationDto res = OrderPaginationDto.builder()
+                .ordersList(ordersList.stream().skip(pageNumber == 1 ? 0: (pageNumber *amount)-amount).limit(amount).toList())
+                .totalAmount(ordersList.size())
+                .build();
+        return res;
+    }
+
 
     public List<Orders> getTempOrders(){
         return ordersRepos.findAllByUserIdAndTemporaryTrue(userService.getCurrentUser().getId());

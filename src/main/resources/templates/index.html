@@ -9,6 +9,7 @@
     <link href="/asserts/styles/Order/header.css" rel="stylesheet"/>
     <link href="/asserts/styles/Order/page.css" rel="stylesheet"/>
     <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
+    <link href="/asserts/styles/Order/pagination.css" rel="stylesheet"/>
 
 </head>
 <body  style="overflow: hidden;padding: 0 !important;" class="p-0">
@@ -50,8 +51,6 @@
             </svg>
         </button>
         <div class="row align-items-center justify-content-center" style="overflow: hidden">
-
-
             <div class="col-3 p-3 d-none d-lg-block mb-auto">
                 <ul class="list-group text-decoration-none">
                     <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -119,6 +118,7 @@
                     </li>
 
                 </ul>
+
             </div>
 
             <div class="col-lg-5 col-12 positions mb-4 mx-1">
@@ -129,7 +129,34 @@
 
                     </div>
                 </div>
-                <h2 class="categoryHead" style="background-color: #454545;">Замовлення</h2>
+
+                <div class="categoryHead d-flex justify-content-center">
+
+                    <form action="/" method="GET" id="searchForm" style="display: none">
+                        <input type="text" name="searchValue" id="searchValue" class="form-control"/>
+                        <button type="submit" class="btn btn-outline-light ms-3 align-self-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-outline-danger ms-3" type="button" onclick="toogleSearch()">
+                            x
+                        </button>
+                    </form>
+
+                    <div id="toogleSearchBtn" style="display: flex" class="justify-content-center">
+                        <h2>Замовлення</h2>
+                        <button class="btn btn-outline-light ms-3 align-self-center" onclick="toogleSearch()" >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                </div>
+
+
+
                 <div th:each="order:${orders}" th:id="'order_div_'+${order.getId()}" th:class="'order_block row align-items-center justify-content-center w-100 m-0 '" th:data-bs-status="${order.getStatus()}" style="height: fit-content !important;" th:style="'background-color: ' + ${order.status.getColor()} + ';'">
                     <div style="position: absolute;top:5px;right:5px;width: fit-content" class="mb-2">
                         <select th:id="'order_status_select_'+${order.getId()}" class="rounded-input" th:onchange="'changeStatus('+${order.getId()}+')'">
@@ -208,7 +235,40 @@
                 </div>
 
 
+                <nav class="mt-3 mb-3 paginaion" >
+                    <ul class="pagination" style="color:black">
+                        <li class="page-item" th:if="${currentPage!=1}">
+                            <a class="page-link" href="/?pageNumber=1" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
 
+                        <li class="page-item" th:if="${currentPage!=1}">
+                            <a class="page-link" th:href="'/?pageNumber='+${currentPage - 1}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+
+                        <li class="page-item page-number"
+                            th:class="${n==currentPage ? 'active' : ''}"
+                            th:each="n, i : ${#numbers.sequence(1,totalPages)}"
+                            th:if="${(n >= currentPage && n<currentPage + maxPaginationButtonsAmount)
+                            || (n+maxPaginationButtonsAmount >= totalPages && currentPage>=n)}" >
+                            <a class="page-link" th:href="'/?pageNumber=' + ${n}" th:text="${n}"></a>
+                        </li>
+
+                        <li class="page-item" th:if="${currentPage!=totalPages}">
+                            <a class="page-link" th:href="'/?pageNumber='+${currentPage + 1}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:if="${currentPage!=totalPages}">
+                            <a class="page-link" th:href="'/?pageNumber='+${totalPages}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
 
             </div>
             <div class="col-3 d-none d-lg-flex mb-auto flex-column align-items-center positions" >
@@ -240,6 +300,8 @@
 
 
             </div>
+
+
         </div>
 
     </div>
@@ -303,6 +365,8 @@
             </div>
         </div>
     </div>
+
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
@@ -436,6 +500,17 @@
             }
         });
     }
+
+
+    function toogleSearch(){
+
+        let togleBtn = document.getElementById("toogleSearchBtn");
+        togleBtn.style.display = togleBtn.style.display === "flex" ? "none" : "flex";
+
+        let searchForm = document.getElementById("searchForm");
+        searchForm.style.display = searchForm.style.display === "flex" ? "none" : "flex";
+    }
+
 </script>
 
 </body>

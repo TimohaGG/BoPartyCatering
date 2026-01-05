@@ -70,14 +70,11 @@ input{
 }
 
 
-.positions>div{
+.positions>div:not(.categoryHead){
     border-bottom: 1px solid #454545;
-    padding-bottom:15px;
-    padding-top:15px;
     grid-template-columns: 3fr 2fr 0.5fr 1fr;
     height: 160px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 15px 10px;
 }
 
 
@@ -168,9 +165,14 @@ padding-bottom: 50px;
 
 .categoryHead{
     text-align:center;
+    background-color: #454545;
+    border-bottom: 1px solid #454545;
+    margin-bottom: 0;
+}
+
+.categoryHead>h2{
     padding-top:10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #454545;
     margin-bottom: 0;
 }
 
@@ -340,3 +342,4 @@ body{
     width: 20px;
     height: 20px;
 }
+
