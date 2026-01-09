@@ -165,11 +165,11 @@
                         <td colspan="4" style="background-color: #454545 !important;"></td>
                     </tr>
 
-                    <tr>
+                    <tr class="pb-5">
                         <td colspan="4" class="p-0 border-0">
                             <form method="post" th:action="'/order/generate/'+${order.getId()}"  id="generateForm" th:object="${orderInfo}">
 
-                                <table class="table table-dark m-0">
+                                <table class="table table-dark m-0 mb-5">
                                     <tr th:if="${isLogged}">
                                         <td>Колір фону: </td>
                                         <td colspan="2">
@@ -209,8 +209,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                       <td colspan="3" style="border:none">
-                                           <input type="submit" value="Generate" class="btn btn-outline-success w-100" style="color: white !important;margin-bottom: 50px"/>
+                                       <td colspan="3" style="border:none" class="pb-5">
+                                           <input type="submit" value="Завантажити PDF" class="btn btn-outline-success w-100" style="color: white !important;margin-bottom: 50px"/>
                                        </td>
                                     </tr>
                                 </table>

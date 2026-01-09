@@ -84,8 +84,6 @@
             <h2 class="text-center m-0" >Обрані</h2>
         </div>
         <div id="selected" style="height: 40%;overflow-y: scroll;" class="p-0">
-
-
             <div th:each="sel:${selectedIngs}" th:id="'item_'+${sel.getIngredient().getId()}" class="mb-2">
                 <div class="w-100 row justify-content-center align-items-center m-0" >
                     <div class="col-3 p-0">
@@ -112,10 +110,17 @@
                 </div>
             </div>
         </div>
+        <div class="search d-flex justify-content-between align-items-center">
+
+            <input id="ingsSearch" type="text" class="form-control" onchange="searchIngredients()"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-search me-2 ms-2" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+        </div>
         <div id="others" style="height: 50%;overflow-y: scroll;">
             <div th:each="item:${ingredients}">
                 <h3 th:text="${item.getKey()}"></h3>
-                <div th:each="ing:${item.getValue()}" th:insert="fragments/_ingredient::ingredient(${ing},${units})"></div>
+                <div class="ingredient" th:each="ing:${item.getValue()}" th:insert="fragments/_ingredient::ingredient(${ing},${units})"></div>
             </div>
 
         </div>
@@ -314,6 +319,27 @@
            })
            .catch(error => console.log(error));
 
+   }
+
+   function searchIngredient(){
+       let input = document.getElementById('ingsSearch');
+       let elements = document.getElementsByClassName("ingredient");
+
+
+       for (let el in elements) {
+           if(input.value === "")
+            el.style.visibility = "visible";
+           else if(el.)
+       }
+
+       if(input.value === ""){
+
+       }
+       else{
+           for (let el in elements) {
+               el.style.visibility = "visible";
+           }
+       }
    }
 </script>
 
