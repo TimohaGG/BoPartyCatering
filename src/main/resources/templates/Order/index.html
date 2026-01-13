@@ -191,7 +191,7 @@
                                             <input th:field="*{tax}" type="checkbox" id="fop" name="fop" class="form-check-input" onclick="toogleTax(event)" th:value="${order.needsTax}"/>
                                         </td>
                                         <td>
-                                            <label class="form-check-label" for="fop">Оплата на ФОП +6%</label>
+                                            <label class="form-check-label" for="fop">Сервісний збір +10%</label>
                                         </td>
                                         <td>
                                             <span id="fop-amount" th:text="${order.getTaxPercentageCalc()} + 'грн'" th:style="${orderInfo.isTax() ? 'visibility: visible' : 'visibility: hidden'}"></span>

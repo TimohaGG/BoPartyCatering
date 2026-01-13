@@ -59,7 +59,7 @@ public class PdfGenerator {
 
         summary.put("Разом по меню, грн",new Tuple<>((int) order.getPrice() + " грн",null));
         if(info.isTax()){
-            summary.put("Оплата на ФОП +6%", new Tuple<>((int) order.getTaxPercentageCalc() + " грн",null));
+            summary.put("Сервісний збір +10%", new Tuple<>((int) order.getTaxPercentageCalc() + " грн",null));
         }
         if(info.isNeedsForOne())
             summary.put("На 1 особу, грн", new Tuple<>((int) order.getPrice() / order.getGuestsAmount() + " грн",null));

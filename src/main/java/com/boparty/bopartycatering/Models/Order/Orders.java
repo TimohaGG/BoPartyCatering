@@ -59,9 +59,9 @@ public class Orders {
 
     private boolean needsTax = false;
 
-    private double taxPercentage = 0.06D;
+    private double taxPercentage = 0.1D;
     public double getTaxPercentageCalc() {
-        double totalPrice = getPrice() + getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum();
+        double totalPrice = getTotalPrice();
         return Math.floor(totalPrice - totalPrice * (1-taxPercentage)) ;
     }
 
