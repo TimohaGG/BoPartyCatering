@@ -86,7 +86,7 @@
         <div id="selected" style="height: 40%;overflow-y: scroll;" class="p-0">
             <div th:each="sel:${selectedIngs}" th:id="'item_'+${sel.getIngredient().getId()}" class="mb-2">
                 <div class="w-100 row justify-content-center align-items-center m-0" >
-                    <div class="col-3 p-0">
+                    <div class="col-3 p-0 ingName">
                         <span th:text="${sel.getIngredient().getName()}"></span>
                     </div>
                     <div class="col-5 p-0">
@@ -112,13 +112,13 @@
         </div>
         <div class="search d-flex justify-content-between align-items-center">
 
-            <input id="ingsSearch" type="text" class="form-control" onchange="searchIngredients()"/>
+            <input id="ingsSearch" type="text" class="form-control" onchange="searchIngredient()"/>
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-search me-2 ms-2" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
             </svg>
         </div>
         <div id="others" style="height: 50%;overflow-y: scroll;">
-            <div th:each="item:${ingredients}">
+            <div th:each="item:${ingredients}" class="ingHead">
                 <h3 th:text="${item.getKey()}"></h3>
                 <div class="ingredient" th:each="ing:${item.getValue()}" th:insert="fragments/_ingredient::ingredient(${ing},${units})"></div>
             </div>
@@ -322,24 +322,49 @@
    }
 
    function searchIngredient(){
-       // let input = document.getElementById('ingsSearch');
-       // let elements = document.getElementsByClassName("ingredient");
-       //
-       //
-       // for (let el in elements) {
-       //     if(input.value === "")
-       //      el.style.visibility = "visible";
-       //     else if(el.)
-       // }
-       //
-       // if(input.value === ""){
-       //
-       // }
-       // else{
-       //     for (let el in elements) {
-       //         el.style.visibility = "visible";
-       //     }
-       // }
+       let input = document.getElementById('ingsSearch');
+       const elements = document.getElementsByClassName("ingredient");
+       const headers = document.getElementsByClassName("ingHead");
+
+       if(input.value===""){
+           for (let el of elements){
+               el.style.display = "block";
+           }
+
+       }
+       else{
+           for (const el of elements) {
+               let name = el.querySelector('.ingName span').innerText;
+                if(name.toLowerCase().includes(input.value.toLowerCase())){
+                    el.style.display = "block";
+                }else{
+                    el.style.display = "none";
+                }
+           }
+
+
+           // for (const head of headers){
+           //     filterHeaders(head);
+           // }
+
+
+       }
+
+       function filterHeaders(head){
+
+           for (let el of head.children){
+                console.log(el.tagName);
+               if(el.tagName==="DIV" && el.style.display === "block"){
+                   console.log(head.querySelector("h3").innerText + " has elements");
+                   head.style.display = "block";
+                   return;
+               }
+           }
+           head.style.display = "none";
+
+
+       }
+
    }
 </script>
 
