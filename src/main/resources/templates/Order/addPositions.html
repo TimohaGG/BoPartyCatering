@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="overflow-y: hidden;position:relative">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,149 +9,311 @@
     <link href="/asserts/styles/Order/page.css" rel="stylesheet"/>
     <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
 </head>
-<body>
-<header th:insert="header::header"></header>
+<body style="position: relative">
+<div th:replace="fragments/_loading.html::loading"></div>
+<header th:replace="header::header"></header>
 
 
-<main>
+<main style="overflow-y: hidden;position: relative">
+
+    <button class="btn btn-light d-sm-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="position: absolute;bottom:20%;right:8%;border-radius: 50%;width: 50px;height: 50px;z-index: 101">
+        <svg style="color: black !important" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket-fill" viewBox="0 0 16 16">
+            <path style="color: black !important" d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"/>
+        </svg>
+    </button>
+    <a class="btn btn-light d-lg-none d-sm-flex d-flex justify-content-center align-items-center" style="border-radius: 50%;position: absolute;bottom: 20%;left: 6%;width: 50px;height: 50px;z-index: 101" href="/create/order" >
+        <span >
+            <svg style="color: black !important;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+              <path style="color: black !important;" fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+            </svg>
+        </span>
+    </a>
     <div class="container rounded">
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center pt-3 pb-3" style="height: 90vh;align-content: start">
             <div class="col-3 p-3 d-none d-lg-flex flex-column">
-                <ul class="list-group text-decoration-none">
-                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class="fw-bold">Меню</div>
-                            <ul class="list-group">
-                                <li class="list-group-item" th:each="category:${categories}" >
 
-                                    <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:text="${category.getName()}"></a>
-                                </li>
-
-                            </ul>
-
-                        </div>
-                    </li>
-
-                </ul>
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Меню</div>
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="category:${categories}" >
+                            <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:text="${category.getName()}"></a>
+                        </li>
+                        <li class="list-group-item">
+                            <input class="rounded-input" name="newCategory" id="newCategory" type="text" placeholder="+" onfocusout="addCategory()"/>
+                        </li>
+                    </ul>
+                </div>
                 <div class="btns mt-auto mb-2  ">
                     <a class="btn btn-outline-light" href="/create/order"><- До замовлення</a>
-
-
                 </div>
-
             </div>
-            <div class="col-12 d-block d-lg-none" style="background-color: black;">
+            <div class="col-12 d-block d-lg-none" style="height: max-content">
                 <div class="d-flex align-items-center scrollbar" style="overflow-x: auto;">
                     <a th:href="'/positions/add?categoryId=' + ${category.getId()}" class="text-decoration-none" th:each="category:${categories}" th:text="${category.getName()}"></a>
                 </div>
             </div>
-            <div class="col-lg-6 col-12 positions mb-4">
 
-                <h2 class="categoryHead" th:text="${categoryName}"></h2>
 
-                <div class="w-100 d-sm-block d-lg-none" style="background-color: #454545;position: sticky;top:0;height: auto;padding: 0">
-                    <a class="btn btn-outline-light my-3" href="/create/order" ><- До замовлення</a>
-                </div>
 
-                <div class="container row" th:each="position:${positions}" style="height: auto">
-
-                    <div class="position col-6">
-                        <h5 th:text="${position.getName()}"></h5>
-                        <span>35 грн</span>
-                        <div class="d-flex flex-column">
-                            <div class="weight">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
-                                    <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
-                                    <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
-                                </svg>
-                                <i>34 г</i>
-                            </div>
-
-                            <div class="amount-selector">
-                                <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',-1)'" >-</button>
-
-                                <input class="amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:value="${selected.get(position.getId())}" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
-                                <input class="amount" th:id="'pos_'+${position.getId()}" th:unless="${selected.keySet().contains(position.getId())}" value="0" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
-
-                                <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',1)'" >+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="image col-3" th:if="${position.getImage()==null}" style="background-image: url('/asserts/img/logo.png');">
-
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center col-3" th:unless="${position.getImage()==null}" style="background-image: url('data:image/*;base64,[[${position.getImageBase64()}]]'); ">
-                        <img th:src="'data:image/*;base64,' + ${position.getImageBase64()}" alt="prod image" style="max-width: 90px"/>
-                    </div>
-                    <div class="d-flex flex-column buttons col-3">
-                        <a class="btn btn-outline-danger" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
-                                <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
-                                <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
-                            </svg>
-                        </a>
-                        <a class="btn btn-outline-warning" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
-                            </svg>
-                        </a>
-                        <a class="btn btn-outline-success" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-plus" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                                <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"/>
-                                <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"/>
-                            </svg>
-                        </a>
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="col-3 d-none d-lg-block mb-auto" style="height: 80vh;overflow: scroll;margin-top:20px">
-                <div>
-                    <form >
-                        <input class="form-control searchbar" type="text" name="positionSearch" id="positionSearch" placeholder="Пошук.."/>
+            <div class="col-lg-6 col-12 positions" style="height: 100%;z-index: 100" >
+                <div class="col-12 d-block p-0" style="height: fit-content;position: sticky;top:0;background-color: #202020;z-index: 100">
+                    <form method="get" action="/positions/search" id="searchForm" onsubmit="return false;">
+                        <input class="rounded-input w-100 my-3" type="text" id="pos_search" name="searchVal" placeholder="Пошук" onchange="searchPos(event)" th:value="${searchVal==null ? '' : searchVal}"/>
                     </form>
                 </div>
+                <h2 class="categoryHead" th:text="${categoryName}"></h2>
 
-                <ul class="list-group selected">
-                    <li class="list-group-item row d-flex align-items-center" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">
-                        <div class="col-12 d-flex justify-content-between">
-                            <span th:text="${pos.getPositionName()}"></span>
-                            <button th:onclick="'remove('+${pos.getPositionId()}+')'" class="text-decoration-none" style="color: red !important;">x</button>
+                <div class="row w-100 p-0" style="align-content: start">
+                    <div class="col-12 container" th:each="position:${positions}" style="height: auto">
+                        <div class="row justify-content-center align-items-center">
+                            <div class="position col-6" style="position: relative;">
+                                <h5 th:text="${position.getName()}"></h5>
+                                <span th:text="${position.getPrice()} + ' грн'"></span>
+                                <div class="d-flex flex-column">
+                                    <div class="weight">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+                                            <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+                                            <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+                                        </svg>
+                                        <i th:text="${position.getWeight()}"></i>
+                                    </div>
+
+                                    <div class="amount-selector">
+                                        <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',-1)'" >-</button>
+                                        <input class="rounded-input amount" th:id="'pos_'+${position.getId()}" th:if="${selected.keySet().contains(position.getId())}" th:value="${selected.get(position.getId())}" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
+                                        <input class="rounded-input amount" th:id="'pos_'+${position.getId()}" th:unless="${selected.keySet().contains(position.getId())}" value="0" th:onfocusout="'addAmount(' + ${position.getId()} + ',event)'"/>
+                                        <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${position.getId()} + ',1)'" >+</button>
+                                    </div>
+                                </div>
+                                <div class="userIndicator" th:style="'background-color:'+${position.getCategory().getUser().getDefaultColor()}">
+
+                                </div>
+                            </div>
+                            <div class="image col-3" th:if="${position.getImage()==null}" style="background-image: url('/asserts/img/logo.png');">
+
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center col-3" th:unless="${position.getImage()==null}" style="background-image: url('data:image/*;base64,[[${position.getImageBase64()}]]'); ">
+                                <img th:src="'data:image/*;base64,' + ${position.getImageBase64()}" alt="prod image" style="max-width: 90px"/>
+                            </div>
+                            <div class="d-flex flex-column buttons col-3">
+                                <a class="btn btn-outline-danger" href="#">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                        <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                        <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-outline-warning" th:href="'/create/position?posId='+${position.getId()}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                    </svg>
+                                </a>
+
+                            </div>
                         </div>
-                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',-1)'">-</button>
-                            <span class="mx-2" th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',1)'" >+</button>
+                    </div>
+
+                    <div class="col-12 container template" style="height: auto;visibility: hidden;">
+                        <div class="row justify-content-center align-items-center">
+                            <div class="position col-6">
+                                <h5 >Why would you search for this</h5>
+                                <span>35 грн</span>
+                                <div class="d-flex flex-column">
+                                    <div class="weight">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+                                            <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+                                            <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+                                        </svg>
+                                        <i>34 г</i>
+                                    </div>
+
+                                    <div class="amount-selector">
+                                        <button class="btn btn-outline-warning disable-dbl-tap-zoom">-</button>
+
+                                        <input class="rounded-input amount" value="0" />
+                                        <button class="btn btn-outline-warning disable-dbl-tap-zoom"  >+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-center col-3" style="background-image: url('data:image/*;base64,[[${position.getImageBase64()}]]'); ">
+
+                            </div>
+                            <div class="d-flex flex-column buttons col-3">
+                                <a class="btn btn-outline-danger" href="#">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                        <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                        <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-outline-warning" >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
-                    </li>
-                    <li class="list-group-item row d-flex align-items-center" id="template">
-                        <div class="col-12 d-flex justify-content-between" >
-                            <span class="pos-name"></span>
-                            <button onclick="remove(3)" class="text-decoration-none remove-btn" style="color: red !important;">x</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-3 d-none d-lg-block mb-auto" style="height: 90vh;overflow-y: hidden">
+
+
+<!--                <ul class="list-group selected">-->
+<!--                    <li class="list-group-item row d-flex align-items-center order-position" th:each="pos:${selectedPositions}" th:id="'position_'+${pos.getPositionId()}">-->
+<!--                        <div class="col-8 d-flex justify-content-between">-->
+<!--                            <span th:text="${pos.getPosName()}"></span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <span th:text="${pos.getPosition().getPrice()} + ' грн'" class="price"></span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <button th:onclick="'remove('+${pos.getPositionId()}+')'" class="text-decoration-none btn btn-outline-danger align-self-center" style="color: red !important;">x</button>-->
+<!--                        </div>-->
+<!--                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',-1)'">-</button>-->
+<!--                            <span class="mx-2 amount" th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPosition().getId()} + ',1)'" >+</button>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="list-group-item row d-flex align-items-center order-position" id="template">-->
+<!--                        <div class="col-8 d-flex justify-content-between" >-->
+<!--                            <span class="pos-name">0</span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <span class="price"></span>-->
+<!--                        </div>-->
+<!--                        <div class="col-2">-->
+<!--                            <button onclick="remove(3)" class="text-decoration-none btn btn-outline-danger align-self-center remove-btn" style="color: red !important;">x</button>-->
+<!--                        </div>-->
+<!--                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom sub-btn" onclick="addAmount(3,-1)">-</button>-->
+<!--                            <span class="mx-2 amount-span amount" id="sel_pos_3">0</span>-->
+<!--                            <button class="btn btn-outline-primary disable-dbl-tap-zoom add-btn" onclick="addAmount(3,1)">+</button>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="list-group-item" style="position: sticky;bottom: 0;height: fit-content;background-color: #202020 !important;">-->
+<!--                        <h5>Загальна сума: <span id="total-header-big"></span></h5>-->
+<!--                    </li>-->
+<!--                </ul>-->
+
+
+                    <div class="m-0 pt-0">
+                        <div class="category positions selected-big">
+
+
+                            <div class="container row m-0" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
+
+                                <div class="position big col-7">
+                                    <h5 th:text="${pos.getPosName()}" ></h5>
+                                    <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
+                                    <div class="d-flex flex-column">
+                                        <div class="weight">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+                                                <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+                                                <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+                                            </svg>
+                                            <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>
+                                        </div>
+
+                                        <div class="amount-selector">
+                                            <div class="btn btn-outline-warning disable-dbl-tap-zoom"  th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
+                                            <span class="amount" th:class="'sel_pos_'+${pos.getPositionId()} + ' amount'"  th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPosition().getId()}"></span>
+                                            <div class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column buttons col-2 justify-content-center">
+                                    <button class="btn btn-outline-danger m-0" th:onclick="'remove('+${pos.getPositionId()}+')'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                            <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div style="position: sticky;bottom: 0;height: fit-content" class="container mb-4" id="total-container-big">
+                                <h5>Загальна сума: <span id="total-header-big"></span></h5>
+                            </div>
+
                         </div>
-                        <div class="col-12 d-flex justify-content-center align-items-center mt-2">
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom sub-btn" onclick="addAmount(3,-1)">-</button>
-                            <span class="mx-2 amount-span" id="sel_pos_3">1</span>
-                            <button class="btn btn-outline-primary disable-dbl-tap-zoom add-btn" onclick="addAmount(3,1)">+</button>
-                        </div>
-                    </li>
 
 
 
-                </ul>
+
+                    </div>
+
+                </div>
+            </div>
+
+        <div style="background-color: #202020 !important;" class="offcanvas offcanvas-end text-bg-dark p-0" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+            <div class="offcanvas-header">
+                <h2  style="position: sticky;top:0;border:0">Позиції</h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0" style="overflow: hidden;">
+                <div class="mb-auto mt-0 ms-1" style="height: 89vh;overflow-y: scroll">
+
+                    <div class="m-0 pt-0">
+                        <div class="category positions">
+
+                            <div class="container row m-0" th:classappend="'position_' + ${pos.getPositionId()}" th:each="pos:${selectedPositions}" style="height: fit-content !important;" th:id="'position_'+${pos.getPositionId()}">
+
+                                <div class="position col-7">
+                                    <h5 th:text="${pos.getPosName()}" ></h5>
+                                    <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>
+                                    <div class="d-flex flex-column">
+                                        <div class="weight">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+                                                <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+                                                <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+                                            </svg>
+                                            <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>
+                                        </div>
+
+                                        <div class="amount-selector">
+                                            <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>
+                                            <span class="amount" th:class="'sel_pos_'+${pos.getPositionId()} + ' amount'"  th:text="${pos.getAmount()}" th:id="'sel_pos_'+${pos.getPositionId()}"></span>
+                                            <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column buttons col-2 justify-content-center">
+                                    <a class="btn btn-outline-danger m-0" th:onclick="'remove(' + ${pos.getPositionId()}+')'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">
+                                            <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>
+                                            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+                                        </svg>
+                                    </a>
+                                </div>
+
+                            </div>
+                            <div style="position: sticky;bottom: 0;" class="container d-flex align-items-center text-center" id="total-container-small">
+                                <h4>Загальна сума: <span id="total-header-small"></span></h4>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+
+                </div>
             </div>
         </div>
-
     </div>
+
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
     async function addAmount(position, event){
-        console.log("ASDSA");
+
         let amount;
 
         if(typeof event === "number"){
@@ -170,35 +332,31 @@
             method:"GET"
 
         })
-            .then(res=>res.json())
+            .then(res=>res.text())
             .then(async resp=> {
-                console.log(resp);
+
                 if(resp!==null){
+
+                    if(document.getElementById("position_"+position)===null){
+                        document.getElementById("total-container-big").insertAdjacentHTML("beforebegin",resp);
+                        document.getElementById("total-container-small").insertAdjacentHTML("beforebegin",resp);
+                    }
+
 
                     let amountSpan = document.getElementById("pos_"+position);
                     if(amountSpan!=null){
-                        amountSpan.value = resp.amount;
+                        amountSpan.value = amount;
                     }
-
                     let sel_pos = document.getElementById("sel_pos_"+position);
-                    console.log(sel_pos);
                     if(sel_pos!=null){
-                        console.log(resp.amount + " should be added");
-                        sel_pos.innerHTML =  resp.amount;
+                        sel_pos.innerHTML = amount;
                     }
-                    else{
-                        let elem = document.getElementById("template").cloneNode(true);
-                        elem.style.visibility = "visible";
-                        elem.id = "position_"+resp.id;
-                        elem.getElementsByClassName("pos-name")[0].innerText = resp.name;
-                        elem.getElementsByClassName("remove-btn")[0].addE = ()=>remove(resp.id);
-                        elem.getElementsByClassName("sub-btn")[0].onclick =()=> addAmount(resp.id,-1);
-                        elem.getElementsByClassName("add-btn")[0].onclick =()=> addAmount(resp.id,1);
-                        elem.getElementsByClassName("amount-span")[0].innerText = resp.amount;
-                        elem.getElementsByClassName("amount-span")[0].id="sel_pos_"+resp.id;
 
-                        document.querySelector(".list-group.selected").insertBefore(elem,document.querySelector(".list-group.selected").lastElementChild);
-                    }
+                    sel_pos = document.querySelectorAll(".sel_pos_"+position);
+                    sel_pos.forEach(el=>{
+                        el.innerHTML = amount;
+                    });
+                    await getPrice();
 
 
                 }
@@ -217,13 +375,102 @@
             method:"GET"
         })
             .then(res=>res.json())
-            .then(resp=>{
+            .then(async resp=>{
                 if(resp){
-                    document.getElementById("position_"+position).remove();
-                    document.getElementById("pos_"+position).value = 0;
+                    document.querySelectorAll(".position_"+position).forEach(el=>{
+                        el.remove();
+                    });
+                    if(document.getElementById("position_"+position)!=null)
+                        document.getElementById("position_"+position).remove();
+                    if(document.getElementById("pos_"+position)!=null)
+                        document.getElementById("pos_"+position).value = 0;
+
+                    await getPrice();
                 }
             });
     }
+
+    async function addCategory(){
+        let name = document.getElementById("newCategory").value;
+        console.log(name);
+        let resp = await fetch("/category/add?categoryName=" + name,{
+            method:"POST"
+        })
+            .then(resp=>resp.json())
+            .then(resp=>{
+                let elem = document.createElement("li");
+                elem.classList.add("list-group-item");
+                let a = document.createElement("a");
+                a.classList.add("text-decoration-none");
+                a.href = "/positions/add?categoryId=" + resp.id;
+                a.innerText = resp.name;
+                elem.appendChild(a);
+
+                document.querySelector(".list-group .list-group-item:last-child").insertAdjacentElement("beforebegin",elem);
+                document.getElementById("newCategory").value="";
+            }).catch(error=>console.log(error));
+    }
+
+    function searchPos(event){
+        event.preventDefault();
+        let name = document.getElementById("pos_search").value;
+
+        if(name===""){
+            for(let elem of document.querySelectorAll(".col-12.container:not(.template)")){
+                elem.style.display = "block";
+            }
+        }
+        else{
+            let count = 0;
+            for(let elem of document.querySelectorAll(".col-12.container:not(.template)")){
+
+                if(elem.getElementsByTagName("h5")[0].innerText.includes(name)){
+                    elem.style.display = "block";
+                    count++;
+                }else{
+                    elem.style.display = "none";
+                }
+            }
+
+
+            if(count===0){
+                let form = document.getElementById("searchForm");
+                form.submit();
+            }
+        }
+    }
+
+    getPrice();
+    //setInterval(getPrice,1000);
+
+    async function getPrice(){
+        console.log("Hello!");
+        //let pos = document.querySelectorAll(".position.big");
+        let totalHeaderBig = document.getElementById("total-header-big");
+        let totalHeaderSmall = document.getElementById("total-header-small");
+        let resp = await fetch("/positions/getTotalPrice",{
+            method:"POST"
+        }).then(res=>res.text())
+            .then(res=>{
+                totalHeaderBig.innerText = (res + " грн");
+                totalHeaderSmall.innerText = (res + " грн");
+            })
+            .catch(error=>console.log(error));
+        // let sum = 0;
+        // pos.forEach(el=>{
+        //     let amount = +el.getElementsByClassName("amount")[0].innerText;
+        //     let price = +el.getElementsByClassName("price")[0].innerText.replace(" грн","");
+        //     sum+= (amount*price);
+        // });
+
+
+
+    }
+    document.addEventListener("DOMContentLoaded", function(event) {
+        document.getElementById("loading").style.display = "none";
+    });
+
+
 </script>
 </body>
 </html>

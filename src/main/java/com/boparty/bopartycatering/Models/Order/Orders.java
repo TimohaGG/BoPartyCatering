@@ -5,17 +5,14 @@ import com.boparty.bopartycatering.Models.User.User;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.web.bind.annotation.Mapping;
-
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -26,57 +23,89 @@ public class Orders {
     private Long id;
 
     public Orders(){
-        date = "";
+        date = LocalDate.now().atStartOfDay();
         client = "";
         guestsAmount = 0;
-        duration = 0;
-        format = "";
-        phone = "";
+        duration = "";
+        format = "Бокси";
+        phone = "0688714410";
         id = 0L;
+        positionsAmount = new ArrayList<>();
+        status = Status.CALCULATED;
     }
 
-    private String date;
-    //private Date date;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime date;
+
 
     @Column(nullable = true)
     private String client;
     @Column(nullable = true)
     private int guestsAmount;
     @Column(nullable = true)
-    private int duration;
+    private String duration;
     @Column(nullable = true)
     private String format;
     @ColumnDefault("0688714410")
     private String phone;
 
+    public boolean isNeedsTax() {
+        return needsTax;
+    }
 
-    @OneToMany(mappedBy = "order")
+    public void setNeedsTax(boolean needsTax) {
+        this.needsTax = needsTax;
+    }
+
+    private boolean needsTax = false;
+
+    private double taxPercentage = 0.1D;
+    public double getTaxPercentageCalc() {
+        double totalPrice = getPrice() + getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum();
+        return Math.floor(totalPrice - totalPrice * (1-taxPercentage)) ;
+    }
+
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PositionAmount> positionsAmount;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
     private List<OrderAdditionalInfo> additionalInfo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public String getDate() {
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ShoppingList shoppingList;
+    @ColumnDefault("false")
+    private boolean temporary;
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try{
-            Date res = formatter.parse(date);
-            formatter = new SimpleDateFormat("dd.MM.yyyy");
-            return formatter.format(res);
+    @ColumnDefault("CALCULATED")
+    private Status status;
+
+    public ShoppingList getShoppingList() {
+        return shoppingList;
+    }
+
+    public void setShoppingList(ShoppingList shoppingList) {
+        this.shoppingList = shoppingList;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public String getDateFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        if(date!=null){
+            return date.format(formatter);
         }
-        catch (Exception e){
+        else{
             return "";
         }
 
-
     }
 
-    public double getTotalPrice(){
-        return positionsAmount.stream().mapToDouble(x -> x.getPosition().getPrice() * x.getAmount()).sum();
-    }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -93,6 +122,14 @@ public class Orders {
                 .sum();
     }
 
+    public int getTotalPrice(){
+        int sum = getPrice() + getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum();
+        if(needsTax){
+            sum += getTaxPercentageCalc();
+        }
+        return sum;
+    }
+
     public String getClient() {
         return client;
     }
@@ -101,7 +138,7 @@ public class Orders {
         return guestsAmount;
     }
 
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 
@@ -114,7 +151,7 @@ public class Orders {
     }
 
     public List<PositionAmount> getPositionsAmount() {
-        return positionsAmount;
+        return positionsAmount.stream().sorted(Comparator.comparing(x->x.getPosition().getCategory().getId())).toList();
     }
 
     public User getUser() {
@@ -125,7 +162,7 @@ public class Orders {
         this.client = client;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -133,7 +170,7 @@ public class Orders {
         this.guestsAmount = guestsAmount;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
     }
 
@@ -155,5 +192,37 @@ public class Orders {
 
     public List<OrderAdditionalInfo> getAdditionalInfo() {
         return additionalInfo;
+    }
+
+    public void addPosition(PositionAmount position) {
+        positionsAmount.add(position);
+    }
+
+    public int getOnOnePerson(){
+        if(guestsAmount==0){
+            return 0;
+        }
+        return (int)getPrice() / guestsAmount;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void removePosition(PositionAmount positionAmount) {
+        this.positionsAmount.remove(positionAmount);
+        positionAmount.setOrder(null);
     }
 }

@@ -1,17 +1,22 @@
 package com.boparty.bopartycatering.Models.User;
 
 import com.boparty.bopartycatering.Models.Order.Orders;
+import com.boparty.bopartycatering.Models.Position.Category;
+import com.boparty.bopartycatering.Models.Position.Ingredient;
+import com.boparty.bopartycatering.Models.Position.Position;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
-@Getter
+
 
 
 public class User implements UserDetails {
@@ -31,6 +36,33 @@ public class User implements UserDetails {
 
     private String username;
     private String password;
+
+    public MultipartFile getLogoFile() {
+        return logoFile;
+    }
+
+    public void setLogoFile(MultipartFile logoFile) {
+        this.logoFile = logoFile;
+    }
+
+    @Transient
+    private MultipartFile logoFile;
+
+    @Lob
+    private byte[] logo;
+
+    private String defaultCalendar;
+    private String defaultColor;
+
+
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
+
     @Transient
     private String repeatPassword;
 
@@ -39,6 +71,16 @@ public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Category> categories;
+
+    public Long getId() {
+        return id;
+    }
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Ingredient> ingredients;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,6 +107,15 @@ public class User implements UserDetails {
         return true;
     }
 
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
 
     @Override
     public String getUsername() {
@@ -97,6 +148,26 @@ public class User implements UserDetails {
 
     public void setRepeatPassword(String repeatPassword) {
         this.repeatPassword = repeatPassword;
+    }
+
+    public String getDefaultCalendar() {
+        return defaultCalendar==null ? "primary" : defaultCalendar;
+    }
+
+    public void setDefaultCalendar(String defaultCalendar) {
+        this.defaultCalendar = defaultCalendar;
+    }
+
+    public String getDefaultColor() {
+        return defaultColor==null ? "1" : defaultColor;
+    }
+
+    public void setDefaultColor(String defaultColor) {
+        this.defaultColor = defaultColor;
+    }
+
+    public List<Orders> getOrders() {
+        return orders;
     }
 }
 

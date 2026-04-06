@@ -1,0 +1,12 @@
+.paginaion{
+    margin-top: 2em !important;
+    margin-bottom: 10em !important;
+    justify-items: center;
+}
+
+
+
+.pagination li a{
+    background-color:#454545;
+    border:1px solid black;
+}

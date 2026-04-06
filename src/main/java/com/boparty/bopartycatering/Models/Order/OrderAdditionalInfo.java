@@ -86,4 +86,11 @@ public class OrderAdditionalInfo
     public void setPrice(int price) {
         this.price = price;
     }
+
+    @Override
+    public String toString() {
+        return title + "," + description + "," + price;
+    }
+
+
 }

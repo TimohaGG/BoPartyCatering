@@ -1,0 +1,76 @@
+package com.boparty.bopartycatering.Services;
+
+import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
+import com.boparty.bopartycatering.Models.Order.Orders;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Colors;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+@Service
+public class GoogleCalendarService {
+    private final GoogleOAuthService service;
+
+    public GoogleCalendarService(GoogleOAuthService service) {
+       this.service = service;
+    }
+
+    public boolean createEvent(String userId, Orders order, String calendarId, String colorId) {
+        try{
+
+            Calendar calendar = service.getCalendarService(userId);
+
+
+            String title = order.getClient();
+            OrderAdditionalInfo deliver = order.getAdditionalInfo().stream().filter(x->x.getTitle().contains("Доставка")).findFirst().orElse(null);
+            if(deliver!=null){
+                title = title.concat(deliver.getDescription());
+            }
+
+            Event event = new Event()
+                    .setSummary(title)
+                    .setDescription(order.getFormat())
+                    .setColorId(colorId);
+            if(order.getDate()!=null){
+
+
+                ZoneId zoneId = ZoneId.systemDefault();
+                EventDateTime start = convertToEventDateTime(order.getDate(), "Europe/Kyiv");
+                EventDateTime end = convertToEventDateTime(order.getDate().plusHours(1), "Europe/Kyiv");
+                event.setStart(start);
+                event.setEnd(end);
+            }
+
+
+
+            calendar.events().insert(calendarId, event).execute();
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
+
+    public EventDateTime convertToEventDateTime(LocalDateTime localDateTime, String timezone) {
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(timezone));
+        Instant instant = zonedDateTime.toInstant();
+        DateTime googleDateTime = new DateTime(instant.toEpochMilli());
+
+        return new EventDateTime()
+                .setDateTime(googleDateTime)
+                .setTimeZone(timezone);
+    }
+
+}

@@ -1,3 +1,8 @@
+body{
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+}
+
 li{
     background-color: transparent !important;
     border: 0 !important;
@@ -15,6 +20,11 @@ input{
     border-radius: 15px;
 }
 
+.list-group-item.current,
+.mobile-menu-item.current{
+    background-color: #454545 !important;
+}
+
 .scrollbar::-webkit-scrollbar{
     display: none;
 }
@@ -27,6 +37,7 @@ input{
     border-radius: 10px;
     text-align: center;
     white-space:nowrap ;
+
 
 }
 
@@ -49,8 +60,9 @@ input{
     border-radius: 15px;
     padding-left: 0;
     padding-right: 0;
-    overflow: scroll;
-    height: 80vh;
+    overflow-y: scroll;
+    height: calc(100vh - 100px);
+    /*height: 100%;*/
 }
 
 .positions::-webkit-scrollbar{
@@ -58,14 +70,11 @@ input{
 }
 
 
-.positions>div{
+.positions>div:not(.categoryHead):not(.search){
     border-bottom: 1px solid #454545;
-    padding-bottom:15px;
-    padding-top:15px;
     grid-template-columns: 3fr 2fr 0.5fr 1fr;
     height: 160px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 15px 10px;
 }
 
 
@@ -75,6 +84,14 @@ input{
     background-repeat: no-repeat;
     background-position: center;
 
+}
+
+.col-12.container:last-child{
+    padding-bottom: 100px;
+}
+
+.col-12.container{
+    margin-bottom: 20px;
 }
 
 .buttons{
@@ -89,6 +106,7 @@ input{
 .positions .container{
     padding-top:10px;
     justify-content: space-around;
+    padding-bottom: 20px;
 }
 
 .positions .container:first-child{
@@ -96,7 +114,11 @@ input{
 }
 
 .positions .container:last-child{
-    margin-bottom: 0;
+    /*margin-bottom: 0;*/
+}
+
+.order-position:last-child{
+padding-bottom: 50px;
 }
 
 .amount-selector{
@@ -143,9 +165,14 @@ input{
 
 .categoryHead{
     text-align:center;
+    background-color: #454545;
+    border-bottom: 1px solid #454545;
+    margin-bottom: 0;
+}
+
+.categoryHead>h2{
     padding-top:10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #454545;
     margin-bottom: 0;
 }
 
@@ -157,8 +184,12 @@ input{
     color: #454545 !important;
 }
 
+.mobile-menu-item.active{
+    color: black !important;
+}
+
 .btn-outline-light:hover{
-    color: black;
+    color: black !important;
 }
 
 
@@ -171,6 +202,10 @@ input{
     .preview>*{
         width: initial;
     }
+
+    .small-hide{
+        column-span: 2;
+    }
 }
 
 .disable-dbl-tap-zoom {
@@ -181,3 +216,130 @@ input{
     visibility: collapse;
     display: none;
 }
+
+.list-group-item:last-child:not(.error-item):hover{
+    background-color: #202020 !important;
+}
+
+.rounded-input{
+    background-color: #454545;
+    border:0;
+
+    text-align: center;
+    border-radius: 20px;
+    height: 40px;
+    color: white !important;
+    outline: none;
+}
+
+.rounded-input:hover{
+    border-radius: 20px;
+    border: 0;
+    outline: none;
+}
+
+.rounded-input:focus{
+    border-radius: 20px;
+    border: 1px solid #202020;
+    outline: none;
+
+}
+
+.rounded-input.amount{
+    width: 60px;
+}
+
+
+.order_block:last-child{
+    padding-bottom: 100px;
+}
+
+.modal-content{
+    background-color: #454545;
+}
+
+.color-square{
+    display: block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.color-square.selected{
+    border:2px solid white;
+}
+
+#others>div:last-child{
+    margin-bottom: 100px;
+}
+
+
+ .modal-backdrop{
+     z-index: -10 !important;
+ }
+
+
+#shoppingFormBtnsMobile{
+    position: absolute;
+    bottom: 21%;
+    right:3%;
+
+    animation: slideBtn 0.5s ease-in-out both;
+}
+
+@keyframes slideBtn {
+    from{
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+
+.shoppingBtnMobile{
+    animation: slideOutBtn 0.5s ease-in-out alternate;
+}
+
+@keyframes slideOutBtn {
+    from{
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+body{
+    padding: 0 !important;
+}
+
+.offcanvas{
+    padding:0;
+}
+
+.order_block{
+    position: relative;
+    height: fit-content !important;
+}
+
+.popover-body{
+    color:black !important;
+}
+
+.table-dark td{
+    background-color: #202020 !important;
+}
+
+.userIndicator{
+    position: absolute;
+    top:10px;
+    left:-20px;
+    width: 20px;
+    height: 20px;
+}
+

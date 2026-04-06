@@ -29,7 +29,20 @@
     <properties>
         <java.version>17</java.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>com.e-iceblue</id>
+            <name>e-iceblue</name>
+            <url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
     <dependencies>
+
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.1</version>
+        </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
@@ -97,10 +110,41 @@
         </dependency>
 
         <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.pdf</artifactId>
+            <version>11.3.5</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
             <version>6.4.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>1.34.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-calendar</artifactId>
+            <version>v3-rev20220715-2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>technology.tabula</groupId>
+            <artifactId>tabula</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
+
 
 
     </dependencies>

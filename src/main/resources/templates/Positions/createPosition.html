@@ -12,13 +12,18 @@
     <link href="/asserts/styles/Order/categories.css" rel="stylesheet"/>
 </head>
 <body>
-<header th:insert="header::header"></header>
+<header th:replace="header::header"></header>
 
+<button class="btn btn-outline-light " style="position: absolute;right: 10%;bottom: 20%" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="40" fill="currentColor" class="bi bi-handbag" viewBox="0 0 16 16">
+        <path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2m3 4V3a3 3 0 1 0-6 0v2H3.36a1.5 1.5 0 0 0-1.483 1.277L.85 13.13A2.5 2.5 0 0 0 3.322 16h9.355a2.5 2.5 0 0 0 2.473-2.87l-1.028-6.853A1.5 1.5 0 0 0 12.64 5zm-1 1v1.5a.5.5 0 0 0 1 0V6h1.639a.5.5 0 0 1 .494.426l1.028 6.851A1.5 1.5 0 0 1 12.678 15H3.322a1.5 1.5 0 0 1-1.483-1.723l1.028-6.851A.5.5 0 0 1 3.36 6H5v1.5a.5.5 0 1 0 1 0V6z"/>
+    </svg>
+</button>
 <main>
 
     <div class="container rounded">
 
-        <div class="row align-items-center justify-content-between">
+        <div class="row align-items-center justify-content-center">
             <div class="col-lg-7 col-12 positions mt-0">
                 <h2 class="categoryHead" style="background-color: #454545;">Нова позиція</h2>
                 <form method="post" class="d-flex flex-column mt-3" th:object="${position}" action="/create/position" enctype="multipart/form-data">
@@ -63,62 +68,304 @@
 
 
             </div>
-            <div class="col-4 d-none d-lg-block mb-auto positions mt-0 ms-1">
-<!--                <h2 class="categoryHead" style="background-color: #454545; position: sticky;top:0;">Позиції</h2>-->
-<!--                <div class="col-12 h-100 m-0 pt-0">-->
-<!--                    <div class="category">-->
-
-<!--                        <div class="container row m-0 " th:each="pos:${selectedPositions}">-->
-
-<!--                            <div class="position col-7">-->
-<!--                                <h5 th:text="${pos.getPositionName()}" ></h5>-->
-<!--                                <span th:text="${pos.getPosition().getPrice()} + ' грн'"></span>-->
-<!--                                <div class="d-flex flex-column">-->
-<!--                                    <div class="weight">-->
-<!--                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">-->
-<!--                                            <path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>-->
-<!--                                            <path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>-->
-<!--                                        </svg>-->
-<!--                                        <i th:text="${pos.getPosition().getWeight()} + ' г'"></i>-->
-<!--                                    </div>-->
-
-<!--                                    <div class="amount-selector">-->
-<!--                                        <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',-1)'">-</div>-->
-<!--                                        <span class="amount" th:text="${pos.getAmount()}" th:id="'pos_'+${pos.getPositionId()}"></span>-->
-<!--                                        <div class="btn btn-outline-warning" th:onclick="'addAmount(' + ${pos.getPositionId()} + ',1)'">+</div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="image col-3" style="background-image: url('/asserts/img/image.png');">-->
-
-<!--                            </div>-->
-<!--                            <div class="d-flex flex-column buttons col-2 justify-content-center">-->
-<!--                                <a class="btn btn-outline-danger m-0" href="#">-->
-<!--                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-x" viewBox="0 0 16 16">-->
-<!--                                        <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"/>-->
-<!--                                        <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>-->
-<!--                                    </svg>-->
-<!--                                </a>-->
-<!--                            </div>-->
-
-<!--                        </div>-->
-
-<!--                    </div>-->
 
 
 
+        </div>
+    </div>
+    <div class="mb-auto positions mt-0 ms-1 offcanvas offcanvas-end" style="overflow: hidden;background-color: #202020;height: 100%" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
 
-<!--                </div>-->
 
+        <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close" style="position: absolute;top:10px;right:10px;z-index: 100;color: white !important;">
+            X
+        </button>
+
+        <div style="position:sticky;top:0;background-color: #202020;height: fit-content;">
+            <h2 class="text-center m-0" >Обрані</h2>
+        </div>
+        <div id="selected" style="height: 40%;overflow-y: scroll;" class="p-0">
+            <div th:each="sel:${selectedIngs}" th:id="'item_'+${sel.getIngredient().getId()}" class="mb-2">
+                <div class="w-100 row justify-content-center align-items-center m-0" >
+                    <div class="col-3 p-0 ingName">
+                        <span th:text="${sel.getIngredient().getName()}"></span>
+                    </div>
+                    <div class="col-5 p-0">
+                        <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(-1,'+${sel.getIngredient().getId()}+',event)'" >-</button>
+                        <input class="rounded-input amount" th:value="${sel.getAmount()}" th:id="'ing_'+${sel.getIngredient().getId()}" th:onfocusout="'changeAmount(null,'+${sel.getIngredient().getId()}+',event)'"/>
+                        <button class="btn btn-outline-warning disable-dbl-tap-zoom" th:onclick="'changeAmount(1,'+${sel.getIngredient().getId()}+',event)'" >+</button>
+                    </div>
+                    <div class="col-2 p-0">
+                        <select  th:id="'unit_'+${sel.getIngredient().getId()}" style="color: black !important" th:onchange="'updateUnits(event)'">
+                            <option th:selected="${sel.getUnit().getId() == unit.getId()}" th:each="unit:${units}" th:value="${unit.getId()}" th:text="${unit.getUnitName()}" style="color: black !important"></option>
+                        </select>
+                    </div>
+                    <div class="col-2 p-0 delButton" style="display: none">
+                        <button type="button" class="btn btn-outline-danger ms-3" data-bs-toggle="modal" th:data-bs-target="'#removeModal_'+${sel.getId()}">
+                            -
+                        </button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="search d-flex justify-content-between align-items-center">
+
+            <input id="ingsSearch" type="text" class="form-control" onchange="searchIngredient()"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-search me-2 ms-2" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+        </div>
+        <div id="others" style="height: 50%;overflow-y: scroll;">
+            <div th:each="item:${ingredients}" class="ingHead">
+                <h3 th:text="${item.getKey()}"></h3>
+                <div class="ingredient" th:each="ing:${item.getValue()}" th:insert="fragments/_ingredient::ingredient(${ing},${units})"></div>
             </div>
 
+        </div>
+        <div class="py-3" style="position:sticky;bottom:0; height:fit-content;background-color: #202020;">
+            <button class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#addIngredientModal">
+                +
+            </button>
+        </div>
 
+    </div>
+
+    <div class="modal fade" id="addIngredientModal" tabindex="-1" aria-labelledby="addIngredientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" onsubmit="addIngredient(event)">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addIngredientModalLabel">Новий інгредієнт</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label class="form-label" for="ingName">Назва</label>
+                            <input class="form-control"  type="text" name="ingName" id="ingName" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="ingName">Категорія</label>
+                            <select class="form-select" name="ingCategory" id="ingCategory">
+                                <option th:each="cat:${ingsCategories}" th:text="${cat.getName()}" th:value="${cat.getId()}"></option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Скасувати</button>
+                        <button type="submit" class="btn btn-outline-light">Додати</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
 
+   async function changeAmount(amount, id, event) {
+
+        let newAmount = getNewAmount(amount, id);
+        let unit = document.getElementById('unit_' + id).value;
+
+        let resp = await fetch('/position/addingredient/'+[[${currentPos}]],{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                amount:+newAmount,
+                ingId:+id,
+                unitId:unit
+            })
+        })
+            .then(res=>res.text())
+            .then(resp=>{
+                if(resp){
+                    console.log("New amount is "+resp);
+                    if(+resp===0.0)
+                        removeItem('item_'+id,"others", false);
+                    else
+                        addItem('item_'+id,"selected", true);
+                }
+
+
+            })
+            .catch(err=>console.log(err));
+    }
+
+    function getNewAmount(amount,id){
+        let elem = document.getElementById('ing_' + id);
+        console.log(elem);
+        if(amount == null && elem.value >=0){
+            return elem.value;
+        }
+        else if(amount!=null){
+            let newAmount = +elem.value + amount;
+            if(newAmount>=0){
+                elem.value = newAmount;
+                return newAmount;
+            }
+        }
+        return 0;
+    }
+
+
+   function removeItem(itemId, target, hideControl) {
+       let temp;
+       let elem = document.getElementById(itemId);
+       if (elem.parentElement.id === "selected") {
+           console.log("Item removed");
+           temp = elem;
+           elem.remove();
+           document.getElementById(target).appendChild(temp);
+           console.log(temp);
+           temp.querySelector(".delButton").style.display = hideControl ? "none" : "block";
+       }
+   }
+
+    function addItem(itemId, target, hideControl){
+       console.log("add func");
+
+       let temp;
+        let elem = document.getElementById(itemId);
+
+        if(elem.parentElement.parentElement.parentElement.id==="others" || elem.parentElement.id==="others"){
+            console.log("Item added");
+            temp = elem;
+            elem.remove();
+            document.getElementById(target).appendChild(temp);
+            temp.querySelector(".delButton").style.display = hideControl ? "none" : "block";
+        }
+
+
+
+
+    }
+
+    function updateItem(itemId){
+        let temp;
+        let elem = document.getElementById(itemId);
+        temp = elem;
+        // document.getElementById(target).appendChild(temp);
+        // elem.append(temp);
+        // elem.remove();
+    }
+
+    async function updateUnits(event){
+
+       let id = event.target.id.split('_')[1];
+       let unitId = event.target.value;
+
+        let elem = document.getElementById('unit_' + id).value;
+        if(elem){
+            let resp = await fetch("/position/updateUnits?id="+id+'&unitId='+unitId,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+                .then(res=>res.text())
+                .then(resp=>{
+
+                })
+                .catch(err=>console.log(err));
+        }
+    }
+
+   async function addIngredient(event){
+       event.preventDefault();
+       console.log(event);
+
+       let name = document.getElementById('ingName').value;
+       if(!name){
+           return;
+       }
+       let category = document.getElementById('ingCategory').value;
+       console.log(category);
+       if(!category){
+           return;
+       }
+       let resp = await fetch('/ingredient/create?name='+name+"&categoryId="+category,{
+           method:'POST',
+           headers:{
+               'Content-Type':'application/json',
+               'Accept':'application/json'
+           }
+       })
+           .then(res=>res.text())
+           .then(resp=>{
+               document.getElementById('others').insertAdjacentHTML('beforeend',resp);
+           })
+           .catch(err=>console.log(err));
+    }
+
+   async function removeIngredient(id){
+       let resp = await fetch('/ingredient/remove/' + id, {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+           body: id
+       })
+           .then(response => response.text())
+           .then(res => {
+               if(res){
+                   document.getElementById('item_' + id).remove();
+               }
+           })
+           .catch(error => console.log(error));
+
+   }
+
+   function searchIngredient(){
+       let input = document.getElementById('ingsSearch');
+       const elements = document.getElementsByClassName("ingredient");
+       const headers = document.getElementsByClassName("ingHead");
+
+       if(input.value===""){
+           for (let el of elements){
+               el.style.display = "block";
+           }
+
+       }
+       else{
+           for (const el of elements) {
+               let name = el.querySelector('.ingName span').innerText;
+                if(name.toLowerCase().includes(input.value.toLowerCase())){
+                    el.style.display = "block";
+                }else{
+                    el.style.display = "none";
+                }
+           }
+
+
+           // for (const head of headers){
+           //     filterHeaders(head);
+           // }
+
+
+       }
+
+       function filterHeaders(head){
+
+           for (let el of head.children){
+                console.log(el.tagName);
+               if(el.tagName==="DIV" && el.style.display === "block"){
+                   console.log(head.querySelector("h3").innerText + " has elements");
+                   head.style.display = "block";
+                   return;
+               }
+           }
+           head.style.display = "none";
+
+
+       }
+
+   }
 </script>
 
 </body>

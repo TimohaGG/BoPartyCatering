@@ -1,5 +1,6 @@
 package com.boparty.bopartycatering.Models.Position;
 
+import com.boparty.bopartycatering.Models.User.User;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -12,8 +13,11 @@ public class Category {
 
     private String name;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Position> positions;
+
+    @ManyToOne
+    private User user;
 
     public String getName() {
         return name;
@@ -23,7 +27,19 @@ public class Category {
         return positions;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

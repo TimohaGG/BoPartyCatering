@@ -1,12 +1,13 @@
 package com.boparty.bopartycatering.Controllers;
 
-import com.boparty.bopartycatering.Models.Order.InfoDTO;
-import com.boparty.bopartycatering.Models.Order.OrderAdditionalInfo;
-import com.boparty.bopartycatering.Models.Order.Orders;
-import com.boparty.bopartycatering.Models.Order.PdfGenerator;
+import com.boparty.bopartycatering.Models.Order.*;
+import com.boparty.bopartycatering.Models.Position.IngredientAmount;
+import com.boparty.bopartycatering.Models.Position.PositionAmount;
 import com.boparty.bopartycatering.Repos.OrdersRepos;
 import com.boparty.bopartycatering.Services.OrdersService;
 
+import com.boparty.bopartycatering.Services.ShoppingListService;
+import com.boparty.bopartycatering.Services.UserService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -15,56 +16,128 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.pdfbox.pdmodel.graphics.optionalcontent.PDOptionalContentGroup;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.FrameworkServlet;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.web.IWebExchange;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class OrdersController {
 
+    private final FrameworkServlet frameworkServlet;
+    private final ShoppingListService shoppingListService;
     private OrdersService ordersService;
+    private SpringTemplateEngine templateEngine;
 
+    private HttpServletRequest request;
 
+    private HttpServletResponse response;
+
+    private ServletContext servletContext;
 
     @Autowired
-    public OrdersController(OrdersService ordersService) {
+    public OrdersController(OrdersService ordersService, FrameworkServlet frameworkServlet, ShoppingListService shoppingListService, SpringTemplateEngine templateEngine, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
         this.ordersService = ordersService;
-
+        this.frameworkServlet = frameworkServlet;
+        this.shoppingListService = shoppingListService;
+        this.templateEngine = templateEngine;
+        this.request = request;
+        this.response = response;
+        this.servletContext = servletContext;
     }
-@GetMapping("/order/view/{id}")
+    @GetMapping("/order/view/{id}")
     public String index(@PathVariable long id, Model model){
         Orders order = ordersService.getOrderById(id);
         if(order != null){
             model.addAttribute("order", order);
             model.addAttribute("info", new InfoDTO());
+            model.addAttribute("common",ordersService.getCommonAdditionalInfo());
+            model.addAttribute("orderInfo", new OrderInfo());
+            model.addAttribute("isLogged", UserService.isLoggedIn());
+            model.addAttribute("orderInfoEditModel", new OrderAdditionalInfo());
             return "Order/index";
         }
         return "redirect:/";
     }
 
+    @GetMapping("/order/remove/{id}")
+    public String remove(@PathVariable long id, Model model){
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            ordersService.removeOrder(id);
+        }
+        return "redirect:/";
+    }
+
     @PostMapping("/order/generate/{id}")
-    public void generatePdf(HttpServletResponse response, @PathVariable Long id) {
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=example.pdf");
+    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id,
+                                              @ModelAttribute OrderInfo orderInfo) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            String filename = ordersService.getOrderFileName(id);
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
+            document.open();
+            ordersService.GeneratePdf(document, out, id, orderInfo);
+            document.close();
 
-        // Create a new document
-        Document document = new Document();
+            byte[] pdfBytes = out.toByteArray();
 
-        try (OutputStream out = response.getOutputStream()) {
-           ordersService.GeneratePdf(document,out,id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+//            headers.setContentDisposition(ContentDisposition
+//                    .attachment()
+//                    .name(filename)
+//                    .filename(filename)
+//                    .build());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+//            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK)
+//            ;
         } catch (Exception e) {
-            throw new RuntimeException("Error while generating PDF", e);
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+//    @PostMapping("/order/generate/{id}")
+//    public String generatePdf(HttpServletResponse response, @PathVariable Long id, String color, @ModelAttribute OrderInfo orderInfo, Model model) {
+//        String filename = ordersService.getOrderFileName(id);
+//        color="250,187,7";
+//        response.setContentType("application/pdf");
+//        response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+//
+//        // Create a new document
+//        Document document = new Document();
+//
+//        try (OutputStream out = response.getOutputStream()) {
+//           ordersService.GeneratePdf(document,out,id,color);
+//
+//           return "redirect:/order/view/"+id;
+//        } catch (Exception e) {
+//            return "redirect:/";
+//
+//        }
+//    }
 
     @PostMapping("/order/addinfo/{id}")
     public String addInfo(@PathVariable Long id, @ModelAttribute InfoDTO infoDTO, Model model) {
@@ -91,6 +164,164 @@ public class OrdersController {
     }
 
 
+    @GetMapping("/order/copy/{id}")
+    public String copy(@PathVariable Long id, Model model) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            Orders newOrd = new Orders();
+            newOrd.setClient(order.getClient() + "(copy)");
+            newOrd.setUser(order.getUser());
+            newOrd.setDate(order.getDate());
+            newOrd.setDuration(order.getDuration());
+            newOrd.setFormat(order.getFormat());
+            newOrd.setPhone(order.getPhone());
+            newOrd.setGuestsAmount(order.getGuestsAmount());
+            newOrd.setStatus(order.getStatus());
+            newOrd = ordersService.save(newOrd);
+            for(PositionAmount pos : order.getPositionsAmount()){
+                PositionAmount p = new PositionAmount();
+                p.setAmount(pos.getAmount());
+                p.setPosition(pos.getPosition());
+                newOrd.addPosition(p);
+                //newOrd.getPositionsAmount().add(p);
+                p.setOrder(newOrd);
+                ordersService.savePositionAmount(p);
+            }
 
+
+            ordersService.save(newOrd);
+
+
+
+            for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
+                OrderAdditionalInfo tmp = new OrderAdditionalInfo();
+                tmp.setTitle(info.getTitle());
+                tmp.setDescription(info.getDescription());
+                tmp.setPrice(info.getPrice());
+                tmp.setImage(info.getImage());
+                tmp.setCommon(false);
+                tmp.setOrder(newOrd);
+                ordersService.saveInfo(tmp);
+            }
+
+        }
+        return "redirect:/";
+    }
+
+
+    @PostMapping("/info/get/{id}")
+    public ResponseEntity<InfoDTO> getInfo(@PathVariable Long id, Model model) {
+        OrderAdditionalInfo tmp = ordersService.getCommonInfoById(id);
+        InfoDTO dto = new InfoDTO();
+        if(tmp != null){
+
+            dto.setTitle(tmp.getTitle());
+            dto.setDescription(tmp.getDescription());
+            dto.setPrice(tmp.getPrice());
+            return ResponseEntity.ok(dto);
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/order/shopping/{id}")
+    public String shopping(@PathVariable Long id, Model model) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            ShoppingList list = shoppingListService.getShoppingListByOrderId(id);
+
+            if(list == null || list.isNeedsUpdate()){
+                List<IngredientAmount> ings = ordersService.getShopping(List.of(order));
+                list = shoppingListService.createList(order,ings);
+            }
+
+            model.addAttribute("shoppingList",list);
+            Map<String, List<ShoppingListItem>> res = list.getItems()
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            x -> x.getIngredient().getIngredient().getIngCategory().getName(),
+                            Collectors.collectingAndThen(
+                                    Collectors.toList(),
+                                    it -> it.stream()
+                                            .sorted(Comparator.comparing(
+                                                    itm -> itm.getIngredient().getIngredient().getName()
+                                            ))
+                                            .collect(Collectors.toList())
+                            )
+                    ));
+
+            model.addAttribute("ingredients",res);
+
+        }
+        return "Order/shopping";
+    }
+
+    @PostMapping("/order/shopping/{shoppingItemId}/addComment")
+    public String addComment(@PathVariable long shoppingItemId, @RequestParam String comment, Model model) {
+        if(!comment.isBlank()){
+            ShoppingListItem item = this.shoppingListService.addCommentToItem(comment, shoppingItemId);
+
+            model.addAttribute("item",item);
+            return "fragments/_showComment_button :: button";
+        }
+        return "";
+    }
+
+    @PostMapping("/order/shopping/{shoppingItemId}/removeComment")
+    public ResponseEntity<Boolean> removeComment(@PathVariable long shoppingItemId) {
+
+        ShoppingListItem item = this.shoppingListService.removeComment(shoppingItemId);
+        return ResponseEntity.ok(item==null);
+    }
+
+    @PostMapping("/order/shopping/changeState/{ingId}")
+    public ResponseEntity<Boolean> changeState(@PathVariable Long ingId, Model model) {
+        ShoppingListItem item = shoppingListService.getItemById(ingId);
+        if(item != null){
+            item.setBought(!item.isBought());
+            shoppingListService.saveItem(item);
+            return ResponseEntity.ok(item.isBought());
+        }
+        return ResponseEntity.ok(false);
+    }
+    @PostMapping("/order/shopping/getState/{shoppingId}")
+    public ResponseEntity<long[]> getState(Model model, @PathVariable Long shoppingId){
+        return ResponseEntity.ok(shoppingListService.findSelectedItems(shoppingId));
+    }
+
+
+
+    @GetMapping("/order/shopping/collect")
+    public String collect(long[] orderIds, Model model) {
+        Orders temp = ordersService.createTempOrder(orderIds);
+        return "redirect:/order/shopping/"+temp.getId();
+    }
+
+
+
+    @PostMapping("/order/changeStatus/{id}")
+    public ResponseEntity<StatusResponse> changeStatus(@PathVariable Long id, @RequestParam Status status, Model model) {
+        Orders order = ordersService.getOrderById(id);
+        if(order != null){
+            order.setStatus(status);
+            ordersService.save(order);
+            return ResponseEntity.ok(new StatusResponse(order.getStatus(),order.getStatus().getColor()));
+        }
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/edit/orderInfo/{id}")
+    public ResponseEntity<OrderInfoEditDto> editOrderInfo(@PathVariable Long id) {
+        OrderAdditionalInfo info = this.ordersService.getOrderInfoById(id);
+        if (info != null) {
+            OrderInfoEditDto res = OrderInfoEditDto.builder()
+                    .title(info.getTitle())
+                    .orderId(info.getOrder().getId())
+                    .price(info.getPrice())
+                    .description(info.getDescription())
+                    .build();
+            return ResponseEntity.ok(res);
+        }
+        return ResponseEntity.ok(null);
+    }
 
 }

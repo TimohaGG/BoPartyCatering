@@ -8,6 +8,8 @@ import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,12 +34,18 @@ public class PdfGenerator {
     String summaryHeader = "Загалом";
     Map<String, Tuple<String,byte[]>> summary = new LinkedHashMap<>();
 
-    public PdfGenerator(Orders order) {
+    public PdfGenerator(Orders order, OrderInfo info) {
         this.order = order;
 
+        DateTimeFormatter date = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm");
+
+
         header.put("Замовник",order.getClient());
-        header.put(   "Дата",order.getDate());
-        header.put(   "Початок заходу",order.getDate());
+
+
+        header.put(   "Дата",order.getDate()==null ? "" : order.getDate().format(date));
+        header.put(   "Початок заходу",order.getDate()==null ? "" : order.getDate().format(time));
         header.put(   "Тривалість",String.valueOf(order.getDuration()));
         header.put(  "К-сть запрошених",String.valueOf( order.getGuestsAmount()));
         header.put(  "Формат заходу",order.getFormat());
@@ -49,13 +57,18 @@ public class PdfGenerator {
         posHeader.add("К-сть порцій");
         posHeader.add("Ціна, \nгрн");
 
-        summary.put("Разом по меню, грн",new Tuple<>((int) order.getTotalPrice() + " грн",null));
-        summary.put("На 1 особу, грн", new Tuple<>((int) order.getTotalPrice() / order.getGuestsAmount() + " грн",null));
-        for (OrderAdditionalInfo info : order.getAdditionalInfo()) {
-            summary.put(info.getTitle(),new Tuple<>( (int)info.getPrice() + " грн",info.getImage()));
+        summary.put("Разом по меню, грн",new Tuple<>((int) order.getPrice() + " грн",null));
+        if(info.isTax()){
+            summary.put("Сервісний збір +10%", new Tuple<>((int) order.getTaxPercentageCalc() + " грн",null));
+        }
+        if(info.isNeedsForOne())
+            summary.put("На 1 особу, грн", new Tuple<>((int) order.getPrice() / order.getGuestsAmount() + " грн",null));
+
+        for (OrderAdditionalInfo infoT : order.getAdditionalInfo()) {
+            summary.put(infoT.getTitle(),new Tuple<>( infoT.getDescription () + "\n" + ((int)infoT.getPrice()==0 ? "" : infoT.getPrice() + " грн"),infoT.getImage()));
         }
 
-        summary.put("Всього за заходом: ",new Tuple<>((int) order.getTotalPrice() + (int) order.getAdditionalInfo().stream().mapToInt(OrderAdditionalInfo::getPrice).sum() + " грн",null));
+        summary.put("Всього за заходом: ",new Tuple<>(order.getTotalPrice() + " грн",null));
 
         try (InputStream fontStream = new ClassPathResource("static/asserts/fonts/Arial Unicode.ttf").getInputStream()) {
             BaseFont baseFont = BaseFont.createFont("Arial Unicode.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontStream.readAllBytes(), null);
@@ -109,20 +122,25 @@ public class PdfGenerator {
                     if(!isImgSet.get()) {
                         String logoPath;
                         try {
-                            ClassPathResource classpath = new ClassPathResource("static/asserts/img/logo.png");
-                            byte[] imageBytes;
-                            try (InputStream inputStream = classpath.getInputStream()) {
-                                imageBytes = inputStream.readAllBytes();
-                            }
+//                            ClassPathResource classpath = new ClassPathResource("static/asserts/img/logo.png");
+//                            byte[] imageBytes;
+//                            try (InputStream inputStream = classpath.getInputStream()) {
+//                                imageBytes = inputStream.readAllBytes();
+//                            }
                             //logoPath = new ClassPathResource("static/asserts/img/logo.png").getFile().getAbsolutePath();
-                            Image img = Image.getInstance(imageBytes);
-                            img.scaleToFit(150,150);
+                            Image img = null;
+                            byte[] logo = order.getUser().getLogo();
+                            if(logo!=null){
+                                img = Image.getInstance(logo);
+                                img.scaleToFit(150,150);
+
+                            }
+
                             PdfPCell cell = new PdfPCell(img);
                             cell.setRowspan(7);
                             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             table.addCell(cell);
-
                             isImgSet.set(true);
                         } catch (Exception e) {
                             System.out.println("Error creating PDF");
@@ -148,7 +166,7 @@ public class PdfGenerator {
 
     private void addPositionsCell(PdfPTable table) {
         for(PositionAmount pos : order.getPositionsAmount()){
-            table.addCell(getDefaultCell(pos.getPositionName(), mainFont));
+            table.addCell(getDefaultCell(pos.getPosName(), mainFont));
 
             try{
                 Image img = Image.getInstance(pos.getPosition().getImage());
@@ -207,6 +225,8 @@ public class PdfGenerator {
         header.setVerticalAlignment(Element.ALIGN_MIDDLE);
         header.setPhrase(new Phrase(data, font));
         header.setMinimumHeight(40);
+        header.setPaddingBottom(10);
+        header.setPaddingTop(10);
         header.setBackgroundColor(containerColor);
         return header;
     }
